@@ -1,0 +1,58 @@
+.logros-section {
+  padding: clamp(60px, 8vw, 100px) 0;
+  background-color: #f1f5f9;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.logros-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 3rem);
+  box-sizing: border-box;
+}
+
+.logros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: 100%;
+}
+
+.logro-card {
+  background: #ffffff;
+  padding: clamp(30px, 4vw, 50px) clamp(20px, 3vw, 30px);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logro-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.logro-dato {
+  font-size: clamp(2.5rem, 4vw + 1rem, 4rem);
+  font-weight: 800;
+  color: #0d9488;
+  margin: 0;
+  line-height: 1;
+  margin-bottom: 20px;
+  letter-spacing: -1.5px;
+}
+
+.logro-descripcion {
+  font-size: clamp(1rem, 1.2vw + 0.4rem, 1.15rem);
+  color: #475569;
+  line-height: 1.6;
+  max-width: 300px;
+  margin: 0;
+}
