@@ -5,8 +5,9 @@ class opiniones extends Model {}
 
 opiniones.init({
     id: {
-        type: DataTypes.STRING,
-        primaryKey: true
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
 
     nombre: {
