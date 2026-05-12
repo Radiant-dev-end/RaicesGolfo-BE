@@ -1,36 +1,39 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class Reservation extends Model {}
+class Reservacion extends Model {}
 
-Reservation.init({
-    id: {
-        type: DataTypes.STRING,
+Reservacion.init({
+    id_reservacion: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
 
-    userId: {
-        type: DataTypes.STRING,
+    id_habitaciones: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
 
-    userName: {
-        type: DataTypes.STRING,
+    id_usuarios: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
 
-    habId: {
-        type: DataTypes.STRING,
+    nombre_usuario: {
+        type: DataTypes.STRING (100),
         allowNull: false
     },
 
-    habName: {
+    
+
+    nombre_habitacion: {
         type: DataTypes.STRING,
         allowNull: false
     },
 
     precio: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DECIMAL (10,2),
         allowNull: false
     },
 
@@ -39,12 +42,12 @@ Reservation.init({
         allowNull: false
     },
 
-    status: {
-        type: DataTypes.STRING,
+    estado: {
+        type: DataTypes.STRING (30),
         defaultValue: "Pendiente"
     },
 
-    createdAt: {
+    creado_en: {
         type: DataTypes.DATE,
         allowNull: false
     }

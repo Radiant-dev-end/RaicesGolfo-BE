@@ -4,13 +4,14 @@ const sequelize = require("../config/db");
 class Tour extends Model {}
 
 Tour.init({
-    id: {
-        type: DataTypes.STRING,
+    id_tours: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
 
     nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
@@ -20,21 +21,21 @@ Tour.init({
     },
 
     precio: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DECIMAL (10,2),
         allowNull: false
     },
 
     duracion: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
     tipo: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
-    disponible: {
+    estado: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     }

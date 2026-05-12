@@ -4,20 +4,20 @@ const sequelize = require("../config/db");
 class opiniones extends Model {}
 
 opiniones.init({
-    id: {
+    id_opiniones: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
+        primaryKey: true
     },
 
     nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (30),
         allowNull: false
     },
 
     imagen: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.TEXT,
+        allowNull: false
     },
 
     calificacion: {
@@ -31,7 +31,7 @@ opiniones.init({
     },
 
     experiencia: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     }
 
