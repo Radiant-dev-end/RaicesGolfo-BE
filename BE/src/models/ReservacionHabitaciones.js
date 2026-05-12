@@ -15,7 +15,12 @@ ReservacionHabitaciones.init({
         allowNull: false
     },
 
-    id_habitacion: {
+    id_reservaciones: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    id_habitaciones: {
         type: DataTypes.INTEGER,
         allowNull: false
     },

@@ -1,10 +1,10 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class Reservacion extends Model {}
+class Reservaciones extends Model {}
 
-Reservacion.init({
-    id_reservacion: {
+Reservaciones.init({
+    id_reservaciones: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
