@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:3007/users';
+export const API_URL = 'http://localhost:3000/api/usuarios';
 
 // Registro local contra json-server.
 // Todo usuario nuevo se almacena con rol "cliente" por defecto.
