@@ -1,24 +1,24 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class Caracteristica extends Model {}
+class Role extends Model {}
 
-Caracteristica.init({
+Role.init({
     nombre: {
         type: DataTypes.STRING,
         allowNull: false
     },
 
-    icono: {
-        type: DataTypes.STRING,
+    fecha: {
+        type: DataTypes.DATEONLY,
         allowNull: false
     }
 
 }, {
     sequelize,
-    modelName: "Caracteristica",
-    tableName: "caracteristicas",
+    modelName: "Role",
+    tableName: "roles",
     timestamps: false
 });
 
-module.exports = Caracteristica;
+module.exports = Role;
