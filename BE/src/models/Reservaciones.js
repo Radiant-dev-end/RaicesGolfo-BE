@@ -1,9 +1,9 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class ReservacionHabitaciones extends Model {}
+class Reservation extends Model {}
 
-ReservacionHabitaciones.init({
+Reservation.init({
     id: {
         type: DataTypes.STRING,
         primaryKey: true
@@ -19,33 +19,23 @@ ReservacionHabitaciones.init({
         allowNull: false
     },
 
-    roomId: {
+    habId: {
         type: DataTypes.STRING,
         allowNull: false
     },
 
-    roomName: {
+    habName: {
         type: DataTypes.STRING,
         allowNull: false
     },
 
-    checkIn: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-
-    checkOut: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-
-    time: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    price: {
+    precio: {
         type: DataTypes.FLOAT,
+        allowNull: false
+    },
+
+    fecha: {
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
 
@@ -57,28 +47,13 @@ ReservacionHabitaciones.init({
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false
-    },
-
-    tipo: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    item: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    date: {
-        type: DataTypes.STRING,
-        allowNull: false
     }
 
 }, {
     sequelize,
-    modelName: "RoomReservation",
-    tableName: "room_reservations",
+    modelName: "Reservation",
+    tableName: "reservations",
     timestamps: false
 });
 
-module.exports = RoomReservation;
+module.exports = Reservation;
