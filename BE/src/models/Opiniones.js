@@ -1,9 +1,9 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class opiniones extends Model {}
+class Opinion extends Model {}
 
-opiniones.init({
+Opinion.init({
     id_opiniones: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
