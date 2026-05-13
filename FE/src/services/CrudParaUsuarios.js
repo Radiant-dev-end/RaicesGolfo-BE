@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3007/users';
+const API_URL = 'http://localhost:3000/api/usuarios';
 
 export const getUsers = async () => {
     try {

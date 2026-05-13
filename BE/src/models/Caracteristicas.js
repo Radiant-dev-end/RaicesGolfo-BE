@@ -4,13 +4,19 @@ const sequelize = require("../config/db");
 class Caracteristica extends Model {}
 
 Caracteristica.init({
+    id_caracteristicas: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+
     nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
     icono: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     }
 

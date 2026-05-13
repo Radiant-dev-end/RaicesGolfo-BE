@@ -4,13 +4,24 @@ const sequelize = require("../config/db");
 class Habitacion extends Model {}
 
 Habitacion.init({
-    id: {
-        type: DataTypes.STRING,
+    id_habitaciones: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
 
+    id_caracteristicas: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    numero: {
+        type: DataTypes.STRING (10),
+        allowNull: false
+    },
+
     nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
@@ -19,8 +30,8 @@ Habitacion.init({
         allowNull: false
     },
 
-    precio: {
-        type: DataTypes.FLOAT,
+    precio_noche: {
+        type: DataTypes.DECIMAL (10,2),
         allowNull: false
     },
 
@@ -30,28 +41,29 @@ Habitacion.init({
     },
 
     tipo: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (30),
         allowNull: false
     },
 
     disponible: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true
+        defaultValue: true,
+        allowNull: false
     },
 
     imagen: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.TEXT,
+        allowNull: false
     },
 
-    status: {
-        type: DataTypes.STRING,
+    estado: {
+        type: DataTypes.STRING (30),
         defaultValue: "disponible"
     },
 
     features: {
         type: DataTypes.JSON,
-        allowNull: true
+        allowNull: false
     }
 
 }, {

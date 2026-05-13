@@ -5,12 +5,13 @@ class Role extends Model {}
 
 Role.init({
     nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         allowNull: false
     },
 
     fecha: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false
     }
 
