@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const OpinionController = require("../controllers/OpinionController");
+const OpinionController = require("../controllers/OpinionesController");
 
 // Obtener todas las opiniones
 router.get("/obtener", OpinionController.getAll);

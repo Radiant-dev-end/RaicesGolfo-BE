@@ -46,6 +46,14 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs))
     Sin tener que eliminar tablas o la base de datos
 */
 
+// RUTAS
+const usuarioRoutes = require("./routes/UsuarioRoutes")
+const habitacionRoutes = require("./routes/HabitacionesRoutes")
+const opinionRoutes = require("./routes/OpinionesRoutes")
+
+app.use("/usuarios", usuarioRoutes)
+app.use("/habitaciones", habitacionRoutes)
+app.use("/opiniones", opinionRoutes)
 
 app.listen(3000, () => {
     console.log('servidor corriendo');

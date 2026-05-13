@@ -1,4 +1,4 @@
-const Opinion = require("../models/Opinion");
+const Opinion = require("../models/Opiniones");
 
 const OpinionController = {
 

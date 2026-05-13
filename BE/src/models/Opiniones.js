@@ -4,17 +4,10 @@ const sequelize = require("../config/db");
 class opiniones extends Model {}
 
 opiniones.init({
-<<<<<<< HEAD
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
-=======
-    id_opiniones: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
->>>>>>> 39cdd133329de56ef661b3541f5b0961bb6bb3d5
     },
 
     nombre: {
@@ -49,4 +42,4 @@ opiniones.init({
     timestamps: false
 });
 
-module.exports = Opinion;
+module.exports = opiniones;

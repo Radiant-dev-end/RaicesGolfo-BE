@@ -1,4 +1,4 @@
-const Habitacion = require("../models/Habitacion");
+const Habitacion = require("../models/Habitaciones");
 
 const HabitacionController = {
 
