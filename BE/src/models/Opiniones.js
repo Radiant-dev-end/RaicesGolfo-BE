@@ -1,8 +1,9 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class opiniones extends Model {}
+class Opinion extends Model {}
 
+<<<<<<< HEAD
 opiniones.init({
 <<<<<<< HEAD
     id: {
@@ -10,6 +11,9 @@ opiniones.init({
         primaryKey: true,
         autoIncrement: true
 =======
+=======
+Opinion.init({
+>>>>>>> fa0e21eda95f4fe6728d179ca40812f8f0aa122a
     id_opiniones: {
         type: DataTypes.INTEGER,
         autoIncrement: true,

@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class ReservacionHabitaciones extends Model {}
+class ReservacionHabitaciones extends Model { }
 
 ReservacionHabitaciones.init({
     id_reservacion_habitaciones: {
@@ -11,17 +11,22 @@ ReservacionHabitaciones.init({
     },
 
     nombre_usuario: {
-        type: DataTypes.STRING (100),
+        type: DataTypes.STRING(100),
         allowNull: false
     },
 
-    id_habitacion: {
+    id_reservaciones: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    id_habitaciones: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
 
     nombre_habitacion: {
-        type: DataTypes.STRING (50),
+        type: DataTypes.STRING(50),
         allowNull: false
     },
 
@@ -36,17 +41,17 @@ ReservacionHabitaciones.init({
     },
 
     tiempo: {
-        type: DataTypes.DATETIME,
+        type: DataTypes.DATE,
         allowNull: false
     },
 
     precio: {
-        type: DataTypes.DECIMAL(10,2),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
 
     estado: {
-        type: DataTypes.STRING (50),
+        type: DataTypes.STRING(50),
         defaultValue: "Pendiente"
     },
 
@@ -56,24 +61,24 @@ ReservacionHabitaciones.init({
     },
 
     tipo: {
-        type: DataTypes.STRING (50),
+        type: DataTypes.STRING(50),
         allowNull: false
     },
 
     item: {
-        type: DataTypes.STRING (50),
+        type: DataTypes.STRING(50),
         allowNull: false
     },
 
     date: {
-        type: DataTypes.STRING (100),
+        type: DataTypes.STRING(100),
         allowNull: false
     }
 
 }, {
     sequelize,
-    modelName: "RoomReservation",
-    tableName: "room_reservations",
+    modelName: "ReservacionHabitaciones",
+    tableName: "reservaciones_habitaciones",
     timestamps: false
 });
 
