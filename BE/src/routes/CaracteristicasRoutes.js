@@ -1,21 +1,17 @@
 const express = require("express");
 const router = express.Router();
+const CarasteristicasController = require("../controllers/CarasteristicasController");
+const { isAdmin, isHotel } = require("../middleware/auth");
 
-const UsuarioController = require("../controllers/UsuarioController");
+// Obtener todas las características (Cualquier usuario autenticado)
+router.get("/obtener", CarasteristicasController.getAll);
 
-// Obtener todos los usuarios
-router.get("/obtener", UsuarioController.getAll);
+// Obtener característica por ID (Cualquier usuario autenticado)
+router.get("/obtener/:id", CarasteristicasController.getById);
 
-// Obtener usuario por ID
-router.get("/obtener/:id", UsuarioController.getById);
-
-// Crear usuario
-router.post("/crear", UsuarioController.create);
-
-// Actualizar usuario
-router.put("/editar/:id", UsuarioController.update);
-
-// Eliminar usuario
-router.delete("/eliminar/:id", UsuarioController.delete);
+// Rutas de Administrador o Hotel
+router.post("/crear", isHotel, CarasteristicasController.create);
+router.put("/editar/:id", isHotel, CarasteristicasController.update);
+router.delete("/eliminar/:id", isHotel, CarasteristicasController.delete);
 
 module.exports = router;

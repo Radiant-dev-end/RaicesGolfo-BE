@@ -1,4 +1,5 @@
-const Usuario = require("../models/Usuario");
+const Usuario = require("../models/Usuarios");
+const { Role } = require("../models/index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -101,12 +102,12 @@ const UsuarioController = {
 
             // Crear usuario
             const nuevoUsuario = await Usuario.create({
-                id,
+                id_usuarios: id,
                 email,
                 password: passwordHash,
-                role,
-                name,
-                photo
+                id_roles: role || 2, // Default to role 2 (Cliente) if not provided
+                nombre: name,
+                foto: photo
             });
 
             res.status(201).json({
@@ -139,9 +140,10 @@ const UsuarioController = {
 
             }
 
-            // Buscar usuario
+            // Buscar usuario con su rol
             const usuario = await Usuario.findOne({
-                where: { email }
+                where: { email },
+                include: [{ model: Role, as: 'role' }]
             });
 
             if (!usuario) {
@@ -169,11 +171,12 @@ const UsuarioController = {
             // Generar token
             const token = jwt.sign(
                 {
-                    id: usuario.id,
+                    id: usuario.id_usuarios,
+                    nombre: usuario.nombre,
                     email: usuario.email,
-                    role: usuario.role
+                    role: usuario.role ? usuario.role.nombre : 'user'
                 },
-                "secreto_jwt",
+                process.env.JWT_SECRET || "secreto_jwt",
                 {
                     expiresIn: "1h"
                 }
@@ -230,7 +233,7 @@ const UsuarioController = {
                     where: { email }
                 });
 
-                if (existeEmail && existeEmail.id !== id) {
+                if (existeEmail && existeEmail.id_usuarios !== parseInt(id)) {
 
                     return res.status(400).json({
                         message: "El correo ya está en uso"
@@ -261,9 +264,9 @@ const UsuarioController = {
             await usuario.update({
                 email,
                 password: passwordHash,
-                role,
-                name,
-                photo
+                id_roles: role,
+                nombre: name,
+                foto: photo
             });
 
             res.json({

@@ -1,4 +1,4 @@
-const Opinion = require("../models/Opinion");
+const Opinion = require("../models/Opiniones");
 
 const OpinionController = {
 
@@ -116,8 +116,8 @@ const OpinionController = {
 
             // Crear opinión
             const nuevaOpinion = await Opinion.create({
-                id,
-                nombre,
+                id_opiniones: id,
+                nombre: nombre || req.user.nombre,
                 imagen,
                 calificacion,
                 comentario,

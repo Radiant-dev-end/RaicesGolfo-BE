@@ -1,22 +1,32 @@
-const Reservation = require("../models/Reservation");
+const Reservation = require("../models/Reservaciones");
 
 const ReservationController = {
 
     // Obtener todas las reservaciones
     getAll: async (req, res) => {
         try {
-
             const reservaciones = await Reservation.findAll();
-
             res.json(reservaciones);
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al obtener reservaciones",
                 error: error.message
             });
+        }
+    },
 
+    // Obtener mis reservaciones (Usuario autenticado)
+    getMyReservations: async (req, res) => {
+        try {
+            const reservaciones = await Reservation.findAll({
+                where: { id_usuarios: req.user.id }
+            });
+            res.json(reservaciones);
+        } catch (error) {
+            res.status(500).json({
+                message: "Error al obtener tus reservaciones",
+                error: error.message
+            });
         }
     },
 
@@ -103,15 +113,14 @@ const ReservationController = {
 
             // Crear reservación
             const nuevaReservacion = await Reservation.create({
-                id,
-                userId,
-                userName,
-                habId,
-                habName,
+                id_reservaciones: id,
+                id_usuarios: userId || req.user.id,
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
                 precio,
                 fecha,
-                status,
-                createdAt
+                estado: status,
+                creado_en: createdAt || new Date()
             });
 
             res.status(201).json({
@@ -167,14 +176,13 @@ const ReservationController = {
 
             // Actualizar reservación
             await reservacion.update({
-                userId,
-                userName,
-                habId,
-                habName,
+                id_usuarios: userId,
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
                 precio,
                 fecha,
-                status,
-                createdAt
+                estado: status,
+                creado_en: createdAt
             });
 
             res.json({

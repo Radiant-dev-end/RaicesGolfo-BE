@@ -1,4 +1,4 @@
-const Tour = require("../models/Tour");
+const Tour = require("../models/Tours");
 
 const TourController = {
 
@@ -102,13 +102,13 @@ const TourController = {
 
             // Crear tour
             const nuevoTour = await Tour.create({
-                id,
+                id_tours: id,
                 nombre,
                 descripcion,
                 precio,
                 duracion,
                 tipo,
-                disponible
+                estado: disponible
             });
 
             res.status(201).json({
@@ -176,7 +176,7 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
-                disponible
+                estado: disponible
             });
 
             res.json({

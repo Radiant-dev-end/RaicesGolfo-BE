@@ -4,16 +4,18 @@ const express = require('express');
 const cors = require('cors');
 const { sequelize } = require('./models/index'); 
 
-const caracteristicasRoutes = require('../routes/CaracteristicasRoutes');
-const authRoutes = require('../routes/authRoutes');
-const habitacionesRoutes = require('../routes/HabitacionesRoutes');
-const opinionesRoutes = require('../routes/OpinionesRoutes');
-const reservaciondehabitacionesRoutes = require('../routes/ReservaciondehabitacionesRoutes');
-const reservacionesRoutes = require('../routes/ReservacionesRoutes');
-const rolRoutes = require('../routes/RolRoutes');
-const toursRoutes = require('../routes/ToursRoutes');
+const caracteristicasRoutes = require('./routes/CaracteristicasRoutes');
+const authRoutes = require('./routes/authRoutes');
+const habitacionesRoutes = require('./routes/HabitacionesRoutes');
+const opinionesRoutes = require('./routes/OpinionesRoutes');
+const reservaciondehabitacionesRoutes = require('./routes/ReservaciondehabitacionesRoutes');
+const reservacionesRoutes = require('./routes/ReservacionesRoutes');
+const rolRoutes = require('./routes/RolRoutes');
+const toursRoutes = require('./routes/ToursRoutes');
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
+const CompraToursRoutes = require('./routes/CompraToursRoutes');
 
+const { authenticateToken, isAdmin } = require('./middleware/auth');
 
 const app = express();
 app.use(cors({
@@ -24,26 +26,24 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Rutas públicas
 app.use('/api/auth', authRoutes);
 
+// Middleware de autenticación global para el resto de las rutas
 app.use(authenticateToken);
 
+// Rutas protegidas (Usuario autenticado)
 app.use('/api/caracteristicas', caracteristicasRoutes);
 app.use('/api/habitaciones', habitacionesRoutes);
 app.use('/api/opiniones', opinionesRoutes);
-<<<<<<< HEAD
 app.use('/api/reservaciondehabitaciones', reservaciondehabitacionesRoutes);
 app.use('/api/reservaciones', reservacionesRoutes);
-app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
+app.use('/api/compras', CompraToursRoutes);
+
+// Rutas de Administrador y Gestión
+app.use('/api/roles', rolRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
-=======
-app.use('/api/reservaciones', reservaciondehabitacionesRoutes);
-app.use('/api/usuarios', reservacionesRoutes);
-app.use('/api/pilotos', rolRoutes);
-app.use('/api/reservas', toursRoutes);
-app.use('/api/roles', UsuarioRoutes);
->>>>>>> f0a5797f5eb603b203767b878d9211a455d8e67f
 
 const PORT = process.env.PORT || 3000;
 

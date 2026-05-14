@@ -1,21 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const OpinionesController = require("../controllers/OpinionesController");
+const { isAdmin } = require("../middleware/auth");
 
-const OpinionController = require("../controllers/OpinionController");
+// Rutas públicas/usuario (Cualquier usuario autenticado)
+router.get("/obtener", OpinionesController.getAll);
+router.get("/obtener/:id", OpinionesController.getById);
+router.post("/crear", OpinionesController.create);
 
-// Obtener todas las opiniones
-router.get("/obtener", OpinionController.getAll);
-
-// Obtener opinión por ID
-router.get("/obtener/:id", OpinionController.getById);
-
-// Crear opinión
-router.post("/crear", OpinionController.create);
-
-// Actualizar opinión
-router.put("/editar/:id", OpinionController.update);
-
-// Eliminar opinión
-router.delete("/eliminar/:id", OpinionController.delete);
+// Rutas de Administrador
+router.put("/editar/:id", isAdmin, OpinionesController.update);
+router.delete("/eliminar/:id", isAdmin, OpinionesController.delete);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const Habitacion = require("../models/Habitacion");
+const Habitacion = require("../models/Habitaciones");
 
 const HabitacionController = {
 
@@ -130,15 +130,15 @@ const HabitacionController = {
 
             // Crear habitación
             const nuevaHabitacion = await Habitacion.create({
-                id,
+                id_habitaciones: id,
                 nombre,
                 descripcion,
-                precio,
+                precio_noche: precio,
                 capacidad,
                 tipo,
                 disponible,
                 imagen,
-                status,
+                estado: status,
                 features
             });
 
@@ -225,12 +225,12 @@ const HabitacionController = {
             await habitacion.update({
                 nombre,
                 descripcion,
-                precio,
+                precio_noche: precio,
                 capacidad,
                 tipo,
                 disponible,
                 imagen,
-                status,
+                estado: status,
                 features
             });
 
