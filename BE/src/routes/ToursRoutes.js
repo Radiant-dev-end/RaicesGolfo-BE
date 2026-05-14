@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const TourController = require("../controllers/TourController");
+const ToursController = require("../controllers/ToursController");
 
 // Obtener todos los tours
-router.get("/obtener", TourController.getAll);
+router.get("/obtener", ToursController.getAll);
 
 // Obtener tour por ID
-router.get("/obtener/:id", TourController.getById);
+router.get("/obtener/:id", ToursController.getById);
 
 // Crear tour
-router.post("/crear", TourController.create);
+router.post("/crear", ToursController.create);
 
 // Actualizar tour
-router.put("/editar/:id", TourController.update);
+router.put("/editar/:id", ToursController.update);
 
 // Eliminar tour
-router.delete("/eliminar/:id", TourController.delete);
+router.delete("/eliminar/:id", ToursController.delete);
 
 module.exports = router;
