@@ -30,7 +30,7 @@ app.use(authenticateToken);
 app.use('/api/caracteristicas', caracteristicasRoutes);
 app.use('/api/habitaciones', habitacionesRoutes);
 app.use('/api/opiniones', opinionesRoutes);
-app.use('/api/reservac', reservaciondehabitacionesRoutes);
+app.use('/api/reservaciones', reservaciondehabitacionesRoutes);
 app.use('/api/usuarios', reservacionesRoutes);
 app.use('/api/pilotos', rolRoutes);
 app.use('/api/reservas', toursRoutes);

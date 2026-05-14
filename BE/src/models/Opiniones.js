@@ -3,22 +3,11 @@ const sequelize = require("../config/db");
 
 class Opinion extends Model {}
 
-<<<<<<< HEAD
-opiniones.init({
-<<<<<<< HEAD
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-=======
-=======
-Opinion.init({
->>>>>>> fa0e21eda95f4fe6728d179ca40812f8f0aa122a
+     init({
     id_opiniones: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
->>>>>>> 39cdd133329de56ef661b3541f5b0961bb6bb3d5
     },
 
     nombre: {
