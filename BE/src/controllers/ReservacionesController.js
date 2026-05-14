@@ -1,4 +1,4 @@
-const Reservation = require("../models/Reservation");
+const ReservacionesController = require("../controllers/ReservacionesController");
 
 const ReservationController = {
 

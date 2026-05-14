@@ -1,9 +1,9 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/db");
 
-class Opinion extends Model {}
+class Opiniones extends Model {}
 
-opiniones.init({
+Opiniones.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +11,7 @@ opiniones.init({
     },
 
     nombre: {
-        type: DataTypes.STRING (30),
+        type: DataTypes.STRING(30),
         allowNull: false
     },
 
@@ -31,15 +31,15 @@ opiniones.init({
     },
 
     experiencia: {
-        type: DataTypes.STRING (50),
+        type: DataTypes.STRING(50),
         allowNull: false
     }
 
 }, {
     sequelize,
-    modelName: "Opinion",
+    modelName: "Opiniones",
     tableName: "opiniones",
     timestamps: false
 });
 
-module.exports = opiniones;
+module.exports = Opiniones;

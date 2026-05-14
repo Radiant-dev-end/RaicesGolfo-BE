@@ -4,7 +4,7 @@ const router = express.Router();
 const ReservationController = require("../controllers/ReservationController");
 
 // Obtener todas las reservaciones
-router.get("/obtener", ReservationController.getAll);
+router.get("/obtener", ReservationesController.getAll);
 
 // Obtener reservación por ID
 router.get("/obtener/:id", ReservationController.getById);

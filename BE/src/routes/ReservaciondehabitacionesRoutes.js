@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const ReservacionHabitacionesController = require("../controllers/ReservacionHabitacionesController");
+const ReservacionHabitacionesController = require("../controllers/ReservacionesdehabitacionesController");
 
 // Obtener todas las reservaciones
 router.get("/obtener", ReservacionHabitacionesController.getAll);
