@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const RoleController = require("../controllers/RolController");
+const RoleController = require("../controllers/RoleController");
 
 // Obtener todos los roles
 router.get("/", RoleController.getAll);

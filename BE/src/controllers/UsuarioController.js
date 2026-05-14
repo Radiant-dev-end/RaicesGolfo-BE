@@ -94,9 +94,9 @@ const UsuarioController = {
             const nuevoUsuario = await Usuario.create({
                 email,
                 password: passwordHash,
-                id_roles: role, // Mapped from role
-                nombre: name,   // Mapped from name
-                foto: photo     // Mapped from photo
+                id_roles: id_roles, // Use mapped id_roles
+                nombre: name,
+                foto: photo
             });
 
             res.status(201).json({
@@ -213,10 +213,22 @@ const UsuarioController = {
                 passwordHash = await bcrypt.hash(password, 10);
             }
 
+            let id_roles_update = usuario.id_roles;
+            if (role) {
+                if (typeof role === 'string') {
+                    const cleanRole = role.trim().toLowerCase();
+                    if (cleanRole === 'admin') id_roles_update = 1;
+                    else if (cleanRole === 'cliente') id_roles_update = 2;
+                    else id_roles_update = parseInt(role) || 2;
+                } else {
+                    id_roles_update = role;
+                }
+            }
+
             await usuario.update({
                 email,
                 password: passwordHash,
-                id_roles: role,
+                id_roles: id_roles_update,
                 nombre: name,
                 foto: photo
             });
