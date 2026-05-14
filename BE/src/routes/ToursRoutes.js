@@ -3,15 +3,21 @@ const router = express.Router();
 const ToursController = require("../controllers/ToursController");
 const { isAdmin, isHotel } = require("../middleware/auth");
 
-// Obtener todos los tours (Cualquier usuario autenticado)
+const ToursController = require("../controllers/ToursController");
+
+// Obtener todos los tours
 router.get("/obtener", ToursController.getAll);
 
-// Obtener tour por ID (Cualquier usuario autenticado)
+// Obtener tour por ID
 router.get("/obtener/:id", ToursController.getById);
 
-// Rutas de Administrador o Hotel
-router.post("/crear", isHotel, ToursController.create);
-router.put("/editar/:id", isHotel, ToursController.update);
-router.delete("/eliminar/:id", isHotel, ToursController.delete);
+// Crear tour
+router.post("/crear", ToursController.create);
+
+// Actualizar tour
+router.put("/editar/:id", ToursController.update);
+
+// Eliminar tour
+router.delete("/eliminar/:id", ToursController.delete);
 
 module.exports = router;

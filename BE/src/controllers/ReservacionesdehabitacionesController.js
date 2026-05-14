@@ -1,110 +1,107 @@
-const ReservacionHabitaciones = require("../models/ReservacionHabitaciones");
+const { ReservacionHabitaciones } = require("../models");
 
 const ReservacionHabitacionesController = {
 
-    // Obtener todas las reservaciones
     getAll: async (req, res) => {
         try {
-
             const reservaciones = await ReservacionHabitaciones.findAll();
-
             res.json(reservaciones);
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al obtener reservaciones",
                 error: error.message
             });
-
         }
     },
 
-    // Obtener reservación por ID
     getById: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const reservacion = await ReservacionHabitaciones.findByPk(id);
-
             if (!reservacion) {
-
                 return res.status(404).json({
                     message: "Reservación no encontrada"
                 });
-
             }
-
             res.json(reservacion);
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al buscar reservación",
                 error: error.message
             });
-
         }
     },
 
-    // Crear reservación
     create: async (req, res) => {
         try {
-
             const {
-                id_usuario,
-                id_habitacion,
+                nombre_usuario,
+                id_reservaciones,
+                id_habitaciones,
+                nombre_habitacion,
                 fecha_checkin,
                 fecha_checkout,
                 total,
-                status
+                status,
+                tipo,
+                item,
+                date,
+                tiempo,
+                creado_en
             } = req.body;
 
-            // Validar campos obligatorios
-            if (
-                !id_usuario ||
-                !id_habitacion ||
-                !fecha_checkin ||
-                !fecha_checkout ||
-                !total
-            ) {
+            // Mapping for tests which might send different fields
+            const checkIn = fecha_checkin;
+            const checkOut = fecha_checkout;
+            const precio = total;
 
+            if (
+                !nombre_usuario ||
+                !id_reservaciones ||
+                !id_habitaciones ||
+                !nombre_habitacion ||
+                !checkIn ||
+                !checkOut ||
+                precio === undefined ||
+                !tipo ||
+                !item ||
+                !date ||
+                !tiempo ||
+                !creado_en
+            ) {
                 return res.status(400).json({
                     message: "Todos los campos obligatorios deben ser completados"
                 });
-
             }
 
-            // Validar total
-            if (total <= 0) {
-
+            if (precio <= 0) {
                 return res.status(400).json({
                     message: "El total debe ser mayor a 0"
                 });
-
             }
 
-            // Validar fechas
-            const fechaEntrada = new Date(fecha_checkin);
-            const fechaSalida = new Date(fecha_checkout);
-
+            const fechaEntrada = new Date(checkIn);
+            const fechaSalida = new Date(checkOut);
             if (fechaSalida <= fechaEntrada) {
-
                 return res.status(400).json({
                     message: "La fecha de salida debe ser mayor a la fecha de entrada"
                 });
-
             }
 
-            // Crear reservación
             const nuevaReservacion = await ReservacionHabitaciones.create({
-                id_usuario,
-                id_habitacion,
-                fecha_checkin,
-                fecha_checkout,
-                total,
-                status
+                nombre_usuario,
+                id_reservaciones,
+                id_habitaciones,
+                nombre_habitacion,
+                checkIn,
+                checkOut,
+                precio,
+                estado: status,
+                tipo,
+                item,
+                date,
+                tiempo,
+                creado_en
             });
 
             res.status(201).json({
@@ -113,73 +110,73 @@ const ReservacionHabitacionesController = {
             });
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al crear reservación",
                 error: error.message
             });
-
         }
     },
 
-    // Actualizar reservación
     update: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const reservacion = await ReservacionHabitaciones.findByPk(id);
-
             if (!reservacion) {
-
                 return res.status(404).json({
                     message: "Reservación no encontrada"
                 });
-
             }
 
             const {
-                id_usuario,
-                id_habitacion,
+                nombre_usuario,
+                id_reservaciones,
+                id_habitaciones,
+                nombre_habitacion,
                 fecha_checkin,
                 fecha_checkout,
                 total,
-                status
+                status,
+                tipo,
+                item,
+                date,
+                tiempo,
+                creado_en
             } = req.body;
 
-            // Validar total
-            if (total && total <= 0) {
+            const checkIn = fecha_checkin || reservacion.checkIn;
+            const checkOut = fecha_checkout || reservacion.checkOut;
+            const precio = total || reservacion.precio;
 
+            if (precio !== undefined && precio <= 0) {
                 return res.status(400).json({
                     message: "El total debe ser mayor a 0"
                 });
-
             }
 
-            // Validar fechas
-            if (fecha_checkin && fecha_checkout) {
-
-                const fechaEntrada = new Date(fecha_checkin);
-                const fechaSalida = new Date(fecha_checkout);
-
+            if (checkIn && checkOut) {
+                const fechaEntrada = new Date(checkIn);
+                const fechaSalida = new Date(checkOut);
                 if (fechaSalida <= fechaEntrada) {
-
                     return res.status(400).json({
                         message: "La fecha de salida debe ser mayor a la fecha de entrada"
                     });
-
                 }
-
             }
 
-            // Actualizar reservación
             await reservacion.update({
-                id_usuario,
-                id_habitacion,
-                fecha_checkin,
-                fecha_checkout,
-                total,
-                status
+                nombre_usuario,
+                id_reservaciones,
+                id_habitaciones,
+                nombre_habitacion,
+                checkIn,
+                checkOut,
+                precio,
+                estado: status,
+                tipo,
+                item,
+                date,
+                tiempo,
+                creado_en
             });
 
             res.json({
@@ -188,44 +185,31 @@ const ReservacionHabitacionesController = {
             });
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al actualizar reservación",
                 error: error.message
             });
-
         }
     },
 
-    // Eliminar reservación
     delete: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const reservacion = await ReservacionHabitaciones.findByPk(id);
-
             if (!reservacion) {
-
                 return res.status(404).json({
                     message: "Reservación no encontrada"
                 });
-
             }
-
             await reservacion.destroy();
-
             res.json({
                 message: "Reservación eliminada correctamente"
             });
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al eliminar reservación",
                 error: error.message
             });
-
         }
     }
 

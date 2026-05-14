@@ -6,12 +6,6 @@ class Usuario extends Model { }
 Usuario.init({
     id_usuarios: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
-
-    email: {
-        type: DataTypes.STRING(255),
         primaryKey: true,
         autoIncrement: true
     },
@@ -23,7 +17,6 @@ Usuario.init({
     },
 
     password: {
-        type: DataTypes.STRING(255),
         type: DataTypes.STRING(255),
         allowNull: false
     },

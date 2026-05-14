@@ -3,15 +3,21 @@ const router = express.Router();
 const CarasteristicasController = require("../controllers/CarasteristicasController");
 const { isAdmin, isHotel } = require("../middleware/auth");
 
-// Obtener todas las características (Cualquier usuario autenticado)
-router.get("/obtener", CarasteristicasController.getAll);
+const CaracteristicasController = require("../controllers/CaracteristicasController");
 
-// Obtener característica por ID (Cualquier usuario autenticado)
-router.get("/obtener/:id", CarasteristicasController.getById);
+// Obtener todas las características
+router.get("/obtener", CaracteristicasController.getAll);
 
-// Rutas de Administrador o Hotel
-router.post("/crear", isHotel, CarasteristicasController.create);
-router.put("/editar/:id", isHotel, CarasteristicasController.update);
-router.delete("/eliminar/:id", isHotel, CarasteristicasController.delete);
+// Obtener característica por ID
+router.get("/obtener/:id", CaracteristicasController.getById);
+
+// Crear característica
+router.post("/crear", CaracteristicasController.create);
+
+// Actualizar característica
+router.put("/editar/:id", CaracteristicasController.update);
+
+// Eliminar característica
+router.delete("/eliminar/:id", CaracteristicasController.delete);
 
 module.exports = router;

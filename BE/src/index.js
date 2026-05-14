@@ -1,49 +1,5 @@
-
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { sequelize } = require('./models/index'); 
-
-const caracteristicasRoutes = require('./routes/CaracteristicasRoutes');
-const authRoutes = require('./routes/authRoutes');
-const habitacionesRoutes = require('./routes/HabitacionesRoutes');
-const opinionesRoutes = require('./routes/OpinionesRoutes');
-const reservaciondehabitacionesRoutes = require('./routes/ReservaciondehabitacionesRoutes');
-const reservacionesRoutes = require('./routes/ReservacionesRoutes');
-const rolRoutes = require('./routes/RolRoutes');
-const toursRoutes = require('./routes/ToursRoutes');
-const UsuarioRoutes = require('./routes/UsuarioRoutes');
-const CompraToursRoutes = require('./routes/CompraToursRoutes');
-
-const { authenticateToken, isAdmin } = require('./middleware/auth');
-
-const app = express();
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Rutas públicas
-app.use('/api/auth', authRoutes);
-
-// Middleware de autenticación global para el resto de las rutas
-app.use(authenticateToken);
-
-// Rutas protegidas (Usuario autenticado)
-app.use('/api/caracteristicas', caracteristicasRoutes);
-app.use('/api/habitaciones', habitacionesRoutes);
-app.use('/api/opiniones', opinionesRoutes);
-app.use('/api/reservaciondehabitaciones', reservaciondehabitacionesRoutes);
-app.use('/api/reservaciones', reservacionesRoutes);
-app.use('/api/tours', toursRoutes);
-app.use('/api/compras', CompraToursRoutes);
-
-// Rutas de Administrador y Gestión
-app.use('/api/roles', rolRoutes);
-app.use('/api/usuarios', UsuarioRoutes);
+const app = require('./app');
+const { sequelize } = require('./models/index');
 
 const PORT = process.env.PORT || 3000;
 
@@ -51,7 +7,10 @@ const startServer = async () => {
     try {
         await sequelize.authenticate();
         console.log('Conexión a la base de datos validada exitosamente.');
-        
+
+        // Sincronizar modelos si es necesario
+        // await sequelize.sync({ alter: true });
+
         app.listen(PORT, () => {
             console.log(`Servidor de API corriendo en el puerto ${PORT}`);
         });
@@ -60,4 +19,4 @@ const startServer = async () => {
     }
 };
 
-startServer(); 
+startServer();

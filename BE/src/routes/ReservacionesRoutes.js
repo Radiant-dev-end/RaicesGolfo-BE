@@ -3,14 +3,21 @@ const router = express.Router();
 const ReservacionesController = require("../controllers/ReservacionesController");
 const { isAdmin, isHotel } = require("../middleware/auth");
 
-// Rutas de Usuario (Cualquier usuario autenticado)
-router.get("/mis-reservas", ReservacionesController.getMyReservations);
+const ReservacionesController = require("../controllers/ReservacionesController");
+
+// Obtener todas las reservaciones
+router.get("/obtener", ReservacionesController.getAll);
+
+// Obtener reservación por ID
+router.get("/obtener/:id", ReservacionesController.getById);
+
+// Crear reservación
 router.post("/crear", ReservacionesController.create);
 
-// Rutas de Administrador o Hotel
-router.get("/obtener", isHotel, ReservacionesController.getAll);
-router.get("/obtener/:id", isHotel, ReservacionesController.getById);
-router.put("/editar/:id", isHotel, ReservacionesController.update);
-router.delete("/eliminar/:id", isHotel, ReservacionesController.delete);
+// Actualizar reservación
+router.put("/editar/:id", ReservacionesController.update);
+
+// Eliminar reservación
+router.delete("/eliminar/:id", ReservacionesController.delete);
 
 module.exports = router;

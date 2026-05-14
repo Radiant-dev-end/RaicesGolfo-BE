@@ -38,9 +38,7 @@ ReservacionHabitaciones.belongsTo(Reservacion, { foreignKey: 'id_reservaciones' 
 Habitacion.hasMany(ReservacionHabitaciones, { foreignKey: 'id_habitaciones' });
 ReservacionHabitaciones.belongsTo(Habitacion, { foreignKey: 'id_habitaciones' });
 
-// Opinion - Tour
-Tour.hasMany(Opinion, { foreignKey: 'id_tours' });
-Opinion.belongsTo(Tour, { foreignKey: 'id_tours' });
+// Removed invalid associations that reference non-existent columns id_usuarios in Tours and id_tours in Opiniones
 
 module.exports = {
     sequelize,
