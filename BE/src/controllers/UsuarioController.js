@@ -1,4 +1,6 @@
 const Usuario = require("../models/Usuario");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const UsuarioController = {
 
@@ -94,11 +96,14 @@ const UsuarioController = {
 
             }
 
+            // Encriptar contraseña
+            const passwordHash = await bcrypt.hash(password, 10);
+
             // Crear usuario
             const nuevoUsuario = await Usuario.create({
                 id,
                 email,
-                password,
+                password: passwordHash,
                 role,
                 name,
                 photo
@@ -113,6 +118,77 @@ const UsuarioController = {
 
             res.status(500).json({
                 message: "Error al crear usuario",
+                error: error.message
+            });
+
+        }
+    },
+
+    // Login
+    login: async (req, res) => {
+        try {
+
+            const { email, password } = req.body;
+
+            // Validar campos
+            if (!email || !password) {
+
+                return res.status(400).json({
+                    message: "Correo y contraseña son obligatorios"
+                });
+
+            }
+
+            // Buscar usuario
+            const usuario = await Usuario.findOne({
+                where: { email }
+            });
+
+            if (!usuario) {
+
+                return res.status(404).json({
+                    message: "Usuario no encontrado"
+                });
+
+            }
+
+            // Comparar contraseña
+            const passwordCorrecta = await bcrypt.compare(
+                password,
+                usuario.password
+            );
+
+            if (!passwordCorrecta) {
+
+                return res.status(400).json({
+                    message: "Contraseña incorrecta"
+                });
+
+            }
+
+            // Generar token
+            const token = jwt.sign(
+                {
+                    id: usuario.id,
+                    email: usuario.email,
+                    role: usuario.role
+                },
+                "secreto_jwt",
+                {
+                    expiresIn: "1h"
+                }
+            );
+
+            res.json({
+                message: "Login exitoso",
+                token,
+                usuario
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                message: "Error en el login",
                 error: error.message
             });
 
@@ -137,7 +213,7 @@ const UsuarioController = {
 
             const { email, password, role, name, photo } = req.body;
 
-            // Validar email si viene en la petición
+            // Validar email
             if (email) {
 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -150,7 +226,6 @@ const UsuarioController = {
 
                 }
 
-                // Verificar correo repetido
                 const existeEmail = await Usuario.findOne({
                     where: { email }
                 });
@@ -165,19 +240,27 @@ const UsuarioController = {
 
             }
 
-            // Validar contraseña
-            if (password && password.length < 6) {
+            let passwordHash = usuario.password;
 
-                return res.status(400).json({
-                    message: "La contraseña debe tener mínimo 6 caracteres"
-                });
+            // Encriptar nueva contraseña
+            if (password) {
+
+                if (password.length < 6) {
+
+                    return res.status(400).json({
+                        message: "La contraseña debe tener mínimo 6 caracteres"
+                    });
+
+                }
+
+                passwordHash = await bcrypt.hash(password, 10);
 
             }
 
             // Actualizar usuario
             await usuario.update({
                 email,
-                password,
+                password: passwordHash,
                 role,
                 name,
                 photo
