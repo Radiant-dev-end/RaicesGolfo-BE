@@ -52,16 +52,13 @@ const UsuarioController = {
     create: async (req, res) => {
         try {
 
-            const { id, email, password, role, name, photo } = req.body;
+            const { email, password, role, name, photo } = req.body;
 
-            // Validar campos obligatorios
-            if (!id || !email || !password || !role || !name) {
-
-                return res.status(400).json({
-                    message: "Todos los campos son obligatorios"
-                });
-
-            }
+if (!email || !password || !role || !name || !photo) {
+    return res.status(400).json({
+        message: "Todos los campos son obligatorios"
+    });
+}
 
             // Validar formato del correo
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,13 +97,12 @@ const UsuarioController = {
             const passwordHash = await bcrypt.hash(password, 10);
 
             // Crear usuario
-            const nuevoUsuario = await Usuario.create({
-                id,
-                email,
-                password: passwordHash,
-                role,
-                name,
-                photo
+           const nuevoUsuario = await Usuario.create({
+                 email,
+                 password: passwordHash,
+                 role,
+                 name,
+                 photo
             });
 
             res.status(201).json({

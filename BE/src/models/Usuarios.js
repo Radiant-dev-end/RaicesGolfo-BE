@@ -4,10 +4,11 @@ const sequelize = require("../config/db");
 class Usuario extends Model {}
 
 Usuario.init({
-    id: {
+
+    id_usuarios: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
+        primaryKey: true
     },
 
     email: {
@@ -21,17 +22,17 @@ Usuario.init({
         allowNull: false
     },
 
-    id_roles: {
-        type: DataTypes.INTEGER,
+    role: {
+        type: DataTypes.STRING(50),
         allowNull: false
     },
 
-    nombre: {
-        type: DataTypes.STRING (100),
+    name: {
+        type: DataTypes.STRING(100),
         allowNull: false
     },
 
-    foto: {
+    photo: {
         type: DataTypes.TEXT,
         allowNull: true
     }

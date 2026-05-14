@@ -18,6 +18,24 @@ const UsuarioController = require("../controllers/UsuarioController");
 // Obtener todos los usuarios
 router.get("/obtener", UsuarioController.getAll);
 
+
+/**
+ * @swagger
+ * /usuarios/obtener/{id}:
+ *   get:
+ *     summary: Obtener usuario por ID
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado
+ */
+
 // Obtener usuario por ID
 router.get("/obtener/:id", UsuarioController.getById);
 
@@ -34,8 +52,6 @@ router.get("/obtener/:id", UsuarioController.getById);
  *           schema:
  *             type: object
  *             properties:
- *               id:
- *                 type: integer
  *               email:
  *                 type: string
  *               password:
@@ -43,6 +59,8 @@ router.get("/obtener/:id", UsuarioController.getById);
  *               role:
  *                 type: string
  *               name:
+ *                 type: string
+ *               photo:
  *                 type: string
  *     responses:
  *       201:
@@ -56,9 +74,63 @@ router.post("/crear", UsuarioController.create);
 // Login usuario
 router.post("/login", UsuarioController.login);
 
+
+
+/**
+ * @swagger
+ * /usuarios/editar/{id}:
+ *   put:
+ *     summary: Actualizar usuario
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               photo:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado correctamente
+ */
+
+
 // Actualizar usuario
 router.put("/editar/:id", UsuarioController.update);
 
+
+/**
+ * @swagger
+ * /usuarios/eliminar/{id}:
+ *   delete:
+ *     summary: Eliminar usuario
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Usuario eliminado correctamente
+ */
 // Eliminar usuario
 router.delete("/eliminar/:id", UsuarioController.delete);
 

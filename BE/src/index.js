@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 
 const express = require('express');
@@ -35,10 +36,18 @@ app.use('/api/caracteristicas', caracteristicasRoutes);
 app.use('/api/habitaciones', habitacionesRoutes);
 app.use('/api/opiniones', opinionesRoutes);
 app.use('/api/reservaciones-habitaciones', reservaciondehabitacionesRoutes);
+app.use('/api/reservaciondehabitaciones', reservaciondehabitacionesRoutes);
 app.use('/api/reservaciones', reservacionesRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
+
+app.use('/api/reservaciones', reservaciondehabitacionesRoutes);
+app.use('/api/usuarios', reservacionesRoutes);
+app.use('/api/pilotos', rolRoutes);
+app.use('/api/reservas', toursRoutes);
+app.use('/api/roles', UsuarioRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -64,4 +73,4 @@ const startServer = async () => {
 
 };
 
-startServer();
+startServer(); 
