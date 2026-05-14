@@ -12,8 +12,7 @@ Role.init({
     },
 
     nombre: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING (50),
         allowNull: false
     },
 
