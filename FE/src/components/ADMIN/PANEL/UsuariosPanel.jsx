@@ -7,6 +7,8 @@ const UsuariosPanel = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchId, setSearchId] = useState('');
+    const [searchRole, setSearchRole] = useState('');
 
     const cargarUsuarios = async () => {
         try {
@@ -24,10 +26,17 @@ const UsuariosPanel = () => {
         cargarUsuarios();
     }, []);
 
-    // Filtrar usuarios por correo
-    const usuariosFiltrados = usuarios.filter(user => 
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtrar usuarios por correo, ID y Rol
+    const usuariosFiltrados = usuarios.filter(user => {
+        const userId = user.id || user.id_usuarios;
+        const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
+        
+        const matchEmail = user.email ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+        const matchId = searchId ? (userId ? userId.toString() === searchId.toString() : false) : true;
+        const matchRole = searchRole ? (userRole && userRole.toLowerCase() === searchRole.toLowerCase()) : true;
+        
+        return matchEmail && matchId && matchRole;
+    });
 
     const handleEliminar = async (id) => {
         const result = await Swal.fire({
@@ -85,15 +94,39 @@ const UsuariosPanel = () => {
                     <h1>Gestión de Usuarios</h1>
                     <p>Directorio de usuarios registrados. Se omiten datos sensibles (contraseñas).</p>
                 </div>
-                <div className="search-container">
-                    <i className="icon-search">🔍</i>
-                    <input 
-                        type="text" 
-                        placeholder="Buscar por correo electrónico..."
-                        className="search-input"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                <div className="filtros-usuarios-container">
+                    <div className="search-box">
+                        <i className="icon-search">🔍</i>
+                        <input 
+                            type="text" 
+                            placeholder="Buscar por correo electrónico..."
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="search-box">
+                        <i className="icon-search">#️⃣</i>
+                        <input 
+                            type="number" 
+                            placeholder="Buscar por ID..."
+                            className="search-input"
+                            value={searchId}
+                            onChange={(e) => setSearchId(e.target.value)}
+                        />
+                    </div>
+                    <div className="search-box">
+                        <i className="icon-search">👥</i>
+                        <select 
+                            className="search-input"
+                            value={searchRole}
+                            onChange={(e) => setSearchRole(e.target.value)}
+                        >
+                            <option value="">Todos los roles</option>
+                            <option value="admin">Administrador (Admin)</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
                 </div>
             </header>
             
@@ -109,33 +142,37 @@ const UsuariosPanel = () => {
                     </thead>
                     <tbody>
                         {usuariosFiltrados.length > 0 ? (
-                            usuariosFiltrados.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.id}</td>
+                            usuariosFiltrados.map(user => {
+                                const userId = user.id || user.id_usuarios;
+                                const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
+                                return (
+                                <tr key={userId}>
+                                    <td>{userId}</td>
                                     <td>{user.email}</td>
                                     <td>
-                                        <span className={`badge-role ${user.role}`}>
-                                            {user.role}
+                                        <span className={`badge-role ${userRole}`}>
+                                            {userRole}
                                         </span>
                                     </td>
                                     <td>
                                         <button 
                                             className="btn-action edit"
-                                            onClick={() => handleCambiarRol(user.id, user.role)}
+                                            onClick={() => handleCambiarRol(userId, userRole)}
                                             title="Cambiar Rol"
                                         >
                                             Cambiar Rol
                                         </button>
                                         <button 
                                             className="btn-action delete"
-                                            onClick={() => handleEliminar(user.id)}
+                                            onClick={() => handleEliminar(userId)}
                                             title="Eliminar"
                                         >
                                             Eliminar
                                         </button>
                                     </td>
                                 </tr>
-                            ))
+                                );
+                            })
                         ) : (
                             <tr>
                                 <td colSpan="4" className="no-results">

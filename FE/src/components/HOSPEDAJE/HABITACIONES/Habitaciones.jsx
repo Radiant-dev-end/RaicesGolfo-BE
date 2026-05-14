@@ -8,6 +8,14 @@ import habi2Img from '../../VIDEOS Y IMG/Habi.2.avif';
 import chiraVistaImg from '../../VIDEOS Y IMG/img-1019-2.jpg';
 import chiraRefugioImg from '../../VIDEOS Y IMG/img-0984-2.jpg';
 
+const FILTROS_AMENIDADES = [
+  "Cama Queen", "Iluminacion Solar", "Terraza Privada", "Cama King", 
+  "Frente al Mar", "Cocina de lena", "Balcon con vista", "Balcon", 
+  "Vistas al mar", "TV por cable", "Ventilacion Natural", "Hamacas Privadas", 
+  "Decoracion Tematica", "Tour historico opcional", "Area de estar familiar", 
+  "cama individual", "Ambiente de retiro"
+];
+
 const habitacionesEstaticas = [
   {
     id: 'static-1',
@@ -112,6 +120,8 @@ function Habitaciones() {
   const [cargando, setCargando] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [habitacionSeleccionada, setHabitacionSeleccionada] = useState(null);
+  const [filtrosActivos, setFiltrosActivos] = useState([]);
+  const [searchNombre, setSearchNombre] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -189,6 +199,41 @@ function Habitaciones() {
 
   const listaCompleta = [...todasLasHabitaciones, ...habitacionesNuevas];
 
+  // Lógica de Filtrado con AND (Nombre y Amenidades)
+  const listaFiltrada = listaCompleta.filter(hab => {
+    // 1. Filtrar por nombre
+    const matchNombre = searchNombre === '' || normalizarTexto(hab.nombre).includes(normalizarTexto(searchNombre));
+    if (!matchNombre) return false;
+
+    // 2. Filtrar por amenidades
+    if (filtrosActivos.length === 0) return true;
+    
+    // Unir amenidades y features (de la base de datos)
+    const todasLasCaracteristicas = [
+        ...(hab.amenidades || []),
+        ...(hab.features ? JSON.parse(hab.features) : [])
+    ].map(normalizarTexto);
+
+    // Debe contener TODAS las características seleccionadas en los filtros activos
+    return filtrosActivos.every(filtro => {
+        const filtroNormalizado = normalizarTexto(filtro);
+        return todasLasCaracteristicas.some(c => c.includes(filtroNormalizado));
+    });
+  });
+
+  const handleToggleFiltro = (filtro) => {
+    setFiltrosActivos(prev => 
+        prev.includes(filtro)
+            ? prev.filter(f => f !== filtro)
+            : [...prev, filtro]
+    );
+  };
+
+  const clearFiltros = () => {
+    setFiltrosActivos([]);
+    setSearchNombre('');
+  };
+
   const handleReservar = habitacion => {
     setHabitacionSeleccionada(habitacion);
     setIsModalOpen(true);
@@ -201,8 +246,41 @@ function Habitaciones() {
 
   return (
     <>
+      <div className="filtros-wrapper">
+        <div className="search-habitacion-container">
+            <i className="icon-search-hab">🔍</i>
+            <input 
+                type="text" 
+                placeholder="Buscar habitación por nombre..."
+                className="search-habitacion-input"
+                value={searchNombre}
+                onChange={(e) => setSearchNombre(e.target.value)}
+            />
+        </div>
+
+        <div className="filtros-header">
+            <h3>Filtrar por Características:</h3>
+            {filtrosActivos.length > 0 && (
+                <button className="btn-limpiar-filtros" onClick={clearFiltros}>
+                    Limpiar ({filtrosActivos.length})
+                </button>
+            )}
+        </div>
+        <div className="filtros-carousel">
+            {FILTROS_AMENIDADES.map((filtro, index) => (
+                <button 
+                    key={index}
+                    className={`filtro-pill ${filtrosActivos.includes(filtro) ? 'activo' : ''}`}
+                    onClick={() => handleToggleFiltro(filtro)}
+                >
+                    {filtro}
+                </button>
+            ))}
+        </div>
+      </div>
+
       <div className="habitaciones-grid">
-        {listaCompleta.map((hab, index) => (
+        {listaFiltrada.map((hab, index) => (
           <div key={hab.id} className="habitacion-card">
             <div className="hab-image-container">
               <h5 className="hab-status">{hab.status}</h5>
@@ -260,6 +338,14 @@ function Habitaciones() {
           <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#64748b' }}>
             Cargando habitaciones adicionales...
           </p>
+        )}
+
+        {!cargando && listaFiltrada.length === 0 && (
+          <div className="no-rooms-found">
+            <h3>No se encontraron habitaciones</h3>
+            <p>Intenta reducir la cantidad de filtros seleccionados.</p>
+            <button className="btn-limpiar-filtros large" onClick={clearFiltros}>Quitar Filtros</button>
+          </div>
         )}
       </div>
 
