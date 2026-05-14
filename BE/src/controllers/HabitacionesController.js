@@ -1,4 +1,4 @@
-const Habitacion = require("../models/Habitacion");
+const Habitacion = require("../models/Habitaciones");
 
 const HabitacionController = {
 
@@ -53,7 +53,6 @@ const HabitacionController = {
         try {
 
             const {
-                id,
                 nombre,
                 descripcion,
                 precio,
@@ -62,12 +61,13 @@ const HabitacionController = {
                 disponible,
                 imagen,
                 status,
-                features
+                features,
+                numero,
+                id_caracteristicas
             } = req.body;
 
             // Validar campos obligatorios
             if (
-                !id ||
                 !nombre ||
                 !descripcion ||
                 !precio ||
@@ -130,16 +130,17 @@ const HabitacionController = {
 
             // Crear habitación
             const nuevaHabitacion = await Habitacion.create({
-                id,
                 nombre,
                 descripcion,
-                precio,
+                precio_noche: precio,
                 capacidad,
                 tipo,
-                disponible,
+                disponible: disponible !== undefined ? disponible : true,
                 imagen,
-                status,
-                features
+                estado: status || "disponible",
+                features: features || {},
+                numero: numero || "0",
+                id_caracteristicas: id_caracteristicas || 1
             });
 
             res.status(201).json({
@@ -225,13 +226,15 @@ const HabitacionController = {
             await habitacion.update({
                 nombre,
                 descripcion,
-                precio,
+                precio_noche: precio,
                 capacidad,
                 tipo,
                 disponible,
                 imagen,
-                status,
-                features
+                estado: status,
+                features,
+                numero,
+                id_caracteristicas
             });
 
             res.json({

@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const UsuarioController = require("../controllers/UsuarioController");
+const CaracteristicaController = require("../controllers/CarasteristicasController");
 
-// Obtener todos los usuarios
-router.get("/obtener", UsuarioController.getAll);
+// Obtener todas las caracteristicas
+router.get("/", CaracteristicaController.getAll);
 
-// Obtener usuario por ID
-router.get("/obtener/:id", UsuarioController.getById);
+// Obtener caracteristica por ID
+router.get("/:id", CaracteristicaController.getById);
 
-// Crear usuario
-router.post("/crear", UsuarioController.create);
+// Crear caracteristica
+router.post("/", CaracteristicaController.create);
 
-// Actualizar usuario
-router.put("/editar/:id", UsuarioController.update);
+// Actualizar caracteristica
+router.put("/:id", CaracteristicaController.update);
 
-// Eliminar usuario
-router.delete("/eliminar/:id", UsuarioController.delete);
+// Eliminar caracteristica
+router.delete("/:id", CaracteristicaController.delete);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const Opinion = require("../models/Opinion");
+const Opinion = require("../models/Opiniones");
 
 const OpinionController = {
 
@@ -53,7 +53,6 @@ const OpinionController = {
         try {
 
             const {
-                id,
                 nombre,
                 imagen,
                 calificacion,
@@ -63,7 +62,6 @@ const OpinionController = {
 
             // Validar campos obligatorios
             if (
-                !id ||
                 !nombre ||
                 !calificacion ||
                 !comentario ||
@@ -116,9 +114,8 @@ const OpinionController = {
 
             // Crear opinión
             const nuevaOpinion = await Opinion.create({
-                id,
                 nombre,
-                imagen,
+                imagen: imagen || "",
                 calificacion,
                 comentario,
                 experiencia

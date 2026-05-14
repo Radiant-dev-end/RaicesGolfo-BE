@@ -53,20 +53,26 @@ const ReservacionHabitacionesController = {
         try {
 
             const {
-                id_usuario,
-                id_habitacion,
-                fecha_checkin,
-                fecha_checkout,
+                userName,
+                habName,
+                checkIn,
+                checkOut,
                 total,
-                status
+                status,
+                createdAt,
+                id_reservaciones,
+                id_habitaciones,
+                tipo,
+                item,
+                date
             } = req.body;
 
             // Validar campos obligatorios
             if (
-                !id_usuario ||
-                !id_habitacion ||
-                !fecha_checkin ||
-                !fecha_checkout ||
+                !userName ||
+                !habName ||
+                !checkIn ||
+                !checkOut ||
                 !total
             ) {
 
@@ -99,12 +105,19 @@ const ReservacionHabitacionesController = {
 
             // Crear reservación
             const nuevaReservacion = await ReservacionHabitaciones.create({
-                id_usuario,
-                id_habitacion,
-                fecha_checkin,
-                fecha_checkout,
-                total,
-                status
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
+                id_reservaciones: id_reservaciones || 1, // Default or find
+                id_habitaciones: id_habitaciones || 1, // Default or find
+                checkIn: checkIn,
+                checkOut: checkOut,
+                precio: total,
+                estado: status || "Pendiente",
+                creado_en: createdAt || new Date(),
+                tiempo: new Date(),
+                tipo: tipo || "Habitacion",
+                item: item || habName,
+                date: date || new Date().toISOString()
             });
 
             res.status(201).json({
@@ -174,12 +187,18 @@ const ReservacionHabitacionesController = {
 
             // Actualizar reservación
             await reservacion.update({
-                id_usuario,
-                id_habitacion,
-                fecha_checkin,
-                fecha_checkout,
-                total,
-                status
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
+                id_reservaciones,
+                id_habitaciones,
+                checkIn,
+                checkOut,
+                precio: total,
+                estado: status,
+                creado_en: createdAt,
+                tipo,
+                item,
+                date
             });
 
             res.json({

@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:3000/api/usuarios';
+import { ENDPOINTS } from '../config/api';
+
+const API_URL = ENDPOINTS.USERS;
 
 export const getUsers = async () => {
     try {
@@ -28,7 +30,7 @@ export const updateUserRole = async (id, currentRole) => {
     try {
         const newRole = currentRole === 'admin' ? 'cliente' : 'admin';
         const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -44,7 +46,7 @@ export const updateUserRole = async (id, currentRole) => {
 export const updateUserProfile = async (id, userData) => {
     try {
         const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },

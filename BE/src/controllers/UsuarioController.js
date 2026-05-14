@@ -1,4 +1,4 @@
-const Usuario = require("../models/Usuario");
+const Usuario = require("../models/Usuarios");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -52,10 +52,10 @@ const UsuarioController = {
     create: async (req, res) => {
         try {
 
-            const { id, email, password, role, name, photo } = req.body;
+            const { email, password, role, name, photo } = req.body;
 
             // Validar campos obligatorios
-            if (!id || !email || !password || !role || !name) {
+            if (!email || !password || !name) {
 
                 return res.status(400).json({
                     message: "Todos los campos son obligatorios"
@@ -99,14 +99,26 @@ const UsuarioController = {
             // Encriptar contraseña
             const passwordHash = await bcrypt.hash(password, 10);
 
+            // Mapear rol si es string
+            let id_roles = 2; // Default a cliente
+            if (role) {
+                if (typeof role === 'string') {
+                    const cleanRole = role.trim().toLowerCase();
+                    if (cleanRole === 'admin') id_roles = 1;
+                    else if (cleanRole === 'cliente') id_roles = 2;
+                    else id_roles = parseInt(role) || 2;
+                } else {
+                    id_roles = role;
+                }
+            }
+
             // Crear usuario
             const nuevoUsuario = await Usuario.create({
-                id,
                 email,
                 password: passwordHash,
-                role,
-                name,
-                photo
+                id_roles: id_roles,
+                nombre: name,
+                foto: photo
             });
 
             res.status(201).json({
@@ -169,9 +181,9 @@ const UsuarioController = {
             // Generar token
             const token = jwt.sign(
                 {
-                    id: usuario.id,
+                    id: usuario.id_usuarios,
                     email: usuario.email,
-                    role: usuario.role
+                    role: usuario.id_roles
                 },
                 "secreto_jwt",
                 {
@@ -257,13 +269,26 @@ const UsuarioController = {
 
             }
 
+            // Mapear rol si es string
+            let id_roles_update = usuario.id_roles;
+            if (role) {
+                if (typeof role === 'string') {
+                    const cleanRole = role.trim().toLowerCase();
+                    if (cleanRole === 'admin') id_roles_update = 1;
+                    else if (cleanRole === 'cliente') id_roles_update = 2;
+                    else id_roles_update = parseInt(role) || 2;
+                } else {
+                    id_roles_update = role;
+                }
+            }
+
             // Actualizar usuario
             await usuario.update({
                 email,
                 password: passwordHash,
-                role,
-                name,
-                photo
+                id_roles: id_roles_update,
+                nombre: name,
+                foto: photo
             });
 
             res.json({

@@ -3,19 +3,22 @@ const router = express.Router();
 
 const UsuarioController = require("../controllers/UsuarioController");
 
+// Login
+router.post("/login", UsuarioController.login);
+
 // Obtener todos los usuarios
-router.get("/obtener", UsuarioController.getAll);
+router.get("/", UsuarioController.getAll);
 
 // Obtener usuario por ID
-router.get("/obtener/:id", UsuarioController.getById);
+router.get("/:id", UsuarioController.getById);
 
-// Crear usuario
-router.post("/crear", UsuarioController.create);
+// Crear usuario (Registro)
+router.post("/", UsuarioController.create);
 
 // Actualizar usuario
-router.put("/editar/:id", UsuarioController.update);
+router.put("/:id", UsuarioController.update);
 
 // Eliminar usuario
-router.delete("/eliminar/:id", UsuarioController.delete);
+router.delete("/:id", UsuarioController.delete);
 
 module.exports = router;

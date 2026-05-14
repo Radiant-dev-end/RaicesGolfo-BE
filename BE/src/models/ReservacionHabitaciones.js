@@ -82,4 +82,4 @@ ReservacionHabitaciones.init({
     timestamps: false
 });
 
-module.exports = RoomReservation;
+module.exports = ReservacionHabitaciones;

@@ -1,4 +1,4 @@
-const Caracteristica = require("../models/Caracteristica");
+const Caracteristica = require("../models/Caracteristicas");
 
 const CaracteristicaController = {
 

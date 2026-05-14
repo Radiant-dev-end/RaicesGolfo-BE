@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const HabitacionController = require("../controllers/HabitacionController");
+const HabitacionController = require("../controllers/HabitacionesController");
 
 // Obtener todas las habitaciones
-router.get("/obtener", HabitacionController.getAll);
+router.get("/", HabitacionController.getAll);
 
 // Obtener habitación por ID
-router.get("/obtener/:id", HabitacionController.getById);
+router.get("/:id", HabitacionController.getById);
 
 // Crear habitación
-router.post("/crear", HabitacionController.create);
+router.post("/", HabitacionController.create);
 
 // Actualizar habitación
-router.put("/editar/:id", HabitacionController.update);
+router.put("/:id", HabitacionController.update);
 
 // Eliminar habitación
-router.delete("/eliminar/:id", HabitacionController.delete);
+router.delete("/:id", HabitacionController.delete);
 
 module.exports = router;

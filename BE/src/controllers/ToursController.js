@@ -1,4 +1,4 @@
-const Tour = require("../models/Tour");
+const Tour = require("../models/Tours");
 
 const TourController = {
 
@@ -53,7 +53,6 @@ const TourController = {
         try {
 
             const {
-                id,
                 nombre,
                 descripcion,
                 precio,
@@ -63,7 +62,7 @@ const TourController = {
             } = req.body;
 
             // Validar campos obligatorios
-            if (!id || !nombre || !descripcion || !precio || !duracion || !tipo) {
+            if (!nombre || !descripcion || !precio || !duracion || !tipo) {
 
                 return res.status(400).json({
                     message: "Todos los campos obligatorios deben ser completados"
@@ -102,13 +101,12 @@ const TourController = {
 
             // Crear tour
             const nuevoTour = await Tour.create({
-                id,
                 nombre,
                 descripcion,
                 precio,
                 duracion,
                 tipo,
-                disponible
+                estado: disponible !== undefined ? disponible : true
             });
 
             res.status(201).json({
@@ -176,7 +174,7 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
-                disponible
+                estado: disponible
             });
 
             res.json({

@@ -1,4 +1,4 @@
-const Reservation = require("../models/Reservation");
+const Reservation = require("../models/Reservaciones");
 
 const ReservationController = {
 
@@ -53,10 +53,8 @@ const ReservationController = {
         try {
 
             const {
-                id,
                 userId,
                 userName,
-                habId,
                 habName,
                 precio,
                 fecha,
@@ -66,10 +64,8 @@ const ReservationController = {
 
             // Validar campos obligatorios
             if (
-                !id ||
                 !userId ||
                 !userName ||
-                !habId ||
                 !habName ||
                 !precio ||
                 !fecha
@@ -103,15 +99,13 @@ const ReservationController = {
 
             // Crear reservación
             const nuevaReservacion = await Reservation.create({
-                id,
-                userId,
-                userName,
-                habId,
-                habName,
+                id_usuarios: userId,
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
                 precio,
                 fecha,
-                status,
-                createdAt
+                estado: status || "Pendiente",
+                creado_en: createdAt || new Date()
             });
 
             res.status(201).json({
@@ -167,14 +161,13 @@ const ReservationController = {
 
             // Actualizar reservación
             await reservacion.update({
-                userId,
-                userName,
-                habId,
-                habName,
+                id_usuarios: userId,
+                nombre_usuario: userName,
+                nombre_habitacion: habName,
                 precio,
                 fecha,
-                status,
-                createdAt
+                estado: status,
+                creado_en: createdAt
             });
 
             res.json({
