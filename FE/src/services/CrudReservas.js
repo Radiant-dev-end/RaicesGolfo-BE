@@ -42,7 +42,7 @@ export const getAllReservas = async () => {
 export const updateReserva = async (id, reservaData) => {
     try {
         const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(reservaData)
         });

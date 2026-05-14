@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TourCard from '../INFO/TourCard';
 import { getTours } from '../../../services/CrudTours';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 // Reusing ToursSection.css
 
 import islaImg1 from '../../VIDEOS Y IMG/isla1.jpg';
@@ -18,23 +20,13 @@ const IMAGES = {
 };
 
 function ToursIsla() {
-  const [tours, setTours] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        const data = await getTours();
-        // Filter only Isla tours
-        setTours(data.filter(t => t.tipo === 'Isla' && t.disponible));
-      } catch (error) {
-        console.error("Error fetching tours:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTours();
-  }, []);
+  const { 
+    data: tours, 
+    loading, 
+    page, 
+    setPage, 
+    totalPaginas 
+  } = usePagination(() => getTours('Isla'), 3); // LIMIT: 3 items per page
 
   return (
     <section id="tours-isla" className="tours-section isla-bg">
@@ -50,12 +42,13 @@ function ToursIsla() {
         <div className="tours-grid isla-grid">
           {loading ? (
             <p>Cargando tours...</p>
-          ) : tours.length > 0 ? (
+          ) : tours && tours.length > 0 ? (
             tours.map(tour => (
               <TourCard 
-                key={tour.id} 
+                key={tour.id_tours || tour.id} 
                 {...tour} 
-                imagen={tour.imagen || IMAGES[tour.id] || islaImg1} 
+                id={tour.id_tours || tour.id}
+                imagen={tour.imagen || IMAGES[tour.id_tours || tour.id] || islaImg1} 
                 precio={`$${tour.precio} USD`}
               />
             ))
@@ -63,6 +56,12 @@ function ToursIsla() {
             <p>No hay tours disponibles en este momento.</p>
           )}
         </div>
+
+        <Pagination 
+          paginaActual={page} 
+          totalPaginas={totalPaginas} 
+          onPageChange={setPage} 
+        />
       </div>
     </section>
   );
