@@ -31,11 +31,19 @@ app.use(authenticateToken);
 app.use('/api/caracteristicas', caracteristicasRoutes);
 app.use('/api/habitaciones', habitacionesRoutes);
 app.use('/api/opiniones', opinionesRoutes);
+<<<<<<< HEAD
 app.use('/api/reservaciondehabitaciones', reservaciondehabitacionesRoutes);
 app.use('/api/reservaciones', reservacionesRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
+=======
+app.use('/api/reservaciones', reservaciondehabitacionesRoutes);
+app.use('/api/usuarios', reservacionesRoutes);
+app.use('/api/pilotos', rolRoutes);
+app.use('/api/reservas', toursRoutes);
+app.use('/api/roles', UsuarioRoutes);
+>>>>>>> f0a5797f5eb603b203767b878d9211a455d8e67f
 
 const PORT = process.env.PORT || 3000;
 

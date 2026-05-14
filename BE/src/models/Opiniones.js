@@ -3,7 +3,11 @@ const sequelize = require("../config/db");
 
 class Opinion extends Model {}
 
+<<<<<<< HEAD
 Opinion.init({
+=======
+     init({
+>>>>>>> f0a5797f5eb603b203767b878d9211a455d8e67f
     id_opiniones: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
