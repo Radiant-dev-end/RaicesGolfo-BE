@@ -1,4 +1,4 @@
-const Usuario = require("../models/Usuarios");
+const { Usuario } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -7,80 +7,60 @@ const UsuarioController = {
     // Obtener todos los usuarios
     getAll: async (req, res) => {
         try {
-
             const usuarios = await Usuario.findAll();
-
             res.json(usuarios);
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al obtener usuarios",
                 error: error.message
             });
-
         }
     },
 
     // Obtener usuario por ID
     getById: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const usuario = await Usuario.findByPk(id);
-
             if (!usuario) {
                 return res.status(404).json({
                     message: "Usuario no encontrado"
                 });
             }
-
             res.json(usuario);
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al buscar usuario",
                 error: error.message
             });
-
         }
     },
 
     // Crear usuario
     create: async (req, res) => {
         try {
-
             const { email, password, role, name, photo } = req.body;
 
             // Validar campos obligatorios
-            if (!email || !password || !name) {
-
+            if (!email || !password || !role || !name) {
                 return res.status(400).json({
                     message: "Todos los campos son obligatorios"
                 });
-
             }
 
             // Validar formato del correo
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
             if (!emailRegex.test(email)) {
-
                 return res.status(400).json({
                     message: "Correo electrónico inválido"
                 });
-
             }
 
             // Validar contraseña
             if (password.length < 6) {
-
                 return res.status(400).json({
                     message: "La contraseña debe tener mínimo 6 caracteres"
                 });
-
             }
 
             // Verificar si el correo ya existe
@@ -89,11 +69,9 @@ const UsuarioController = {
             });
 
             if (existeUsuario) {
-
                 return res.status(400).json({
                     message: "El correo ya está registrado"
                 });
-
             }
 
             // Encriptar contraseña
@@ -116,9 +94,9 @@ const UsuarioController = {
             const nuevoUsuario = await Usuario.create({
                 email,
                 password: passwordHash,
-                id_roles: id_roles,
-                nombre: name,
-                foto: photo
+                id_roles: role, // Mapped from role
+                nombre: name,   // Mapped from name
+                foto: photo     // Mapped from photo
             });
 
             res.status(201).json({
@@ -127,58 +105,45 @@ const UsuarioController = {
             });
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al crear usuario",
                 error: error.message
             });
-
         }
     },
 
     // Login
     login: async (req, res) => {
         try {
-
             const { email, password } = req.body;
 
-            // Validar campos
             if (!email || !password) {
-
                 return res.status(400).json({
                     message: "Correo y contraseña son obligatorios"
                 });
-
             }
 
-            // Buscar usuario
             const usuario = await Usuario.findOne({
                 where: { email }
             });
 
             if (!usuario) {
-
                 return res.status(404).json({
                     message: "Usuario no encontrado"
                 });
-
             }
 
-            // Comparar contraseña
             const passwordCorrecta = await bcrypt.compare(
                 password,
                 usuario.password
             );
 
             if (!passwordCorrecta) {
-
                 return res.status(400).json({
                     message: "Contraseña incorrecta"
                 });
-
             }
 
-            // Generar token
             const token = jwt.sign(
                 {
                     id: usuario.id_usuarios,
@@ -198,95 +163,60 @@ const UsuarioController = {
             });
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Error en el login",
                 error: error.message
             });
-
         }
     },
 
     // Actualizar usuario
     update: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const usuario = await Usuario.findByPk(id);
 
             if (!usuario) {
-
                 return res.status(404).json({
                     message: "Usuario no encontrado"
                 });
-
             }
 
             const { email, password, role, name, photo } = req.body;
 
-            // Validar email
             if (email) {
-
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
                 if (!emailRegex.test(email)) {
-
                     return res.status(400).json({
                         message: "Correo electrónico inválido"
                     });
-
                 }
 
                 const existeEmail = await Usuario.findOne({
                     where: { email }
                 });
 
-                if (existeEmail && existeEmail.id !== id) {
-
+                if (existeEmail && existeEmail.id_usuarios !== parseInt(id)) {
                     return res.status(400).json({
                         message: "El correo ya está en uso"
                     });
-
                 }
-
             }
 
             let passwordHash = usuario.password;
-
-            // Encriptar nueva contraseña
             if (password) {
-
                 if (password.length < 6) {
-
                     return res.status(400).json({
                         message: "La contraseña debe tener mínimo 6 caracteres"
                     });
-
                 }
-
                 passwordHash = await bcrypt.hash(password, 10);
-
             }
 
-            // Mapear rol si es string
-            let id_roles_update = usuario.id_roles;
-            if (role) {
-                if (typeof role === 'string') {
-                    const cleanRole = role.trim().toLowerCase();
-                    if (cleanRole === 'admin') id_roles_update = 1;
-                    else if (cleanRole === 'cliente') id_roles_update = 2;
-                    else id_roles_update = parseInt(role) || 2;
-                } else {
-                    id_roles_update = role;
-                }
-            }
-
-            // Actualizar usuario
             await usuario.update({
                 email,
                 password: passwordHash,
-                id_roles: id_roles_update,
+                id_roles: role,
                 nombre: name,
                 foto: photo
             });
@@ -297,44 +227,32 @@ const UsuarioController = {
             });
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al actualizar usuario",
                 error: error.message
             });
-
         }
     },
 
     // Eliminar usuario
     delete: async (req, res) => {
         try {
-
             const { id } = req.params;
-
             const usuario = await Usuario.findByPk(id);
-
             if (!usuario) {
-
                 return res.status(404).json({
                     message: "Usuario no encontrado"
                 });
-
             }
-
             await usuario.destroy();
-
             res.json({
                 message: "Usuario eliminado correctamente"
             });
-
         } catch (error) {
-
             res.status(500).json({
                 message: "Error al eliminar usuario",
                 error: error.message
             });
-
         }
     }
 
