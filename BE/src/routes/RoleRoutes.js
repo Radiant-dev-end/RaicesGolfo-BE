@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
 const RoleController = require("../controllers/RoleController");
+const { isAdmin } = require("../middleware/auth");
 
 // Obtener todos los roles
 router.get("/", RoleController.getAll);

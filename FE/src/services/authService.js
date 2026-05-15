@@ -31,16 +31,16 @@ export const loginUser = async (email, password) => {
     });
 
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Credenciales inválidas');
+      const error = await response.json();
+      throw new Error(error.message || 'Credenciales inválidas');
     }
 
     const data = await response.json();
-    
+
     // Guardar token en localStorage si el backend lo envía
     if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.usuario));
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.usuario));
     }
 
     return data.usuario;

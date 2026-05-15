@@ -140,7 +140,7 @@ const RoleController = {
                     where: { nombre }
                 });
 
-                if (existeRol && existeRol.id !== parseInt(id)) {
+                if (existeRol && existeRol.id_roles !== parseInt(id)) {
 
                     return res.status(400).json({
                         message: "El rol ya existe"
