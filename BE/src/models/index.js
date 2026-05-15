@@ -8,10 +8,19 @@ const ReservacionHabitaciones = require('./ReservacionHabitaciones');
 const Role = require('./Role');
 const Tour = require('./Tours');
 const Usuario = require('./Usuarios');
+const CompraTour = require('./CompraTours');
 
 // Role - Usuario
 Role.hasMany(Usuario, { foreignKey: 'id_roles' });
 Usuario.belongsTo(Role, { foreignKey: 'id_roles', as: 'role' });
+
+// Usuario - CompraTour
+Usuario.hasMany(CompraTour, { foreignKey: 'id_usuarios' });
+CompraTour.belongsTo(Usuario, { foreignKey: 'id_usuarios' });
+
+// Tour - CompraTour
+Tour.hasMany(CompraTour, { foreignKey: 'id_tours' });
+CompraTour.belongsTo(Tour, { foreignKey: 'id_tours' });
 
 // Usuario - Reservation
 Usuario.hasMany(Reservacion, { foreignKey: 'id_usuarios' });

@@ -111,7 +111,8 @@ const UsuarioController = {
             }
 
             const usuario = await Usuario.findOne({
-                where: { email }
+                where: { email },
+                include: [{ model: Role, as: 'role' }]
             });
 
             if (!usuario) {
@@ -137,7 +138,7 @@ const UsuarioController = {
                     email: usuario.email,
                     role: usuario.id_roles
                 },
-                "secreto_jwt",
+                process.env.JWT_SECRET || "secreto_jwt",
                 {
                     expiresIn: "1h"
                 }
