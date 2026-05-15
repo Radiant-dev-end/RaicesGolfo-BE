@@ -7,12 +7,12 @@ Usuario.init({
 
     id_usuarios: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
     },
 
     email: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(255),
         allowNull: false,
         unique: true
     },
@@ -22,17 +22,17 @@ Usuario.init({
         allowNull: false
     },
 
-    role: {
-        type: DataTypes.STRING(50),
+    id_roles: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
 
-    name: {
+    nombre: {
         type: DataTypes.STRING(100),
         allowNull: false
     },
 
-    photo: {
+    foto: {
         type: DataTypes.TEXT,
         allowNull: true
     }
