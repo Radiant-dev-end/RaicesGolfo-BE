@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const RoleController = require("../controllers/RolController");
+const RoleController = require("../controllers/RoleController");
 const { isAdmin } = require("../middleware/auth");
 
 // Rutas de Administrador para gestión de roles

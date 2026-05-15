@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const ReservacionesdehabitacionesController = require("../controllers/ReservacionesdehabitacionesController");
 const { isAdmin, isHotel } = require("../middleware/auth");
 
 const ReservacionesdehabitacionesController = require("../controllers/ReservacionesdehabitacionesController");

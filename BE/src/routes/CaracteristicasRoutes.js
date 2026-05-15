@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const CarasteristicasController = require("../controllers/CarasteristicasController");
-const { isAdmin, isHotel } = require("../middleware/auth");
 
 const CaracteristicasController = require("../controllers/CaracteristicasController");
 
