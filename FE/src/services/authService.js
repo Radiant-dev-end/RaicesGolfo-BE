@@ -1,4 +1,6 @@
-export const API_URL = 'http://localhost:3000/api/usuarios';
+import { ENDPOINTS } from '../config/api';
+
+const API_URL = ENDPOINTS.USERS;
 
 // Registro local contra json-server.
 // Todo usuario nuevo se almacena con rol "cliente" por defecto.
@@ -29,7 +31,7 @@ export const loginUser = async (email, password) => {
     const response = await fetch(`${API_URL}?email=${cleanEmail}&password=${cleanPassword}`);
     const users = await response.json();
 
-    if (users.length > 0) {
+    if (users && users.length > 0) {
       console.log('Usuario encontrado:', users[0].email);
       return users[0];
     }
@@ -38,7 +40,7 @@ export const loginUser = async (email, password) => {
     console.log('No encontrado via query, intentando filtrado manual...');
     const allResponse = await fetch(API_URL);
     const allUsers = await allResponse.json();
-    const foundUser = allUsers.find(
+    const foundUser = (allUsers || []).find(
       u =>
         u.email.toLowerCase().trim() === cleanEmail.toLowerCase() &&
         u.password.toString().trim() === cleanPassword.toString()

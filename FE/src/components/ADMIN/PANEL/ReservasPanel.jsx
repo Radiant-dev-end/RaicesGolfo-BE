@@ -1,40 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Swal from 'sweetalert2';
 import { getAllReservas, updateReserva, deleteReserva } from '../../../services/CrudReservas';
 import { getAllRoomReservas, updateRoomReserva, deleteRoomReserva } from '../../../services/CrudReservasHabitaciones';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 import './ReservasPanel.css';
 
 function ReservasPanel() {
-  const [reservas, setReservas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    data: reservas, 
+    loading, 
+    page, 
+    setPage, 
+    totalPaginas,
+    refresh: fetchReservas
+  } = usePagination(async () => {
+    const [toursData, roomsData] = await Promise.all([
+      getAllReservas(),
+      getAllRoomReservas()
+    ]);
 
-  useEffect(() => {
-    fetchReservas();
-  }, []);
+    // Etiquetar cada reserva con su tipo para diferenciar en la UI
+    const tours = (toursData || []).map(r => ({ ...r, tipo: 'Tour', item: r.tourName }));
+    const rooms = (roomsData || []).map(r => ({ ...r, tipo: 'Habitación', item: r.roomName, date: `${r.checkIn} al ${r.checkOut}` }));
 
-  const fetchReservas = async () => {
-    try {
-      const [toursData, roomsData] = await Promise.all([
-        getAllReservas(),
-        getAllRoomReservas()
-      ]);
+    const allData = [...tours, ...rooms];
 
-      // Etiquetar cada reserva con su tipo para diferenciar en la UI
-      const tours = toursData.map(r => ({ ...r, tipo: 'Tour', item: r.tourName }));
-      const rooms = roomsData.map(r => ({ ...r, tipo: 'Habitación', item: r.roomName, date: `${r.checkIn} al ${r.checkOut}` }));
-
-      const allData = [...tours, ...rooms];
-
-      // Ordenar por fecha de creación (más recientes primero)
-      allData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-      setReservas(allData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error cargando todas las reservas", error);
-      setLoading(false);
-    }
-  };
+    // Ordenar por fecha de creación (más recientes primero)
+    allData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return allData;
+  }, 3); // LIMIT: 3 reservations per page
 
   const handleStatusUpdate = async (id, newStatus, tipo) => {
     const actionText = newStatus === 'Aprobada' ? 'aprobar' : 'denegar';
@@ -205,6 +200,12 @@ function ReservasPanel() {
           </tbody>
         </table>
       </div>
+
+      <Pagination 
+        paginaActual={page} 
+        totalPaginas={totalPaginas} 
+        onPageChange={setPage} 
+      />
     </div>
   );
 }

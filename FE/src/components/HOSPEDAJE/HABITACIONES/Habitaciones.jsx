@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { ENDPOINTS } from '../../../config/api';
+import { getHabitaciones } from '../../../services/CrudHabitaciones';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 import './Habitaciones.css';
 import ReservaModal from '../../MODAL/ReservaModal';
 import { WHATSAPP_HABITACIONES } from '../../../config/whatsapp';
@@ -7,7 +8,8 @@ import habi1Img from '../../VIDEOS Y IMG/Habi.1.webp';
 import habi2Img from '../../VIDEOS Y IMG/Habi.2.avif';
 import chiraVistaImg from '../../VIDEOS Y IMG/img-1019-2.jpg';
 import chiraRefugioImg from '../../VIDEOS Y IMG/img-0984-2.jpg';
-
+import { useState } from 'react';
+import { useEffect } from 'react';
 const habitacionesEstaticas = [
   {
     id: 'static-1',
@@ -107,87 +109,83 @@ const normalizarTexto = valor =>
     .trim();
 
 function Habitaciones() {
-  const [habitacionesAdmin, setHabitacionesAdmin] = useState([]);
   const [roomReservations, setRoomReservations] = useState([]);
-  const [cargando, setCargando] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [habitacionSeleccionada, setHabitacionSeleccionada] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [habitacionesRes, reservasRes] = await Promise.all([
-          fetch(ENDPOINTS.HABITACIONES),
-          fetch(ENDPOINTS.RESERVAS_HABITACIONES),
-        ]);
+  // Hook de paginación que ahora maneja la combinación de estáticas + dinámicas
+  const {
+    data: listaPaginada,
+    loading: cargando,
+    page,
+    setPage,
+    totalPaginas,
+    refresh: refreshData
+  } = usePagination(async () => {
+    try {
+      // 1. Obtener habitaciones del Admin (API)
+      const habitacionesAdmin = await getHabitaciones();
+      
+      // 2. Obtener reservaciones activas para el estado de ocupación
+      const resResponse = await fetch('http://localhost:3000/api/reservaciondehabitaciones');
+      const dataRes = await resResponse.json();
+      const currentReservations = Array.isArray(dataRes) ? dataRes : [];
+      setRoomReservations(currentReservations);
 
-        const habitacionesData = await habitacionesRes.json();
-        const reservasData = await reservasRes.json();
-        const disponibles = Array.isArray(habitacionesData)
-          ? habitacionesData.filter(habitacion => habitacion.status === 'disponible')
-          : [];
+      // --- Lógica de unificación ---
+      
+      // Mapear reservaciones activas
+      const checkOccupied = (roomId, roomNombre) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const roomNombreNormalizado = normalizarTexto(roomNombre);
 
-        setHabitacionesAdmin(disponibles);
-        setRoomReservations(Array.isArray(reservasData) ? reservasData : []);
-      } catch {
-        setHabitacionesAdmin([]);
-        setRoomReservations([]);
-      } finally {
-        setCargando(false);
-      }
-    };
+        return currentReservations.some(res => {
+          const matches = res.roomId === roomId || normalizarTexto(res.roomName) === roomNombreNormalizado;
+          if (!matches || res.status !== 'Aprobada') return false;
 
-    fetchData();
-  }, []);
+          const checkIn = new Date(res.checkIn);
+          const checkOut = new Date(res.checkOut);
+          checkIn.setHours(0, 0, 0, 0);
+          checkOut.setHours(0, 0, 0, 0);
 
-  const checkOccupied = (roomId, roomNombre) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const roomNombreNormalizado = normalizarTexto(roomNombre);
+          return today >= checkIn && today < checkOut;
+        });
+      };
 
-    return roomReservations.some(res => {
-      const matches =
-        res.roomId === roomId || normalizarTexto(res.roomName) === roomNombreNormalizado;
-      if (!matches || res.status !== 'Aprobada') {
-        return false;
-      }
+      // Procesar estáticas
+      const todasLasEstaticas = habitacionesEstaticas.map(staticHab => {
+        const adminData = habitacionesAdmin.find(
+          h => normalizarTexto(h.nombre) === normalizarTexto(staticHab.nombre)
+        );
+        const isManualDisabled = adminData ? adminData.disponible === false : false;
+        const isNowOccupied = checkOccupied(adminData?.id, staticHab.nombre);
 
-      const checkIn = new Date(res.checkIn);
-      const checkOut = new Date(res.checkOut);
-      checkIn.setHours(0, 0, 0, 0);
-      checkOut.setHours(0, 0, 0, 0);
+        return {
+          ...staticHab,
+          disponible: !isManualDisabled && !isNowOccupied,
+          isManualDisabled,
+          isNowOccupied,
+        };
+      });
 
-      return today >= checkIn && today < checkOut;
-    });
-  };
+      // Procesar nuevas (solo Admin no duplicadas)
+      const nombresEstaticos = new Set(habitacionesEstaticas.map(h => normalizarTexto(h.nombre)));
+      const habitacionesNuevas = habitacionesAdmin
+        .filter(h => !nombresEstaticos.has(normalizarTexto(h.nombre)))
+        .map(h => ({
+          ...h,
+          isManualDisabled: h.disponible === false,
+          isNowOccupied: checkOccupied(h.id, h.nombre),
+          disponible: h.disponible !== false && !checkOccupied(h.id, h.nombre),
+        }));
 
-  const todasLasHabitaciones = habitacionesEstaticas.map(staticHab => {
-    const adminData = habitacionesAdmin.find(
-      h => normalizarTexto(h.nombre) === normalizarTexto(staticHab.nombre)
-    );
-
-    const isManualDisabled = adminData ? adminData.disponible === false : false;
-    const isNowOccupied = checkOccupied(adminData?.id, staticHab.nombre);
-
-    return {
-      ...staticHab,
-      disponible: !isManualDisabled && !isNowOccupied,
-      isManualDisabled,
-      isNowOccupied,
-    };
-  });
-
-  const nombresEstaticos = new Set(habitacionesEstaticas.map(h => normalizarTexto(h.nombre)));
-  const habitacionesNuevas = habitacionesAdmin
-    .filter(h => !nombresEstaticos.has(normalizarTexto(h.nombre)))
-    .map(h => ({
-      ...h,
-      isManualDisabled: h.disponible === false,
-      isNowOccupied: checkOccupied(h.id, h.nombre),
-      disponible: h.disponible !== false && !checkOccupied(h.id, h.nombre),
-    }));
-
-  const listaCompleta = [...todasLasHabitaciones, ...habitacionesNuevas];
+      return [...todasLasEstaticas, ...habitacionesNuevas];
+    } catch (err) {
+      console.error("Error unificando habitaciones:", err);
+      return habitacionesEstaticas; // Fallback
+    }
+  }, 4); // LIMIT: 4 per page to show pagination better and keep them small
 
   const handleReservar = habitacion => {
     setHabitacionSeleccionada(habitacion);
@@ -202,18 +200,18 @@ function Habitaciones() {
   return (
     <>
       <div className="habitaciones-grid">
-        {listaCompleta.map((hab, index) => (
+        {listaPaginada.map((hab, index) => (
           <div key={hab.id} className="habitacion-card">
             <div className="hab-image-container">
-              <h5 className="hab-status">{hab.status}</h5>
+              <h5 className="hab-status">{hab.estado || hab.status}</h5>
               <img
-                src={hab.imagenes ? hab.imagenes[0] : hab.imagen || IMAGENES_DEFECTO[index % IMAGENES_DEFECTO.length]}
+                src={hab.imagen || (hab.imagenes ? hab.imagenes[0] : IMAGENES_DEFECTO[index % IMAGENES_DEFECTO.length])}
                 alt={hab.nombre}
                 onError={e => {
                   e.target.src = IMAGENES_DEFECTO[0];
                 }}
               />
-              <div className="hab-price">${hab.precio}/noche</div>
+              <div className="hab-price">${hab.precio_noche || hab.precio}/noche</div>
             </div>
 
             <div className="hab-info">
@@ -228,20 +226,13 @@ function Habitaciones() {
 
               <p>{hab.descripcion || hab.description}</p>
 
-              {hab.amenidades && hab.amenidades.length > 0 && (
+              {(hab.features || hab.amenidades) && (
                 <div className="hab-amenidades">
-                  {hab.amenidades.map((amenidad, amenidadIndex) => (
+                  {(hab.features || hab.amenidades).map((amenidad, amenidadIndex) => (
                     <span key={amenidadIndex} className="amenidad-tag">
                       {amenidad}
                     </span>
                   ))}
-                </div>
-              )}
-
-              {!hab.imagenes && (
-                <div className="hab-amenidades">
-                  <span className="amenidad-tag">Capacidad: {hab.capacidad} personas</span>
-                  <span className="amenidad-tag">{hab.tipo}</span>
                 </div>
               )}
 
@@ -258,10 +249,16 @@ function Habitaciones() {
 
         {cargando && (
           <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#64748b' }}>
-            Cargando habitaciones adicionales...
+            Cargando habitaciones...
           </p>
         )}
       </div>
+
+      <Pagination
+        paginaActual={page}
+        totalPaginas={totalPaginas}
+        onPageChange={setPage}
+      />
 
       {habitacionSeleccionada && (
         <ReservaModal

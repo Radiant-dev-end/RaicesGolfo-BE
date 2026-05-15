@@ -1,29 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Swal from 'sweetalert2';
 import { ENDPOINTS } from '../../../config/api';
-import './ReservasPanel.css'; // Reutilizamos estilos de tablas de administracion
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
+import './ReservasPanel.css'; 
 
 function MensajesPanel() {
-    const [messages, setMessages] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchMessages();
-    }, []);
-
-    const fetchMessages = async () => {
-        try {
-            setLoading(true);
-            const response = await fetch(ENDPOINTS.CONTACTOS);
-            const data = await response.json();
-            // Ordenar por ID o fecha si existe (simulado por ID inverso aqui)
-            setMessages(data.reverse());
-        } catch (error) {
-            console.error("Error fetching messages:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { 
+        data: messages, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: fetchMessages
+    } = usePagination(async () => {
+        const response = await fetch(ENDPOINTS.CONTACTOS);
+        const data = await response.json();
+        return Array.isArray(data) ? [...data].reverse() : [];
+    }, 3); // LIMIT: 3 messages per page
 
     const handleDelete = async (id) => {
         const result = await Swal.fire({
@@ -111,6 +105,12 @@ function MensajesPanel() {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination 
+                paginaActual={page} 
+                totalPaginas={totalPaginas} 
+                onPageChange={setPage} 
+            />
         </div>
     );
 }

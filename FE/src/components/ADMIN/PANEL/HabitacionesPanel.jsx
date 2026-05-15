@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import {
     getHabitaciones,
@@ -6,7 +6,9 @@ import {
     updateHabitacion,
     deleteHabitacion,
 } from '../../../services/CrudHabitaciones';
-import './AdminPanel.css'; // Reutilizamos estilos generales de tabla
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
+import './AdminPanel.css'; 
 
 const TIPO_OPCIONES = ['Estándar', 'Deluxe', 'Suite', 'Cabaña', 'Familiar'];
 
@@ -23,31 +25,17 @@ const FORM_INICIAL = {
 };
 
 const HabitacionesPanel = () => {
-    const [habitaciones, setHabitaciones] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { 
+        data: habitaciones, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: cargarHabitaciones
+    } = usePagination(() => getHabitaciones(), 3); // LIMIT: 3 rooms per page
+
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Modal state
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState(FORM_INICIAL);
-    const [, setFormError] = useState('');
-    const [, setSaving] = useState(false);
-
-    const cargarHabitaciones = async () => {
-        try {
-            setLoading(true);
-            const data = await getHabitaciones();
-            setHabitaciones(data);
-        } catch {
-            setError('No se pudieron cargar las habitaciones.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { cargarHabitaciones(); }, []);
 
     const filtradas = habitaciones.filter(h =>
         h.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,12 +105,12 @@ const HabitacionesPanel = () => {
             };
 
             if (editingId) {
-                const updated = await updateHabitacion(editingId, { ...payload, id: editingId });
-                setHabitaciones(prev => prev.map(h => h.id === editingId ? updated : h));
+                await updateHabitacion(editingId, { ...payload, id: editingId });
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Actualizada!', text: 'La habitación fue actualizada correctamente.', confirmButtonColor: '#0d9488' });
             } else {
-                const created = await createHabitacion(payload);
-                setHabitaciones(prev => [...prev, created]);
+                await createHabitacion(payload);
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Creada!', text: 'La habitación fue registrada correctamente.', confirmButtonColor: '#0d9488' });
             }
             cerrarModal();
@@ -148,7 +136,7 @@ const HabitacionesPanel = () => {
         if (result.isConfirmed) {
             try {
                 await deleteHabitacion(id);
-                setHabitaciones(prev => prev.filter(h => h.id !== id));
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Eliminada!', text: 'La habitación fue eliminada.', confirmButtonColor: '#0d9488' });
             } catch {
                 Swal.fire('Error', 'Hubo un error al eliminar la habitación.', 'error');
@@ -229,6 +217,12 @@ const HabitacionesPanel = () => {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination 
+                paginaActual={page} 
+                totalPaginas={totalPaginas} 
+                onPageChange={setPage} 
+            />
 
             {/* Modal Simplificado */}
             {modalOpen && (

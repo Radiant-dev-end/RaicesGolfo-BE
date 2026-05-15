@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import {
     getTours,
@@ -6,6 +6,8 @@ import {
     updateTour,
     deleteTour,
 } from '../../../services/CrudTours';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 import './ReservaTours.css';
 
 const TIPO_OPCIONES = ['Posada', 'Isla'];
@@ -21,32 +23,17 @@ const FORM_INICIAL = {
 };
 
 const ResevaTours = () => {
-    const [tours, setTours] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { 
+        data: tours, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: cargarTours
+    } = usePagination(() => getTours(), 3); // LIMIT: 3 tours per page
+
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Modal state
-    const [modalOpen, setModalOpen] = useState(false);
-    const [editingId, setEditingId] = useState(null);
-    const [form, setForm] = useState(FORM_INICIAL);
-    const [formError, setFormError] = useState('');
-    const [saving, setSaving] = useState(false);
-
-    // ── Carga de datos ─────────────────────────────────────────
-    const cargarTours = async () => {
-        try {
-            setLoading(true);
-            const data = await getTours();
-            setTours(data);
-        } catch {
-            setError('No se pudieron cargar los tours.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { cargarTours(); }, []);
 
     // ── Filtrado ─────────────────────────────────────────────
     const filtrados = tours.filter(t =>
@@ -112,12 +99,12 @@ const ResevaTours = () => {
             };
 
             if (editingId) {
-                const updated = await updateTour(editingId, { ...payload, id: editingId });
-                setTours(prev => prev.map(t => t.id === editingId ? updated : t));
+                await updateTour(editingId, { ...payload, id: editingId });
+                cargarTours(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Actualizado!', text: 'El tour fue actualizado correctamente.', confirmButtonColor: '#0d9488' });
             } else {
-                const created = await createTour(payload);
-                setTours(prev => [...prev, created]);
+                await createTour(payload);
+                cargarTours(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Creado!', text: 'El tour fue registrado correctamente.', confirmButtonColor: '#0d9488' });
             }
             cerrarModal();
@@ -144,7 +131,7 @@ const ResevaTours = () => {
         if (result.isConfirmed) {
             try {
                 await deleteTour(id);
-                setTours(prev => prev.filter(t => t.id !== id));
+                cargarTours(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Eliminado!', text: 'El tour fue eliminado.', confirmButtonColor: '#0d9488' });
             } catch {
                 Swal.fire('Error', 'Hubo un error al eliminar el tour.', 'error');
@@ -243,6 +230,12 @@ const ResevaTours = () => {
                         </tbody>
                     </table>
                 </div>
+
+                <Pagination 
+                    paginaActual={page} 
+                    totalPaginas={totalPaginas} 
+                    onPageChange={setPage} 
+                />
             </div>
 
             {/* ─ Modal de formulario ─ */}

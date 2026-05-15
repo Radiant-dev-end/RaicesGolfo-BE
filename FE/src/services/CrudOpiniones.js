@@ -27,3 +27,16 @@ export const createOpinion = async (opinion) => {
         throw error;
     }
 };
+
+export const deleteOpinion = async (id) => {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error('Error al eliminar la opinión');
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleteOpinion:", error);
+        throw error;
+    }
+};
