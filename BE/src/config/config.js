@@ -1,7 +1,7 @@
 module.exports = {
   development: {
     username: 'root',
-    password: 'Ro.ot.2',
+    password: 'root',
     database: 'raicesgolfo',
     host: 'localhost',
     dialect: 'mysql',

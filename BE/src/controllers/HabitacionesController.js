@@ -24,7 +24,10 @@ const HabitacionController = {
     getById: async (req, res) => {
         try {
             const { id } = req.params;
-            const habitacion = await Habitacion.findByPk(id);
+            let habitacion = await Habitacion.findByPk(id);
+            if (!habitacion) {
+                habitacion = await Habitacion.findOne({ where: { numero: id } });
+            }
             if (!habitacion) {
                 return res.status(404).json({
                     message: "Habitación no encontrada"
@@ -62,7 +65,26 @@ const HabitacionController = {
             // Mapping price for consistency with test sending 'precio'
             const precio_noche = precio;
 
-            if (!nombre || !descripcion || precio_noche === undefined || !capacidad || !tipo || !numero || id_caracteristicas === undefined) {
+            // Compatibilidad con frontend: autogenerar numero y id_caracteristicas si no vienen
+            let final_id_caracteristicas = id_caracteristicas;
+            if (final_id_caracteristicas === undefined) {
+                const { Caracteristica } = require("../models");
+                const firstCarac = await Caracteristica.findOne();
+                final_id_caracteristicas = firstCarac ? firstCarac.id_caracteristicas : 1;
+            }
+            const final_numero = numero || `HAB-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            console.log("DEBUG CREACION HABITACION:", {
+                nombre,
+                descripcion,
+                precio_noche,
+                capacidad,
+                tipo,
+                final_numero,
+                final_id_caracteristicas
+            });
+
+            if (!nombre || !descripcion || precio_noche === undefined || !capacidad || !tipo || !final_numero || final_id_caracteristicas === undefined) {
                 return res.status(400).json({
                     message: "Todos los campos obligatorios deben ser completados"
                 });
@@ -93,8 +115,8 @@ const HabitacionController = {
             }
 
             const nuevaHabitacion = await Habitacion.create({
-                id_caracteristicas,
-                numero,
+                id_caracteristicas: final_id_caracteristicas,
+                numero: final_numero,
                 nombre,
                 descripcion,
                 precio_noche,
@@ -106,10 +128,12 @@ const HabitacionController = {
                 features
             });
 
-            res.status(201).json({
-                message: "Habitación creada correctamente",
-                habitacion: nuevaHabitacion
-            });
+            const habData = nuevaHabitacion.toJSON();
+            habData.id = habData.numero || habData.id_habitaciones;
+            habData.precio = habData.precio_noche;
+            habData.status = habData.estado;
+
+            res.status(201).json(habData);
 
         } catch (error) {
             res.status(500).json({
@@ -122,7 +146,10 @@ const HabitacionController = {
     update: async (req, res) => {
         try {
             const { id } = req.params;
-            const habitacion = await Habitacion.findByPk(id);
+            let habitacion = await Habitacion.findByPk(id);
+            if (!habitacion) {
+                habitacion = await Habitacion.findOne({ where: { numero: id } });
+            }
             if (!habitacion) {
                 return res.status(404).json({
                     message: "Habitación no encontrada"
@@ -168,11 +195,11 @@ const HabitacionController = {
             }
 
             await habitacion.update({
-                id_caracteristicas,
-                numero,
+                id_caracteristicas: id_caracteristicas !== undefined ? id_caracteristicas : habitacion.id_caracteristicas,
+                numero: numero !== undefined ? numero : habitacion.numero,
                 nombre,
                 descripcion,
-                precio_noche: precio,
+                precio_noche: precio !== undefined ? precio : habitacion.precio_noche,
                 capacidad,
                 tipo,
                 disponible,
@@ -181,10 +208,12 @@ const HabitacionController = {
                 features
             });
 
-            res.json({
-                message: "Habitación actualizada correctamente",
-                habitacion
-            });
+            const habData = habitacion.toJSON();
+            habData.id = habData.numero || habData.id_habitaciones;
+            habData.precio = habData.precio_noche;
+            habData.status = habData.estado;
+
+            res.json(habData);
 
         } catch (error) {
             res.status(500).json({
@@ -197,7 +226,10 @@ const HabitacionController = {
     delete: async (req, res) => {
         try {
             const { id } = req.params;
-            const habitacion = await Habitacion.findByPk(id);
+            let habitacion = await Habitacion.findByPk(id);
+            if (!habitacion) {
+                habitacion = await Habitacion.findOne({ where: { numero: id } });
+            }
             if (!habitacion) {
                 return res.status(404).json({
                     message: "Habitación no encontrada"

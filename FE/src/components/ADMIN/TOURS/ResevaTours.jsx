@@ -50,8 +50,8 @@ const ResevaTours = () => {
 
     // ── Filtrado ─────────────────────────────────────────────
     const filtrados = tours.filter(t =>
-        t.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.tipo.toLowerCase().includes(searchTerm.toLowerCase())
+        (t.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (t.tipo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // ── Auxiliares del modal ──────────────────────────────────

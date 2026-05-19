@@ -79,10 +79,10 @@ const TourController = {
                 estado: disponible // Mapped from disponible
             });
 
-            res.status(201).json({
-                message: "Tour creado correctamente",
-                tour: nuevoTour
-            });
+            const tourData = nuevoTour.toJSON();
+            tourData.id = tourData.id_tours;
+            tourData.disponible = tourData.estado;
+            res.status(201).json(tourData);
 
         } catch (error) {
             res.status(500).json({
@@ -132,10 +132,10 @@ const TourController = {
                 estado: disponible
             });
 
-            res.json({
-                message: "Tour actualizado correctamente",
-                tour
-            });
+            const tourData = tour.toJSON();
+            tourData.id = tourData.id_tours;
+            tourData.disponible = tourData.estado;
+            res.json(tourData);
 
         } catch (error) {
             res.status(500).json({

@@ -19,9 +19,35 @@ function ReservasPanel() {
         getAllRoomReservas()
       ]);
 
-      // Etiquetar cada reserva con su tipo para diferenciar en la UI
-      const tours = toursData.map(r => ({ ...r, tipo: 'Tour', item: r.tourName }));
-      const rooms = roomsData.map(r => ({ ...r, tipo: 'Habitación', item: r.roomName, date: `${r.checkIn} al ${r.checkOut}` }));
+      // Etiquetar y normalizar cada reserva para diferenciar en la UI y evitar valores nulos
+      const tours = toursData.map(r => {
+        const _id = r.id || r.id_reservaciones || r.id_reservacion;
+        return {
+          ...r,
+          id: _id,
+          uniqueKey: `tour-${_id}`,
+          userName: r.userName || r.nombre_usuario || 'Desconocido',
+          userId: r.userId || r.id_usuarios,
+          status: r.status || r.estado || 'Pendiente',
+          tipo: 'Tour',
+          item: r.tourName || r.nombre_habitacion || r.item || 'Tour',
+          date: r.date || r.fecha || 'N/A',
+        };
+      });
+      const rooms = roomsData.map(r => {
+        const _id = r.id || r.id_reservacion_habitacion || r.id_reservaciones;
+        return {
+          ...r,
+          id: _id,
+          uniqueKey: `room-${_id}`,
+          userName: r.userName || r.nombre_usuario || 'Desconocido',
+          userId: r.userId || r.id_usuarios,
+          status: r.status || r.estado || 'Pendiente',
+          tipo: 'Habitación',
+          item: r.roomName || r.nombre_habitacion || r.item || 'Habitación',
+          date: r.date || (r.checkIn ? `${r.checkIn} al ${r.checkOut}` : 'N/A'),
+        };
+      });
 
       const allData = [...tours, ...rooms];
 
@@ -148,7 +174,7 @@ function ReservasPanel() {
               </tr>
             ) : (
               reservas.map((res) => (
-                <tr key={res.id}>
+                <tr key={res.uniqueKey}>
                   <td>
                     <div className="client-cell">
                       <strong>{res.userName}</strong>

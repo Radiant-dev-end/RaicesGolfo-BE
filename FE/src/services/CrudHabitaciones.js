@@ -22,7 +22,10 @@ export const createHabitacion = async (habitacion) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(habitacion)
         });
-        if (!response.ok) throw new Error('Error al crear la habitación');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Error al crear la habitación');
+        }
         return await response.json();
     } catch (error) {
         console.error("Error createHabitacion:", error);
@@ -37,7 +40,10 @@ export const updateHabitacion = async (id, habitacion) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(habitacion)
         });
-        if (!response.ok) throw new Error('Error al actualizar la habitación');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Error al actualizar la habitación');
+        }
         return await response.json();
     } catch (error) {
         console.error("Error updateHabitacion:", error);

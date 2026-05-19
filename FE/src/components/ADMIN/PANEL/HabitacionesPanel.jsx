@@ -50,8 +50,8 @@ const HabitacionesPanel = () => {
     useEffect(() => { cargarHabitaciones(); }, []);
 
     const filtradas = habitaciones.filter(h =>
-        h.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        h.tipo.toLowerCase().includes(searchTerm.toLowerCase())
+        (h.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (h.tipo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const abrirNueva = () => {
@@ -104,7 +104,7 @@ const HabitacionesPanel = () => {
     const handleGuardar = async (e) => {
         e.preventDefault();
         if (!form.nombre.trim() || !form.precio || !form.capacidad) {
-            setFormError('Por favor complete todos los campos obligatorios.');
+            Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Por favor complete todos los campos obligatorios.', confirmButtonColor: '#0d9488' });
             return;
         }
 
@@ -126,8 +126,8 @@ const HabitacionesPanel = () => {
                 Swal.fire({ icon: 'success', title: '¡Creada!', text: 'La habitación fue registrada correctamente.', confirmButtonColor: '#0d9488' });
             }
             cerrarModal();
-        } catch {
-            setFormError('Ocurrió un error al guardar. Intente nuevamente.');
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error al guardar', text: err.message || 'Ocurrió un error al guardar. Intente nuevamente.', confirmButtonColor: '#ef4444' });
         } finally {
             setSaving(false);
         }
