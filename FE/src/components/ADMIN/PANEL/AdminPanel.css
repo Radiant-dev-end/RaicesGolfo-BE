@@ -379,6 +379,31 @@
     }
 }
 
+.filtros-usuarios-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0 15px;
+    min-width: 250px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 6px rgba(13, 148, 136, 0.1);
+}
+
 .search-container {
     position: relative;
     display: flex;

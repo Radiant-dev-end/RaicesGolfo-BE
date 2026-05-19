@@ -33,7 +33,7 @@ Usuario.init({
     },
 
     foto: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT('long'),
         allowNull: true
     }
 

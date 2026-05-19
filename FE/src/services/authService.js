@@ -2,11 +2,10 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
-// Registro local contra json-server.
-// Todo usuario nuevo se almacena con rol "cliente" por defecto.
-export const registerUserLocal = async user => {
-  const userWithRole = { ...user, role: 'cliente' };
-  const response = await fetch(API_URL, {
+// Registro contra el backend real.
+export const registerUser = async user => {
+  const userWithRole = { ...user, role: user.role || 'cliente' };
+  const response = await fetch(`${API_URL}/crear`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,10 +13,13 @@ export const registerUserLocal = async user => {
     body: JSON.stringify(userWithRole),
   });
 
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error en el registro');
+  }
+
   return response.json();
 };
-
-export const registerUser = registerUserLocal;
 
 // Login basico por email y password.
 // Primero intenta filtrar por query y, si falla, revisa manualmente toda la coleccion.

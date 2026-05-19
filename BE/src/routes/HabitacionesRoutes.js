@@ -3,21 +3,19 @@ const router = express.Router();
 const HabitacionController = require("../controllers/HabitacionesController");
 const { isAdmin, isHotel } = require("../middleware/auth");
 
-const HabitacionesController = require("../controllers/HabitacionesController");
-
 // Obtener todas las habitaciones
-router.get("/obtener", HabitacionesController.getAll);
+router.get("/", HabitacionController.getAll);
 
 // Obtener habitación por ID
-router.get("/obtener/:id", HabitacionesController.getById);
+router.get("/:id", HabitacionController.getById);
 
 // Crear habitación
-router.post("/crear", HabitacionesController.create);
+router.post("/", HabitacionController.create);
 
 // Actualizar habitación
-router.put("/editar/:id", HabitacionesController.update);
+router.put("/:id", HabitacionController.update);
 
 // Eliminar habitación
-router.delete("/eliminar/:id", HabitacionesController.delete);
+router.delete("/:id", HabitacionController.delete);
 
 module.exports = router;

@@ -31,9 +31,15 @@ const Inicioseccion = () => {
             setLoading(true);
             setError('');
             
-            const user = await loginUser(email, password);
+            let user = await loginUser(email, password);
 
             if (user) {
+                // Mapear id_roles de MySQL al formato string que usa el frontend
+                if (user.id_roles) {
+                    user.role = user.id_roles === 1 ? 'admin' : 'cliente';
+                }
+                
+                // Asegurarse de que el usuario modificado se guarda
                 localStorage.setItem('user', JSON.stringify(user));
                 
                 // Normalizar el rol

@@ -2,21 +2,21 @@ const express = require("express");
 const router = express.Router();
 const { isAdmin } = require("../middleware/auth");
 
-const OpinionesController = require("../controllers/OpinionesController");
+const OpinionController = require("../controllers/OpinionesController");
 
 // Obtener todas las opiniones
-router.get("/obtener", OpinionesController.getAll);
+router.get("/", OpinionController.getAll);
 
 // Obtener opinión por ID
-router.get("/obtener/:id", OpinionesController.getById);
+router.get("/:id", OpinionController.getById);
 
 // Crear opinión
-router.post("/crear", OpinionesController.create);
+router.post("/", OpinionController.create);
 
 // Actualizar opinión
-router.put("/editar/:id", OpinionesController.update);
+router.put("/:id", OpinionController.update);
 
 // Eliminar opinión
-router.delete("/eliminar/:id", OpinionesController.delete);
+router.delete("/:id", OpinionController.delete);
 
 module.exports = router;
