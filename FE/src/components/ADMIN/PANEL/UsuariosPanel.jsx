@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { getUsers, deleteUser, updateUserRole } from '../../../services/CrudParaUsuarios';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 
 const UsuariosPanel = () => {
-    const [usuarios, setUsuarios] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState('');
 
-    const cargarUsuarios = async () => {
-        try {
-            setLoading(true);
-            const data = await getUsers();
-            setUsuarios(data);
-        } catch (err) {
-            setError('No se pudieron cargar los usuarios.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        cargarUsuarios();
-    }, []);
+    const { 
+        data: usuarios, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: cargarUsuarios
+    } = usePagination(() => getUsers(), 3); // LIMIT: 3 users per page
 
     // Filtrar usuarios por correo
-    const usuariosFiltrados = usuarios.filter(user => 
+    const usuariosFiltrados = (usuarios || []).filter(user => 
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -44,7 +37,7 @@ const UsuariosPanel = () => {
         if (result.isConfirmed) {
             try {
                 await deleteUser(id);
-                setUsuarios(usuarios.filter(u => u.id !== id));
+                cargarUsuarios(); // Recargar datos del hook
                 Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success');
             } catch (err) {
                 Swal.fire('Error', 'Hubo un error al eliminar el usuario.', 'error');
@@ -66,8 +59,8 @@ const UsuariosPanel = () => {
 
         if (result.isConfirmed) {
             try {
-                const updatedUser = await updateUserRole(id, currentRole);
-                setUsuarios(usuarios.map(u => u.id === id ? updatedUser : u));
+                await updateUserRole(id, currentRole);
+                cargarUsuarios(); // Recargar datos del hook
                 Swal.fire('¡Actualizado!', 'El rol fue modificado exitosamente.', 'success');
             } catch (err) {
                 Swal.fire('Error', 'Hubo un error al actualizar el rol.', 'error');
@@ -146,6 +139,12 @@ const UsuariosPanel = () => {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination 
+                paginaActual={page} 
+                totalPaginas={totalPaginas} 
+                onPageChange={setPage} 
+            />
         </div>
     );
 };

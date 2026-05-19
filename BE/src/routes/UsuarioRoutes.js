@@ -3,6 +3,10 @@ const router = express.Router();
 
 const UsuarioController = require("../controllers/UsuarioController");
 
+const { isAdmin } = require("../middleware/auth");
+
+const authenticateToken = require("../middlewares/authMiddleware");
+
 /**
  * @swagger
  * /usuarios/obtener:
@@ -14,10 +18,8 @@ const UsuarioController = require("../controllers/UsuarioController");
  *         description: Lista de usuarios obtenida correctamente
  */
 
-
 // Obtener todos los usuarios
 router.get("/obtener", UsuarioController.getAll);
-
 
 /**
  * @swagger
@@ -67,14 +69,11 @@ router.get("/obtener/:id", UsuarioController.getById);
  *         description: Usuario creado correctamente
  */
 
-
 // Crear usuario
 router.post("/crear", UsuarioController.create);
 
 // Login usuario
 router.post("/login", UsuarioController.login);
-
-
 
 /**
  * @swagger
@@ -110,10 +109,12 @@ router.post("/login", UsuarioController.login);
  *         description: Usuario actualizado correctamente
  */
 
-
-// Actualizar usuario
-router.put("/editar/:id", UsuarioController.update);
-
+// Actualizar usuario (PROTEGIDO CON TOKEN)
+router.put(
+  "/editar/:id",
+  authenticateToken,
+  UsuarioController.update
+);
 
 /**
  * @swagger
@@ -131,7 +132,13 @@ router.put("/editar/:id", UsuarioController.update);
  *       200:
  *         description: Usuario eliminado correctamente
  */
-// Eliminar usuario
-router.delete("/eliminar/:id", UsuarioController.delete);
+
+// Eliminar usuario (PROTEGIDO CON TOKEN Y ADMIN)
+router.delete(
+  "/eliminar/:id",
+  authenticateToken,
+  isAdmin,
+  UsuarioController.delete
+);
 
 module.exports = router;

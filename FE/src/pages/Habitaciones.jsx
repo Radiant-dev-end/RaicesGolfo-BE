@@ -3,7 +3,8 @@ import Navbar from '../components/HOSPEDAJE/NAVBAR/Navbar';
 import HabitacionesComponent from '../components/HOSPEDAJE/HABITACIONES/Habitaciones';
 import '../components/HOSPEDAJE/HABITACIONES/Habitaciones.css';
 import Footer from '../components/INICIO/FOOTER/Footer';
-
+import { useState } from 'react';
+import { useEffect } from 'react';
 function Habitaciones() {
   return (
     <div className="habitaciones-page">

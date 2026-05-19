@@ -176,7 +176,8 @@
       "precio": 15,
       "duracion": "4 horas",
       "tipo": "Posada",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/posada1.jpg"
     },
     {
       "id": "t002",
@@ -185,7 +186,8 @@
       "precio": 10,
       "duracion": "3 horas",
       "tipo": "Posada",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/posada2.jpg"
     },
     {
       "id": "t003",
@@ -194,7 +196,8 @@
       "precio": 12,
       "duracion": "1 hora",
       "tipo": "Posada",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/posada3.jpg"
     },
     {
       "id": "t004",
@@ -203,7 +206,8 @@
       "precio": 14,
       "duracion": "2 horas",
       "tipo": "Posada",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/posada4.jpg"
     },
     {
       "id": "t005",
@@ -212,7 +216,8 @@
       "precio": 30,
       "duracion": "3 horas",
       "tipo": "Isla",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/isla1.jpg"
     },
     {
       "id": "t006",
@@ -221,7 +226,8 @@
       "precio": 20,
       "duracion": "2 horas",
       "tipo": "Isla",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/isla2.jpg"
     },
     {
       "id": "t007",
@@ -230,7 +236,8 @@
       "precio": 15,
       "duracion": "2 horas",
       "tipo": "Isla",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/isla3.jpg"
     },
     {
       "id": "t008",
@@ -239,7 +246,8 @@
       "precio": 18,
       "duracion": "1.5 horas",
       "tipo": "Isla",
-      "disponible": true
+      "disponible": true,
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/isla4.jpg"
     }
   ],
   "reservations": [
@@ -431,6 +439,105 @@
       "createdAt": "2026-03-31T00:42:32.033Z",
       "userId": "10ff",
       "status": "Pendiente"
+    }
+  ],
+  "gastronomia": [
+    {
+      "id": "g001",
+      "id_gastronomia": "g001",
+      "nombre": "Casado costarricense",
+      "descripcion": "El plato tradicional por excelencia. Arroz, frijoles, ensalada fresca, plátano maduro frito y opción de carne o pollo, preparado con el sazón local.",
+      "precio": "₡3,500 – ₡5,000",
+      "tipo": "Posada",
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/comida1.jpg"
+    },
+    {
+      "id": "g002",
+      "id_gastronomia": "g002",
+      "nombre": "Gallo pinto (desayuno típico)",
+      "descripcion": "El desayuno perfecto para empezar el día. Mezcla tradicional de arroz con frijoles acompañado de huevo, queso artesanal o natilla.",
+      "precio": "₡2,000 – ₡3,500",
+      "tipo": "Posada",
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/comida2.jpg"
+    },
+    {
+      "id": "g003",
+      "id_gastronomia": "g003",
+      "nombre": "Sopa de mariscos",
+      "descripcion": "Un caldo reconfortante y lleno de sabor. Sopa preparada con pesca del día, camarones frescos y especias locales que capturan la esencia del golfo.",
+      "precio": "₡4,000 – ₡6,000",
+      "tipo": "Posada",
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/comida3.jpg"
+    },
+    {
+      "id": "g004",
+      "id_gastronomia": "g004",
+      "nombre": "Pescado frito con patacones",
+      "descripcion": "Pescado entero fresco y frito a la perfección, acompañado de crujientes patacones (plátano verde frito) y una refrescante ensalada.",
+      "precio": "₡4,000 – ₡6,500",
+      "tipo": "Posada",
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/comida4.jpg"
+    },
+    {
+      "id": "g005",
+      "id_gastronomia": "g005",
+      "nombre": "Ceviche de la Isla",
+      "descripcion": "Pescado fresco marinado en jugos cítricos con cebolla, culantro y especias tradicionales.",
+      "precio": "₡3,000 – ₡4,500",
+      "tipo": "Isla",
+      "imagen": "/src/components/VIDEOS%20Y%20IMG/marisco1.jpg"
+    }
+  ],
+  "transporte": [
+    {
+      "id": "tr001",
+      "id_transporte": "tr001",
+      "categoria": "Lancha (Bote)",
+      "ruta": "Puntarenas - Isla Venado",
+      "descripcion": "Servicio regular de transporte marítimo desde el muelle de Puntarenas.",
+      "horarios": [
+        {
+          "from": "Puntarenas",
+          "to": "Isla Venado",
+          "times": [
+            "7:00 AM",
+            "11:30 AM",
+            "3:30 PM"
+          ]
+        },
+        {
+          "from": "Isla Venado",
+          "to": "Puntarenas",
+          "times": [
+            "6:00 AM",
+            "10:00 AM",
+            "2:00 PM"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tr002",
+      "id_transporte": "tr002",
+      "categoria": "Autobús",
+      "ruta": "San José - Puntarenas",
+      "descripcion": "Transporte terrestre desde la Terminal 7-10 en San José hacia Puntarenas.",
+      "horarios": [
+        {
+          "from": "San José",
+          "to": "Puntarenas",
+          "times": [
+            "Cada hora desde las 6:00 AM"
+          ]
+        },
+        {
+          "from": "Puntarenas",
+          "to": "San José",
+          "times": [
+            "Cada hora hasta las 7:00 PM"
+          ]
+        }
+      ]
     }
   ],
   "balances": [],

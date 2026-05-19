@@ -40,7 +40,7 @@ function Routing() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={[1]}>
               <Admin />
             </ProtectedRoute>
           }
@@ -48,7 +48,7 @@ function Routing() {
         <Route
           path="/cliente"
           element={
-            <ProtectedRoute allowedRoles={['cliente']}>
+            <ProtectedRoute allowedRoles={[2]}>
               <Cliente />
             </ProtectedRoute>
           }

@@ -1,21 +1,13 @@
 const express = require("express");
 const router = express.Router();
-
 const RoleController = require("../controllers/RoleController");
+const { isAdmin } = require("../middleware/auth");
 
-// Obtener todos los roles
-router.get("/obtener", RoleController.getAll);
-
-// Obtener rol por ID
-router.get("/obtener/:id", RoleController.getById);
-
-// Crear rol
-router.post("/crear", RoleController.create);
-
-// Actualizar rol
-router.put("/editar/:id", RoleController.update);
-
-// Eliminar rol
-router.delete("/eliminar/:id", RoleController.delete);
+// Rutas de Administrador para gestión de roles
+router.get("/obtener", isAdmin, RoleController.getAll);
+router.get("/obtener/:id", isAdmin, RoleController.getById);
+router.post("/crear", isAdmin, RoleController.create);
+router.put("/editar/:id", isAdmin, RoleController.update);
+router.delete("/eliminar/:id", isAdmin, RoleController.delete);
 
 module.exports = router;
