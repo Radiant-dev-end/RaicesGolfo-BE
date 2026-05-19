@@ -15,10 +15,14 @@ function NavbarAdmin({ toggleSidebar, onTabChange }) {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+ const handleLogout = () => {
+
+  localStorage.removeItem('token');
+
+  localStorage.removeItem('user');
+
+  navigate('/login');
+};
 
   const getInitials = (name) => {
     if (!name) return 'AD';

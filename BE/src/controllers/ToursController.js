@@ -5,7 +5,13 @@ const TourController = {
     getAll: async (req, res) => {
         try {
             const tours = await Tour.findAll();
-            res.json(tours);
+            const mappedTours = tours.map(t => {
+                const tourData = t.toJSON();
+                tourData.id = tourData.id_tours;
+                tourData.disponible = tourData.estado;
+                return tourData;
+            });
+            res.json(mappedTours);
         } catch (error) {
             res.status(500).json({
                 message: "Error al obtener tours",
@@ -23,7 +29,10 @@ const TourController = {
                     message: "Tour no encontrado"
                 });
             }
-            res.json(tour);
+            const tourData = tour.toJSON();
+            tourData.id = tourData.id_tours;
+            tourData.disponible = tourData.estado;
+            res.json(tourData);
         } catch (error) {
             res.status(500).json({
                 message: "Error al buscar tour",

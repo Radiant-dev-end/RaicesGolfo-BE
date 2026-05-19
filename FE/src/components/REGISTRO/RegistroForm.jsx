@@ -113,6 +113,11 @@ const RegistroForm = () => {
                     </Link>
                 </p>
                 <p>
+                    <Link to="/olvide-contrasena" aria-label="Recuperar contraseña">
+                        Olvidé mi contraseña
+                    </Link>
+                </p>
+                <p>
                     <Link to="/" aria-label="Volver al inicio">
                         ← Volver al Inicio
                     </Link>

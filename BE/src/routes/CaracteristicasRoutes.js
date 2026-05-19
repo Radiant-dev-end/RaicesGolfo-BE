@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const CaracteristicasController = require("../controllers/CaracteristicasController");
+const CaracteristicaController = require("../controllers/CaracteristicasController");
 
-// Obtener todas las características
-router.get("/obtener", CaracteristicasController.getAll);
+// Obtener todas las caracteristicas
+router.get("/", CaracteristicaController.getAll);
 
-// Obtener característica por ID
-router.get("/obtener/:id", CaracteristicasController.getById);
+// Obtener caracteristica por ID
+router.get("/:id", CaracteristicaController.getById);
 
-// Crear característica
-router.post("/crear", CaracteristicasController.create);
+// Crear caracteristica
+router.post("/", CaracteristicaController.create);
 
-// Actualizar característica
-router.put("/editar/:id", CaracteristicasController.update);
+// Actualizar caracteristica
+router.put("/:id", CaracteristicaController.update);
 
-// Eliminar característica
-router.delete("/eliminar/:id", CaracteristicasController.delete);
+// Eliminar caracteristica
+router.delete("/:id", CaracteristicaController.delete);
 
 module.exports = router;

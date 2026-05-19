@@ -22,10 +22,14 @@ function NavbarCliente() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+ const handleLogout = () => {
+
+  localStorage.removeItem('token');
+
+  localStorage.removeItem('user');
+
+  navigate('/login');
+};
 
   return (
     <nav className="navbar-cliente">
