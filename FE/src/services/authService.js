@@ -2,10 +2,9 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
-// Registro local contra json-server.
-// Todo usuario nuevo se almacena con rol "cliente" por defecto.
-export const registerUserLocal = async user => {
-  const userWithRole = { ...user, role: 'cliente' };
+// Registro contra el backend real.
+export const registerUser = async user => {
+  const userWithRole = { ...user, role: user.role || 'cliente' };
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -14,39 +13,39 @@ export const registerUserLocal = async user => {
     body: JSON.stringify(userWithRole),
   });
 
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error en el registro');
+  }
+
   return response.json();
 };
 
-export const registerUser = registerUserLocal;
-
-// Login basico por email y password.
-// Primero intenta filtrar por query y, si falla, revisa manualmente toda la coleccion.
+// Login contra el backend real.
 export const loginUser = async (email, password) => {
-  const cleanEmail = email.trim();
-  const cleanPassword = password.trim();
-
-  console.log(`Intentando login para: ${cleanEmail}`);
-
   try {
-    const response = await fetch(`${API_URL}?email=${cleanEmail}&password=${cleanPassword}`);
-    const users = await response.json();
+    const response = await fetch(`${API_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-    if (users && users.length > 0) {
-      console.log('Usuario encontrado:', users[0].email);
-      return users[0];
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Credenciales inválidas');
     }
 
-    // Fallback manual para evitar depender por completo del filtrado de json-server.
-    console.log('No encontrado via query, intentando filtrado manual...');
-    const allResponse = await fetch(API_URL);
-    const allUsers = await allResponse.json();
-    const foundUser = (allUsers || []).find(
-      u =>
-        u.email.toLowerCase().trim() === cleanEmail.toLowerCase() &&
-        u.password.toString().trim() === cleanPassword.toString()
-    );
+    const data = await response.json();
 
-    return foundUser || null;
+    // Guardar token en localStorage si el backend lo envía
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.usuario));
+    }
+
+    return data.usuario;
   } catch (error) {
     console.error('Error en loginUser:', error);
     throw error;

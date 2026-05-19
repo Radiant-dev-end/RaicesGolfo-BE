@@ -45,7 +45,7 @@ const HabitacionController = {
                 disponible,
                 imagen,
                 status,
-                features
+                features,
             } = req.body;
 
             // Mapping price for consistency with test sending 'precio'
@@ -89,7 +89,7 @@ const HabitacionController = {
                 precio_noche,
                 capacidad,
                 tipo,
-                disponible,
+                disponible: disponible !== undefined ? disponible : true,
                 imagen,
                 estado: status,
                 features

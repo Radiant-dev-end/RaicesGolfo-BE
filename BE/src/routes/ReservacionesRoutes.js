@@ -5,18 +5,18 @@ const { isAdmin, isHotel } = require("../middleware/auth");
 const ReservacionesController = require("../controllers/ReservacionesController");
 
 // Obtener todas las reservaciones
-router.get("/obtener", ReservacionesController.getAll);
+router.get("/", ReservacionesController.getAll);
 
 // Obtener reservación por ID
-router.get("/obtener/:id", ReservacionesController.getById);
+router.get("/:id", ReservacionesController.getById);
 
 // Crear reservación
-router.post("/crear", ReservacionesController.create);
+router.post("/", ReservacionesController.create);
 
 // Actualizar reservación
-router.put("/editar/:id", ReservacionesController.update);
+router.put("/:id", ReservacionesController.update);
 
 // Eliminar reservación
-router.delete("/eliminar/:id", ReservacionesController.delete);
+router.delete("/:id", ReservacionesController.delete);
 
 module.exports = router;

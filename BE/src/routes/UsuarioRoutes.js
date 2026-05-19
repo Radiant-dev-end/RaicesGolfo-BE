@@ -3,11 +3,22 @@ const router = express.Router();
 const UsuarioController = require("../controllers/UsuarioController");
 const { isAdmin } = require("../middleware/auth");
 
-// Rutas de Administrador para gestión de usuarios
-router.get("/obtener", isAdmin, UsuarioController.getAll);
-router.get("/obtener/:id", isAdmin, UsuarioController.getById);
-router.post("/crear", isAdmin, UsuarioController.create);
-router.put("/editar/:id", isAdmin, UsuarioController.update);
-router.delete("/eliminar/:id", isAdmin, UsuarioController.delete);
+// Login
+router.post("/login", UsuarioController.login);
+
+// Obtener todos los usuarios
+router.get("/", UsuarioController.getAll);
+
+// Obtener usuario por ID
+router.get("/:id", UsuarioController.getById);
+
+// Crear usuario (Registro)
+router.post("/", UsuarioController.create);
+
+// Actualizar usuario
+router.put("/:id", UsuarioController.update);
+
+// Eliminar usuario
+router.delete("/:id", UsuarioController.delete);
 
 module.exports = router;

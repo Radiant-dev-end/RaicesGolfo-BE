@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import './Notificaciones.css';
 import ReplyModal from './ReplyModal';
+import { ENDPOINTS } from '../../../config/api';
 
 function Notificaciones({ onTabChange }) {
   const [notifications, setNotifications] = useState([]);
@@ -12,16 +13,21 @@ function Notificaciones({ onTabChange }) {
   const fetchNotifications = async () => {
     try {
       const [resTours, resRooms, resContacts] = await Promise.all([
-        fetch('http://localhost:3007/reservations?status=Pendiente').then(r => r.json()),
-        fetch('http://localhost:3007/room_reservations?status=Pendiente').then(r => r.json()),
-        fetch('http://localhost:3007/formularioContacto').then(r => r.json())
+        fetch(ENDPOINTS.RESERVAS_TOURS).then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch(ENDPOINTS.RESERVAS_HABITACIONES).then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch('http://localhost:3007/formularioContacto').then(r => r.ok ? r.json() : []).catch(() => [])
       ]);
 
+      // Filtrar pendientes y formatear
+      const pendingTours = Array.isArray(resTours) ? resTours.filter(r => r.estado === 'Pendiente' || r.status === 'Pendiente') : [];
+      const pendingRooms = Array.isArray(resRooms) ? resRooms.filter(r => r.estado === 'Pendiente' || r.status === 'Pendiente') : [];
+      const pendingContacts = Array.isArray(resContacts) ? resContacts.filter(r => !r.respuestaAdmin) : [];
+
       const allNotifications = [
-        ...resTours.map(r => ({ ...r, type: 'tour', label: `Nueva reserva: ${r.tourName}` })),
-        ...resRooms.map(r => ({ ...r, type: 'room', label: `Nueva habitación: ${r.roomName}` })),
-        ...resContacts.map(r => ({ ...r, type: 'contact', label: `Nuevo mensaje de: ${r.nombre || 'Contacto'}` }))
-      ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        ...pendingTours.map(r => ({ ...r, type: 'tour', label: `Nueva reserva: Tour #${r.id_tours || r.id}` })),
+        ...pendingRooms.map(r => ({ ...r, type: 'room', label: `Nueva habitación: Habitación #${r.id_habitaciones || r.id}` })),
+        ...pendingContacts.map(r => ({ ...r, type: 'contact', label: `Nuevo mensaje de: ${r.nombre || 'Contacto'}` }))
+      ].sort((a, b) => new Date(b.createdAt || b.fecha_reserva || 0) - new Date(a.createdAt || a.fecha_reserva || 0));
 
       setNotifications(allNotifications);
     } catch (error) {

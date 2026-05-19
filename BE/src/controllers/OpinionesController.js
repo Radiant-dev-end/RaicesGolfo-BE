@@ -68,7 +68,7 @@ const OpinionController = {
 
             const nuevaOpinion = await Opinion.create({
                 nombre,
-                imagen,
+                imagen: imagen || "",
                 calificacion,
                 comentario,
                 experiencia

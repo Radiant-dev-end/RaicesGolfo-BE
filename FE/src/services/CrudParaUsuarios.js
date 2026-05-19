@@ -30,7 +30,7 @@ export const updateUserRole = async (id, currentRole) => {
     try {
         const newRole = currentRole === 'admin' ? 'cliente' : 'admin';
         const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -47,7 +47,7 @@ export const updateUserRole = async (id, currentRole) => {
 export const updateUserProfile = async (id, userData) => {
     try {
         const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
