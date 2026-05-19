@@ -5,7 +5,12 @@ const OpinionController = {
     getAll: async (req, res) => {
         try {
             const opiniones = await Opinion.findAll();
-            res.json(opiniones);
+            const mappedOpiniones = opiniones.map(o => {
+                const opData = o.toJSON();
+                opData.id = opData.id_opiniones;
+                return opData;
+            });
+            res.json(mappedOpiniones);
         } catch (error) {
             res.status(500).json({
                 message: "Error al obtener opiniones",
@@ -23,7 +28,9 @@ const OpinionController = {
                     message: "Opinión no encontrada"
                 });
             }
-            res.json(opinion);
+            const opData = opinion.toJSON();
+            opData.id = opData.id_opiniones;
+            res.json(opData);
         } catch (error) {
             res.status(500).json({
                 message: "Error al buscar opinión",

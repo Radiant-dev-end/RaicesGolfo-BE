@@ -9,7 +9,7 @@ const startServer = async () => {
         console.log('Conexión a la base de datos validada exitosamente.');
 
         // Sincronizar modelos si es necesario
-        // await sequelize.sync({ alter: true });
+        await sequelize.sync({ alter: true });
 
         app.listen(PORT, () => {
             console.log(`Servidor de API corriendo en el puerto ${PORT}`);

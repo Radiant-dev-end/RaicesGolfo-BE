@@ -10,6 +10,7 @@ import { getRoomReservasByUser, createRoomReserva, getAllRoomReservas } from '..
 
 import { updateUserProfile } from '../../services/CrudParaUsuarios';
 import { getHabitaciones } from '../../services/CrudHabitaciones';
+import { ENDPOINTS } from '../../config/api';
 import './ClientePag.css';
 
 // Importar imágenes de tours para el catálogo
@@ -129,7 +130,7 @@ function ClientePag() {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
     if (storedUser.id) {
       try {
-        const res = await fetch(`http://localhost:3007/formularioContacto?userId=${storedUser.id}`);
+        const res = await fetch(`${ENDPOINTS.CONTACTOS}?userId=${storedUser.id}`);
         const data = await res.json();
         setUserMessages(data.reverse());
       } catch (error) {
@@ -170,7 +171,7 @@ function ClientePag() {
         status: 'Pendiente'
       };
 
-      await fetch('http://localhost:3007/formularioContacto', {
+      await fetch(ENDPOINTS.CONTACTOS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(messageData)
@@ -809,22 +810,46 @@ function ClientePag() {
 
         const handleStartEditing = () => {
           setEditedUser({
-            name: userName,
-            photo: currentUser.photo || ''
+            name: userName || currentUser.nombre || '',
+            photo: currentUser.foto || currentUser.photo || ''
           });
           setIsEditing(true);
         };
 
+        const handlePhotoUpload = (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setEditedUser({ ...editedUser, photo: reader.result });
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+
         const handleSaveProfile = async () => {
           try {
-            const updated = await updateUserProfile(currentUser.id, editedUser);
+            // Manejar caso donde el localStorage pueda estar corrupto por una actualización previa
+            const userId = currentUser?.id_usuarios || currentUser?.id || currentUser?.usuario?.id_usuarios || currentUser?.usuario?.id;
+            
+            if (!userId) {
+                throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
+            }
+
+            const response = await updateUserProfile(userId, editedUser);
+            const updatedUser = response.usuario || response; // Extraer el usuario de la respuesta
             
             // Actualizar localStorage
-            const newUser = { ...currentUser, ...updated };
+            const newUser = { ...currentUser, ...updatedUser };
+            
+            // Limpiar datos anidados si existían por error previo
+            if (newUser.usuario) delete newUser.usuario;
+            if (newUser.message) delete newUser.message;
+            
             localStorage.setItem('user', JSON.stringify(newUser));
             
             // Actualizar estados locales
-            setUserName(updated.name || userName);
+            setUserName(updatedUser.nombre || updatedUser.name || userName);
             setIsEditing(false);
             Swal.fire({
               icon: 'success',
@@ -856,8 +881,26 @@ function ClientePag() {
                         (editedUser.name || '').substring(0, 2).toUpperCase()
                       )}
                     </div>
-                    <div className="input-group-modern">
-                      <label>URL de Foto de Perfil:</label>
+                    <div className="input-group-modern file-upload-group">
+                      <label>Cambiar Foto de Perfil:</label>
+                      
+                      <div className="custom-file-upload">
+                        <label htmlFor="file-upload" className="btn-outline-modern">
+                          <span>📷 Seleccionar Archivo</span>
+                        </label>
+                        <input 
+                          id="file-upload"
+                          type="file" 
+                          accept="image/*"
+                          onChange={handlePhotoUpload}
+                          style={{ display: 'none' }}
+                        />
+                      </div>
+
+                      <div className="divider-text">
+                        <span>O usa un URL:</span>
+                      </div>
+                      
                       <input 
                         type="text" 
                         value={editedUser.photo} 
@@ -870,8 +913,8 @@ function ClientePag() {
                 ) : (
                   <>
                     <div className="avatar-large">
-                      {currentUser.photo && currentUser.photo.trim() !== '' ? (
-                        <img src={currentUser.photo} alt="Profile" className="avatar-img" />
+                      {currentUser.foto || currentUser.photo ? (
+                        <img src={currentUser.foto || currentUser.photo} alt="Profile" className="avatar-img" />
                       ) : (
                         (userName || '').substring(0, 2).toUpperCase()
                       )}

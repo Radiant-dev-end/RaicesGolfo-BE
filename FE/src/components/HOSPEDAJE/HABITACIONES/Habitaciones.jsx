@@ -9,10 +9,10 @@ import chiraVistaImg from '../../VIDEOS Y IMG/img-1019-2.jpg';
 import chiraRefugioImg from '../../VIDEOS Y IMG/img-0984-2.jpg';
 
 const FILTROS_AMENIDADES = [
-  "Cama Queen", "Iluminacion Solar", "Terraza Privada", "Cama King", 
-  "Frente al Mar", "Cocina de lena", "Balcon con vista", "Balcon", 
-  "Vistas al mar", "TV por cable", "Ventilacion Natural", "Hamacas Privadas", 
-  "Decoracion Tematica", "Tour historico opcional", "Area de estar familiar", 
+  "Cama Queen", "Iluminacion Solar", "Terraza Privada", "Cama King",
+  "Frente al Mar", "Cocina de lena", "Balcon con vista", "Balcon",
+  "Vistas al mar", "TV por cable", "Ventilacion Natural", "Hamacas Privadas",
+  "Decoracion Tematica", "Tour historico opcional", "Area de estar familiar",
   "cama individual", "Ambiente de retiro"
 ];
 
@@ -207,25 +207,25 @@ function Habitaciones() {
 
     // 2. Filtrar por amenidades
     if (filtrosActivos.length === 0) return true;
-    
+
     // Unir amenidades y features (de la base de datos)
     const todasLasCaracteristicas = [
-        ...(hab.amenidades || []),
-        ...(hab.features ? JSON.parse(hab.features) : [])
+      ...(hab.amenidades || []),
+      ...(hab.features ? JSON.parse(hab.features) : [])
     ].map(normalizarTexto);
 
     // Debe contener TODAS las características seleccionadas en los filtros activos
     return filtrosActivos.every(filtro => {
-        const filtroNormalizado = normalizarTexto(filtro);
-        return todasLasCaracteristicas.some(c => c.includes(filtroNormalizado));
+      const filtroNormalizado = normalizarTexto(filtro);
+      return todasLasCaracteristicas.some(c => c.includes(filtroNormalizado));
     });
   });
 
   const handleToggleFiltro = (filtro) => {
-    setFiltrosActivos(prev => 
-        prev.includes(filtro)
-            ? prev.filter(f => f !== filtro)
-            : [...prev, filtro]
+    setFiltrosActivos(prev =>
+      prev.includes(filtro)
+        ? prev.filter(f => f !== filtro)
+        : [...prev, filtro]
     );
   };
 
@@ -248,34 +248,34 @@ function Habitaciones() {
     <>
       <div className="filtros-wrapper">
         <div className="search-habitacion-container">
-            <i className="icon-search-hab">🔍</i>
-            <input 
-                type="text" 
-                placeholder="Buscar habitación por nombre..."
-                className="search-habitacion-input"
-                value={searchNombre}
-                onChange={(e) => setSearchNombre(e.target.value)}
-            />
+          <i className="icon-search-hab">🔍</i>
+          <input
+            type="text"
+            placeholder="Buscar habitación por nombre..."
+            className="search-habitacion-input"
+            value={searchNombre}
+            onChange={(e) => setSearchNombre(e.target.value)}
+          />
         </div>
 
         <div className="filtros-header">
-            <h3>Filtrar por Características:</h3>
-            {filtrosActivos.length > 0 && (
-                <button className="btn-limpiar-filtros" onClick={clearFiltros}>
-                    Limpiar ({filtrosActivos.length})
-                </button>
-            )}
+          <h3>Filtrar por Características:</h3>
+          {filtrosActivos.length > 0 && (
+            <button className="btn-limpiar-filtros" onClick={clearFiltros}>
+              Limpiar ({filtrosActivos.length})
+            </button>
+          )}
         </div>
         <div className="filtros-carousel">
-            {FILTROS_AMENIDADES.map((filtro, index) => (
-                <button 
-                    key={index}
-                    className={`filtro-pill ${filtrosActivos.includes(filtro) ? 'activo' : ''}`}
-                    onClick={() => handleToggleFiltro(filtro)}
-                >
-                    {filtro}
-                </button>
-            ))}
+          {FILTROS_AMENIDADES.map((filtro, index) => (
+            <button
+              key={index}
+              className={`filtro-pill ${filtrosActivos.includes(filtro) ? 'activo' : ''}`}
+              onClick={() => handleToggleFiltro(filtro)}
+            >
+              {filtro}
+            </button>
+          ))}
         </div>
       </div>
 
