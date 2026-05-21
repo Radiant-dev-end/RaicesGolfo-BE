@@ -21,7 +21,7 @@ const RecommendationController = require('../controllers/RecommendationControlle
  *         name: preference
  *         schema:
  *           type: string
- *           enum: [barato, aventura, cultura, relajacion, corto]
+ *           enum: [economico, aventura, cultura, relajacion, corto]
  *         description: Tu preferencia principal para la recomendación
  *       - in: query
  *         name: maxPrice

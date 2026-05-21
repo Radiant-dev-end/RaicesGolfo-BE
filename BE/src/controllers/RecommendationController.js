@@ -19,7 +19,7 @@ const RecommendationController = {
             if (preference) {
                 const pref = preference.toLowerCase();
                 
-                if (pref === 'barato') {
+                if (pref === 'economico') {
                     // Tours menores a 50 (ajustable según el mercado del negocio)
                     whereClause.precio = { [Op.lt]: 50 };
                 } 

@@ -20,6 +20,7 @@ export const ENDPOINTS = {
     SETTINGS: `${API_BASE_URL}/settings`,
     GASTRONOMIA: `${API_BASE_URL}/gastronomia`,
     TRANSPORTE: `${API_BASE_URL}/transporte`,
+    RECOMMENDATIONS: `${API_BASE_URL}/recommendations`,
 };
 
 export default API_BASE_URL;

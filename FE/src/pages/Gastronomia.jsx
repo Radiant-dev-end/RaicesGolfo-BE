@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import GastroNavbar from '../components/GASTRONOMIA/NAVBAR/GastroNavbar';
+import RecomendadorGastronomia from '../components/RECOMENDACIONES/Gastronomia/RecomendadorGastronomia';
 import GastronomiaPosada from '../components/GASTRONOMIA/CONTENEDORES/GastronomiaPosada';
 import GastronomiaIsla from '../components/GASTRONOMIA/CONTENEDORES/GastronomiaIsla';
 import Footer from '../components/INICIO/FOOTER/Footer';
@@ -21,6 +22,7 @@ function Gastronomia() {
           Given there is no hero requested, we can use padding-top on the first section to prevent overlap.
           The GastronomiaSection class already has padding: 100px 0; which clears the 80px navbar! */}
 
+      <RecomendadorGastronomia />
       <GastronomiaPosada />
       <GastronomiaIsla />
       <Footer />

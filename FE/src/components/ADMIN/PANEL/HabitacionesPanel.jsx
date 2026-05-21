@@ -154,17 +154,42 @@ const HabitacionesPanel = () => {
                     <h1>Gestión de Habitaciones</h1>
                     <p>Añada, edite o elimine habitaciones del inventario.</p>
                 </div>
-                <div className="search-container">
-                    <i className="icon-search">🔍</i>
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o tipo..."
-                        className="search-input"
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                    />
-                    <button className="btn-nueva-hab" style={{ marginLeft: '1rem', padding: '0.5rem 1rem', background: '#0d9488', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }} onClick={abrirNueva}>
-                        ＋ Nueva
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+                    <div className="search-container" style={{ flex: 1 }}>
+                        <i className="icon-search">🔍</i>
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre o tipo..."
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        className="btn-nueva-hab"
+                        onClick={abrirNueva}
+                        title="Nueva Habitación"
+                        style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '50%',
+                            background: '#0d9488',
+                            color: 'white',
+                            border: 'none',
+                            fontSize: '1.5rem',
+                            lineHeight: '1',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'background 0.3s ease, transform 0.2s ease',
+                            boxShadow: '0 2px 6px rgba(13,148,136,0.3)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#0f766e'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#0d9488'; e.currentTarget.style.transform = 'scale(1)'; }}
+                    >
+                        +
                     </button>
                 </div>
             </header>
