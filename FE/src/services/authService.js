@@ -1,4 +1,4 @@
-import { ENDPOINTS } from '../config/api';
+import { ENDPOINTS, API_BASE_URL } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
@@ -27,7 +27,7 @@ export const registerUser = async user => {
 export const loginUser = async (email, password) => {
 
   const response = await fetch(
-    'http://localhost:3000/api/auth/login',
+    `${API_BASE_URL}/auth/login`,
     {
       method: 'POST',
       headers: {
@@ -49,11 +49,19 @@ export const loginUser = async (email, password) => {
   // guardar token
   localStorage.setItem('token', data.token);
 
+  // Estandarizar el objeto usuario para que funcione con el resto del FE
+  const userToStore = {
+    ...data.usuario,
+    id: data.usuario.id_usuarios || data.usuario.id,
+    name: data.usuario.nombre || data.usuario.name,
+    photo: data.usuario.foto || data.usuario.photo
+  };
+
   // guardar usuario
   localStorage.setItem(
     'user',
-    JSON.stringify(data.usuario)
+    JSON.stringify(userToStore)
   );
 
-  return data.usuario;
+  return userToStore;
 };

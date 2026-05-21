@@ -15,6 +15,7 @@ router.post("/", ReservacionesdehabitacionesController.create);
 
 // Actualizar reservación
 router.put("/:id", ReservacionesdehabitacionesController.update);
+router.patch("/:id", ReservacionesdehabitacionesController.update);
 
 // Eliminar reservación
 router.delete("/:id", ReservacionesdehabitacionesController.delete);

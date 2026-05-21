@@ -56,7 +56,7 @@ function ReservasPanel() {
           await updateReserva(id, updatedData);
         }
 
-        setReservas(reservas.map(r => r.id === id ? updatedData : r));
+        fetchReservas();
         Swal.fire({
           icon: 'success',
           title: '¡Actualizado!',
@@ -94,7 +94,7 @@ function ReservasPanel() {
           await deleteReserva(id);
         }
 
-        setReservas(reservas.filter(r => r.id !== id));
+        fetchReservas();
         Swal.fire({
           icon: 'success',
           title: 'Eliminado',
