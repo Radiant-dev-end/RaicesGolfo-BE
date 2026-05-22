@@ -2,105 +2,165 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
-/**
- * authService - Fase 3: Optimización
- * Unificado para usar únicamente el sistema de recuperación por código.
- */
+// ─────────────────────────────────────────────
+// REGISTRO
+// ─────────────────────────────────────────────
 
-// Registro de usuario
-export const registerUser = async user => {
-  const userWithRole = { ...user, role: user.role || 'cliente' };
-  const response = await fetch(`${API_URL}/crear`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userWithRole),
-  });
+export const registerUser = async (user) => {
+try {
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Error en el registro');
-  }
+const response = await fetch(`${API_URL}/crear`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    ...user,
+    role: user.role || 'cliente',
+  }),
+});
 
-  return response.json();
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'Error al registrar usuario');
+}
+
+return data;
+
+} catch (error) {
+console.error('REGISTER ERROR:', error);
+throw error;
+}
 };
 
-// Login de usuario
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
+
 export const loginUser = async (email, password) => {
-  const response = await fetch(`${API_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
+try {
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Credenciales inválidas');
-  }
+const response = await fetch(`${API_URL}/login`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email, password }),
+});
 
-  const data = await response.json();
+const data = await response.json();
 
-  if (data.token) {
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.usuario));
-  }
+if (!response.ok) {
+  throw new Error(data.message || 'Credenciales inválidas');
+}
 
-  return data.usuario;
+if (data.token) {
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('user', JSON.stringify(data.usuario));
+}
+
+return data;
+
+} catch (error) {
+console.error('LOGIN ERROR:', error);
+throw error;
+}
 };
 
-// ── FLUJO DE RECUPERACIÓN DE CONTRASEÑA (SISTEMA DE CÓDIGOS) ──
+// ─────────────────────────────────────────────
+// PASO 1 — ENVIAR CÓDIGO
+// ─────────────────────────────────────────────
 
-/**
- * Paso 1: Enviar código de 6 dígitos
- */
 export const sendRecoveryCode = async (email) => {
-  const response = await fetch(`${API_URL}/send-recovery-code`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email }),
-  });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'No se pudo enviar el código');
-  }
+try {
+const response = await fetch(`${API_URL}/send-recovery-code`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email }),
+});
 
-  return response.json();
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'No se pudo enviar el código');
+}
+
+return data;
+
+} catch (error) {
+console.error('SEND RECOVERY CODE ERROR:', error);
+throw error;
+}
 };
 
-/**
- * Paso 2: Verificar validez del código
- */
+// ─────────────────────────────────────────────
+// PASO 2 — VALIDAR CÓDIGO
+// ─────────────────────────────────────────────
+
 export const verifyRecoveryCode = async (email, code) => {
-  const response = await fetch(`${API_URL}/verify-recovery-code`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, code }),
-  });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Código inválido o expirado');
-  }
+try {
+const response = await fetch(`${API_URL}/verify-recovery-code`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email, code }),
+});
 
-  return response.json();
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'Código inválido o expirado');
+}
+
+return data;
+
+} catch (error) {
+console.error('VERIFY CODE ERROR:', error);
+throw error;
+}
 };
 
-/**
- * Paso 3: Restablecer contraseña con el código
- */
-export const validateCodeAndResetPassword = async (email, code, password, confirmPassword) => {
-  const response = await fetch(`${API_URL}/validate-code-reset`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, code, password, confirmPassword }),
-  });
+// ─────────────────────────────────────────────
+// PASO 3 — CAMBIAR CONTRASEÑA
+// ─────────────────────────────────────────────
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Error al actualizar la contraseña');
-  }
+export const validateCodeAndResetPassword = async (
+email,
+code,
+password,
+confirmPassword
+) => {
 
-  return response.json();
+try {
+const response = await fetch(`${API_URL}/validate-code-reset`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email,
+    code,
+    password,
+    confirmPassword,
+  }),
+});
+
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'Error al actualizar contraseña');
+}
+
+return data;
+
+} catch (error) {
+console.error('RESET PASSWORD ERROR:', error);
+throw error;
+}
 };
-
-// Se eliminaron métodos obsoletos basados en tokens (forgotPassword, verifyResetToken, resetPassword)
