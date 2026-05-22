@@ -249,13 +249,13 @@ const HabitacionesPanel = () => {
                                 <option value="ocupada">Ocupada</option>
                                 <option value="mantenimiento">Mantenimiento</option>
                             </select>
-                            <input 
-                                type="text" 
-                                name="features" 
-                                value={form.features.join(', ')} 
-                                onChange={handleFeaturesChange} 
-                                placeholder="Características (WiFi, TV, AC...)" 
-                                style={{ padding: '0.5rem' }} 
+                            <input
+                                type="text"
+                                name="features"
+                                value={form.features.join(', ')}
+                                onChange={handleFeaturesChange}
+                                placeholder="Características (WiFi, TV, AC...)"
+                                style={{ padding: '0.5rem' }}
                             />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <input type="checkbox" name="disponible" checked={form.disponible} onChange={handleChange} id="disp" />
