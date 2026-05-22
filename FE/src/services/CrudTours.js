@@ -2,9 +2,12 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.TOURS;
 
-export const getTours = async () => {
+export const getTours = async (tipo = '') => {
     try {
-        const response = await fetch(API_URL);
+        let url = API_URL;
+        if (tipo) url += `?tipo=${tipo}`;
+        
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Error al obtener los tours');
         return await response.json();
     } catch (error) {

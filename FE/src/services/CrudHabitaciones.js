@@ -2,15 +2,27 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.HABITACIONES;
 
-// Servicio CRUD de habitaciones.
-// Se usa tanto en el panel de administracion como en vistas del cliente.
-export const getHabitaciones = async () => {
+export const getHabitaciones = async (tipo = '') => {
     try {
-        const response = await fetch(API_URL);
+        let url = API_URL;
+        if (tipo) url += `?tipo=${tipo}`;
+
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Error al obtener las habitaciones');
         return await response.json();
     } catch (error) {
         console.error("Error getHabitaciones:", error);
+        throw error;
+    }
+};
+
+export const getHabitacionById = async (id) => {
+    try {
+        const response = await fetch(`${API_URL}/${id}`);
+        if (!response.ok) throw new Error('Error al obtener la habitación');
+        return await response.json();
+    } catch (error) {
+        console.error("Error getHabitacionById:", error);
         throw error;
     }
 };

@@ -9,6 +9,7 @@ const Role = require('./Role');
 const Tour = require('./Tours');
 const Usuario = require('./Usuarios');
 const CompraTour = require('./CompraTours');
+const Gastronomia = require('./Gastronomia');
 
 // Role - Usuario
 Role.hasMany(Usuario, { foreignKey: 'id_roles' });
@@ -49,5 +50,6 @@ module.exports = {
     ReservacionHabitaciones,
     Role,
     Tour,
-    Usuario
+    Usuario,
+    Gastronomia
 };

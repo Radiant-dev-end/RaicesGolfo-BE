@@ -5,6 +5,7 @@ const { sequelize } = require('./models/index');
 const authenticateToken = require('./middlewares/authMiddleware');
 
 const caracteristicasRoutes = require('./routes/CaracteristicasRoutes');
+const gastronomiaRoutes = require('./routes/GastronomiaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const habitacionesRoutes = require('./routes/HabitacionesRoutes');
 const opinionesRoutes = require('./routes/OpinionesRoutes');
@@ -13,6 +14,7 @@ const reservacionesRoutes = require('./routes/ReservacionesRoutes');
 const rolRoutes = require('./routes/RoleRoutes');
 const toursRoutes = require('./routes/ToursRoutes');
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
+const recommendationRoutes = require('./routes/RecommendationRoutes');
 
 const app = express();
 
@@ -42,7 +44,7 @@ const options = {
             }
         ]
     },
-    apis: ["./routes/*.js"]
+   apis: ["./src/routes/*.js"]
 };
 const specs = swaggerJsdoc(options);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
@@ -61,5 +63,8 @@ app.use('/api/reservaciones', reservacionesRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+
+app.use('/api/gastronomia', gastronomiaRoutes);
 
 module.exports = app;

@@ -1,9 +1,11 @@
-export const API_URL = 'http://localhost:3000/api/usuarios';
+import { ENDPOINTS, API_BASE_URL } from '../config/api';
+
+const API_URL = ENDPOINTS.USERS;
 
 // Registro contra el backend real.
 export const registerUser = async user => {
   const userWithRole = { ...user, role: user.role || 'cliente' };
-  const response = await fetch(API_URL, {
+  const response = await fetch(`${API_URL}/crear`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -19,33 +21,47 @@ export const registerUser = async user => {
   return response.json();
 };
 
-// Login contra el backend real.
+// Login basico por email y password.
+// Primero intenta filtrar por query y, si falla, revisa manualmente toda la coleccion.
+
 export const loginUser = async (email, password) => {
-  try {
-    const response = await fetch(`${API_URL}/login`, {
+
+  const response = await fetch(
+    `${API_BASE_URL}/auth/login`,
+    {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Credenciales inválidas');
+      body: JSON.stringify({
+        email,
+        password,
+      }),
     }
+  );
 
-    const data = await response.json();
+  const data = await response.json();
 
-    // Guardar token en localStorage si el backend lo envía
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.usuario));
-    }
-
-    return data.usuario;
-  } catch (error) {
-    console.error('Error en loginUser:', error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(data.message);
   }
+
+  // guardar token
+  localStorage.setItem('token', data.token);
+
+  // Estandarizar el objeto usuario para que funcione con el resto del FE
+  const userToStore = {
+    ...data.usuario,
+    id: data.usuario.id_usuarios || data.usuario.id,
+    name: data.usuario.nombre || data.usuario.name,
+    photo: data.usuario.foto || data.usuario.photo
+  };
+
+  // guardar usuario
+  localStorage.setItem(
+    'user',
+    JSON.stringify(userToStore)
+  );
+
+  return userToStore;
 };

@@ -139,7 +139,14 @@ function Opiniones() {
                   {index === currentIndex && (
                     <>
                       <div className="review-img-box">
-                        <img src={review.imagen} alt={review.nombre} />
+                        <img 
+                          src={review.imagen && (review.imagen.startsWith('http') || review.imagen.startsWith('data:')) ? review.imagen : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.nombre)}&background=1a4d2e&color=fff&size=150`} 
+                          alt={review.nombre}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.nombre)}&background=1a4d2e&color=fff&size=150`;
+                          }}
+                        />
                       </div>
                       <div className="review-content">
                         <div className="review-stars">{renderStars(review.calificacion)}</div>

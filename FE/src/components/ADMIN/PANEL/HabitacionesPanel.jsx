@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import {
     getHabitaciones,
@@ -6,7 +6,9 @@ import {
     updateHabitacion,
     deleteHabitacion,
 } from '../../../services/CrudHabitaciones';
-import './AdminPanel.css'; // Reutilizamos estilos generales de tabla
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
+import './AdminPanel.css'; 
 
 const TIPO_OPCIONES = ['Estándar', 'Deluxe', 'Suite', 'Cabaña', 'Familiar'];
 
@@ -23,31 +25,22 @@ const FORM_INICIAL = {
 };
 
 const HabitacionesPanel = () => {
-    const [habitaciones, setHabitaciones] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { 
+        data: habitaciones, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: cargarHabitaciones
+    } = usePagination(() => getHabitaciones(), 3); // LIMIT: 3 rooms per page
+
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Modal state
     const [modalOpen, setModalOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState(FORM_INICIAL);
-    const [, setFormError] = useState('');
-    const [, setSaving] = useState(false);
-
-    const cargarHabitaciones = async () => {
-        try {
-            setLoading(true);
-            const data = await getHabitaciones();
-            setHabitaciones(data);
-        } catch {
-            setError('No se pudieron cargar las habitaciones.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { cargarHabitaciones(); }, []);
+    const [formError, setFormError] = useState('');
+    const [saving, setSaving] = useState(false);
 
     const filtradas = habitaciones.filter(h =>
         (h.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,12 +110,12 @@ const HabitacionesPanel = () => {
             };
 
             if (editingId) {
-                const updated = await updateHabitacion(editingId, { ...payload, id: editingId });
-                setHabitaciones(prev => prev.map(h => h.id === editingId ? updated : h));
+                await updateHabitacion(editingId, { ...payload, id: editingId });
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Actualizada!', text: 'La habitación fue actualizada correctamente.', confirmButtonColor: '#0d9488' });
             } else {
-                const created = await createHabitacion(payload);
-                setHabitaciones(prev => [...prev, created]);
+                await createHabitacion(payload);
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Creada!', text: 'La habitación fue registrada correctamente.', confirmButtonColor: '#0d9488' });
             }
             cerrarModal();
@@ -148,7 +141,7 @@ const HabitacionesPanel = () => {
         if (result.isConfirmed) {
             try {
                 await deleteHabitacion(id);
-                setHabitaciones(prev => prev.filter(h => h.id !== id));
+                cargarHabitaciones(); // Recargar desde el hook
                 Swal.fire({ icon: 'success', title: '¡Eliminada!', text: 'La habitación fue eliminada.', confirmButtonColor: '#0d9488' });
             } catch {
                 Swal.fire('Error', 'Hubo un error al eliminar la habitación.', 'error');
@@ -166,17 +159,42 @@ const HabitacionesPanel = () => {
                     <h1>Gestión de Habitaciones</h1>
                     <p>Añada, edite o elimine habitaciones del inventario.</p>
                 </div>
-                <div className="search-container">
-                    <i className="icon-search">🔍</i>
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o tipo..."
-                        className="search-input"
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                    />
-                    <button className="btn-nueva-hab" style={{ marginLeft: '1rem', padding: '0.5rem 1rem', background: '#0d9488', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }} onClick={abrirNueva}>
-                        ＋ Nueva
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+                    <div className="search-container" style={{ flex: 1 }}>
+                        <i className="icon-search">🔍</i>
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre o tipo..."
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        className="btn-nueva-hab"
+                        onClick={abrirNueva}
+                        title="Nueva Habitación"
+                        style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '50%',
+                            background: '#0d9488',
+                            color: 'white',
+                            border: 'none',
+                            fontSize: '1.5rem',
+                            lineHeight: '1',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'background 0.3s ease, transform 0.2s ease',
+                            boxShadow: '0 2px 6px rgba(13,148,136,0.3)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#0f766e'; e.currentTarget.style.transform = 'scale(1.1)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = '#0d9488'; e.currentTarget.style.transform = 'scale(1)'; }}
+                    >
+                        +
                     </button>
                 </div>
             </header>
@@ -230,21 +248,27 @@ const HabitacionesPanel = () => {
                 </table>
             </div>
 
-            {/* Modal Simplificado */}
+            <Pagination 
+                paginaActual={page} 
+                totalPaginas={totalPaginas} 
+                onPageChange={setPage} 
+            />
+
+            {/* Modal */}
             {modalOpen && (
-                <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div className="modal-content" style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '90%', maxWidth: '500px' }}>
-                        <h2>{editingId ? 'Editar' : 'Nueva'} Habitación</h2>
-                        <form onSubmit={handleGuardar} style={{ display: 'grid', gap: '1rem', marginTop: '1rem' }}>
-                            <input type="text" name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required style={{ padding: '0.5rem' }} />
-                            <select name="tipo" value={form.tipo} onChange={handleChange} style={{ padding: '0.5rem' }}>
+                <div className="admin-modal-overlay">
+                    <div className="admin-modal-box">
+                        <h2 className="admin-modal-title">{editingId ? 'Editar' : 'Nueva'} Habitación</h2>
+                        <form onSubmit={handleGuardar} className="admin-modal-form">
+                            <input type="text" name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required className="admin-form-field" />
+                            <select name="tipo" value={form.tipo} onChange={handleChange} className="admin-form-field">
                                 {TIPO_OPCIONES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
-                            <input type="number" name="precio" value={form.precio} onChange={handleChange} placeholder="Precio" required style={{ padding: '0.5rem' }} />
-                            <input type="number" name="capacidad" value={form.capacidad} onChange={handleChange} placeholder="Capacidad" required style={{ padding: '0.5rem' }} />
-                            <textarea name="descripcion" value={form.descripcion} onChange={handleChange} placeholder="Descripción" style={{ padding: '0.5rem' }} />
-                            <input type="url" name="imagen" value={form.imagen} onChange={handleChange} placeholder="URL Imagen" style={{ padding: '0.5rem' }} />
-                            <select name="status" value={form.status} onChange={handleChange} style={{ padding: '0.5rem' }}>
+                            <input type="number" name="precio" value={form.precio} onChange={handleChange} placeholder="Precio" required className="admin-form-field" />
+                            <input type="number" name="capacidad" value={form.capacidad} onChange={handleChange} placeholder="Capacidad" required className="admin-form-field" />
+                            <textarea name="descripcion" value={form.descripcion} onChange={handleChange} placeholder="Descripción" className="admin-form-field admin-form-textarea" />
+                            <input type="url" name="imagen" value={form.imagen} onChange={handleChange} placeholder="URL Imagen" className="admin-form-field" />
+                            <select name="status" value={form.status} onChange={handleChange} className="admin-form-field">
                                 <option value="disponible">Disponible</option>
                                 <option value="ocupada">Ocupada</option>
                                 <option value="mantenimiento">Mantenimiento</option>
@@ -255,15 +279,17 @@ const HabitacionesPanel = () => {
                                 value={form.features.join(', ')}
                                 onChange={handleFeaturesChange}
                                 placeholder="Características (WiFi, TV, AC...)"
-                                style={{ padding: '0.5rem' }}
+                                className="admin-form-field"
                             />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div className="admin-form-check-row">
                                 <input type="checkbox" name="disponible" checked={form.disponible} onChange={handleChange} id="disp" />
                                 <label htmlFor="disp">Mostrar en web</label>
                             </div>
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <button type="button" onClick={cerrarModal} style={{ padding: '0.5rem 1rem', background: '#ccc', border: 'none', borderRadius: '4px' }}>Cancelar</button>
-                                <button type="submit" style={{ padding: '0.5rem 1rem', background: '#0d9488', color: 'white', border: 'none', borderRadius: '4px' }}>Guardar</button>
+                            <div className="admin-modal-actions">
+                                <button type="button" onClick={cerrarModal} className="btn-modal-cancel">Cancelar</button>
+                                <button type="submit" disabled={saving} className="btn-modal-save">
+                                    {saving ? 'Guardando...' : 'Guardar'}
+                                </button>
                             </div>
                         </form>
                     </div>

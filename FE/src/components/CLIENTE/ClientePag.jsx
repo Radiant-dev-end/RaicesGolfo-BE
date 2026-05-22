@@ -128,9 +128,10 @@ function ClientePag() {
 
   const fetchUserMessages = async () => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (storedUser.id) {
+    const currentUserId = storedUser.id || storedUser.id_usuarios;
+    if (currentUserId) {
       try {
-        const res = await fetch(`${ENDPOINTS.CONTACTOS}?userId=${storedUser.id}`);
+        const res = await fetch(`${ENDPOINTS.CONTACTOS}?userId=${currentUserId}`);
         const data = await res.json();
         setUserMessages(data.reverse());
       } catch (error) {
@@ -162,12 +163,12 @@ function ClientePag() {
     setSendingMsg(true);
     try {
       const messageData = {
-        nombre: storedUser.name || 'Cliente',
+        nombre: storedUser.name || storedUser.nombre || 'Cliente',
         email: storedUser.email || 'No disponible',
         asunto: clientMessage.asunto || 'Consulta General',
         mensaje: clientMessage.mensaje,
         createdAt: new Date().toISOString(),
-        userId: storedUser.id,
+        userId: storedUser.id || storedUser.id_usuarios,
         status: 'Pendiente'
       };
 
@@ -227,11 +228,12 @@ function ClientePag() {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           const user = JSON.parse(storedUser);
-          if (user.name) setUserName(user.name);
-          if (user.id) {
+          if (user.name || user.nombre) setUserName(user.name || user.nombre);
+          const currentUserId = user.id || user.id_usuarios;
+          if (currentUserId) {
             const [resTours, resHab] = await Promise.all([
-              getReservasByUser(user.id),
-              getRoomReservasByUser(user.id)
+              getReservasByUser(currentUserId),
+              getRoomReservasByUser(currentUserId)
             ]);
             setReservas(resTours);
             setReservasHab(resHab);
@@ -300,8 +302,8 @@ function ClientePag() {
 
 
     const reservaData = {
-      userId: storedUser.id,
-      userName: storedUser.name || storedUser.email,
+      userId: storedUser.id || storedUser.id_usuarios,
+      userName: storedUser.name || storedUser.nombre || storedUser.email,
       tourName: newReserva.tour,
       date: newReserva.fecha,
       time: newReserva.horario,
@@ -366,8 +368,8 @@ function ClientePag() {
 
 
     const reservaData = {
-      userId: storedUser.id,
-      userName: storedUser.name || storedUser.email,
+      userId: storedUser.id || storedUser.id_usuarios,
+      userName: storedUser.name || storedUser.nombre || storedUser.email,
       roomId: newRoomReserva.roomId,
       roomName: newRoomReserva.roomName,
       checkIn: newRoomReserva.checkIn,

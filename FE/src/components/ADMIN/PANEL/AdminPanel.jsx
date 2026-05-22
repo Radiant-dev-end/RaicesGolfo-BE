@@ -4,6 +4,7 @@ import './AdminPanel.css';
 import NavbarAdmin from '../Navbar/NavbarAdmin';
 import UsuariosPanel from './UsuariosPanel';
 import HabitacionesPanel from './HabitacionesPanel';
+import GastronomiaPanel from './GastronomiaPanel';
 import ResevaTours from '../TOURS/ResevaTours';
 import ReservasPanel from './ReservasPanel';
 import ConfiguracionPanel from './ConfiguracionPanel';
@@ -25,12 +26,12 @@ function AdminPanel() {
         try {
             setLoadingStats(true);
             const [usersRes, resRes] = await Promise.all([
-                fetch(ENDPOINTS.USERS),
+                fetch(`${ENDPOINTS.USERS}/obtener`),
                 fetch(ENDPOINTS.RESERVATIONS)
             ]);
 
-            const users = await usersRes.json();
-            const reservations = await resRes.json();
+            const users = usersRes.ok ? await usersRes.json() : [];
+            const reservations = resRes.ok ? await resRes.json() : [];
 
             // Cálculos Reales
             const clientesCount = users.filter(u => u.role === 'cliente').length;
@@ -92,6 +93,8 @@ function AdminPanel() {
                 return <UsuariosPanel />;
             case 'rooms':
                 return <HabitacionesPanel />;
+            case 'gastronomia':
+                return <GastronomiaPanel />;
             case 'tours':
                 return <ResevaTours />;
             case 'orders':
@@ -139,6 +142,14 @@ function AdminPanel() {
                                 onClick={() => handleTabChange('rooms')}
                             >
                                 Habitaciones
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                className={`sidebar-btn ${activeTab === 'gastronomia' ? 'active' : ''}`}
+                                onClick={() => handleTabChange('gastronomia')}
+                            >
+                                Gastronomía
                             </button>
                         </li>
                         <li>

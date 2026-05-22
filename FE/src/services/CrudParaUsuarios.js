@@ -2,9 +2,14 @@ import { ENDPOINTS } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 export const getUsers = async () => {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}/obtener`);
         if (!response.ok) throw new Error('Error al obtener los usuarios');
         return await response.json();
     } catch (error) {
@@ -15,8 +20,11 @@ export const getUsers = async () => {
 
 export const deleteUser = async (id) => {
     try {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}/eliminar/${id}`, {
             method: 'DELETE',
+            headers: {
+                ...getAuthHeaders()
+            }
         });
         if (!response.ok) throw new Error('Error al eliminar el usuario');
         return await response.json();
@@ -29,10 +37,11 @@ export const deleteUser = async (id) => {
 export const updateUserRole = async (id, currentRole) => {
     try {
         const newRole = currentRole === 'admin' ? 'cliente' : 'admin';
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}/editar/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
             },
             body: JSON.stringify({ role: newRole })
         });
@@ -43,12 +52,14 @@ export const updateUserRole = async (id, currentRole) => {
         throw error;
     }
 };
+
 export const updateUserProfile = async (id, userData) => {
     try {
-        const response = await fetch(`${API_URL}/${id}`, {
+        const response = await fetch(`${API_URL}/editar/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...getAuthHeaders()
             },
             body: JSON.stringify(userData)
         });

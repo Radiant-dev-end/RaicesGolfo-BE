@@ -1,66 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Swal from 'sweetalert2';
 import { getAllReservas, updateReserva, deleteReserva } from '../../../services/CrudReservas';
 import { getAllRoomReservas, updateRoomReserva, deleteRoomReserva } from '../../../services/CrudReservasHabitaciones';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 import './ReservasPanel.css';
 
 function ReservasPanel() {
-  const [reservas, setReservas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    data: reservas, 
+    loading, 
+    page, 
+    setPage, 
+    totalPaginas,
+    refresh: fetchReservas
+  } = usePagination(async () => {
+    const [toursData, roomsData] = await Promise.all([
+      getAllReservas(),
+      getAllRoomReservas()
+    ]);
 
-  useEffect(() => {
-    fetchReservas();
-  }, []);
+    // Etiquetar cada reserva con su tipo para diferenciar en la UI
+    const tours = (toursData || []).map(r => ({ ...r, tipo: 'Tour', item: r.tourName }));
+    const rooms = (roomsData || []).map(r => ({ ...r, tipo: 'Habitación', item: r.roomName, date: `${r.checkIn} al ${r.checkOut}` }));
 
-  const fetchReservas = async () => {
-    try {
-      const [toursData, roomsData] = await Promise.all([
-        getAllReservas(),
-        getAllRoomReservas()
-      ]);
+    const allData = [...tours, ...rooms];
 
-      // Etiquetar y normalizar cada reserva para diferenciar en la UI y evitar valores nulos
-      const tours = toursData.map(r => {
-        const _id = r.id || r.id_reservaciones || r.id_reservacion;
-        return {
-          ...r,
-          id: _id,
-          uniqueKey: `tour-${_id}`,
-          userName: r.userName || r.nombre_usuario || 'Desconocido',
-          userId: r.userId || r.id_usuarios,
-          status: r.status || r.estado || 'Pendiente',
-          tipo: 'Tour',
-          item: r.tourName || r.nombre_habitacion || r.item || 'Tour',
-          date: r.date || r.fecha || 'N/A',
-        };
-      });
-      const rooms = roomsData.map(r => {
-        const _id = r.id || r.id_reservacion_habitacion || r.id_reservaciones;
-        return {
-          ...r,
-          id: _id,
-          uniqueKey: `room-${_id}`,
-          userName: r.userName || r.nombre_usuario || 'Desconocido',
-          userId: r.userId || r.id_usuarios,
-          status: r.status || r.estado || 'Pendiente',
-          tipo: 'Habitación',
-          item: r.roomName || r.nombre_habitacion || r.item || 'Habitación',
-          date: r.date || (r.checkIn ? `${r.checkIn} al ${r.checkOut}` : 'N/A'),
-        };
-      });
-
-      const allData = [...tours, ...rooms];
-
-      // Ordenar por fecha de creación (más recientes primero)
-      allData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-      setReservas(allData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error cargando todas las reservas", error);
-      setLoading(false);
-    }
-  };
+    // Ordenar por fecha de creación (más recientes primero)
+    allData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return allData;
+  }, 3); // LIMIT: 3 reservations per page
 
   const handleStatusUpdate = async (id, newStatus, tipo) => {
     const actionText = newStatus === 'Aprobada' ? 'aprobar' : 'denegar';
@@ -87,7 +56,7 @@ function ReservasPanel() {
           await updateReserva(id, updatedData);
         }
 
-        setReservas(reservas.map(r => r.id === id ? updatedData : r));
+        await fetchReservas();
         Swal.fire({
           icon: 'success',
           title: '¡Actualizado!',
@@ -125,7 +94,7 @@ function ReservasPanel() {
           await deleteReserva(id);
         }
 
-        setReservas(reservas.filter(r => r.id !== id));
+        await fetchReservas();
         Swal.fire({
           icon: 'success',
           title: 'Eliminado',
@@ -173,49 +142,51 @@ function ReservasPanel() {
                 </td>
               </tr>
             ) : (
-              reservas.map((res) => (
-                <tr key={res.uniqueKey}>
-                  <td>
-                    <div className="client-cell">
-                      <strong>{res.userName}</strong>
-                      <span className="user-id">ID: {res.userId}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`badge-tipo ${res.tipo === 'Tour' ? 'tour' : 'room'}`}>
-                      {res.tipo}
-                    </span>
-                  </td>
-                  <td>{res.item}</td>
-                  <td>{res.date}</td>
-                  <td>{res.time || 'N/A'}</td>
-                  <td>
-                    <span className={`status-badge ${res.status.toLowerCase()}`}>
-                      {res.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      {res.status === 'Pendiente' ? (
-                        <>
-                          <button
-                            className="btn-approve"
-                            onClick={() => handleStatusUpdate(res.id, 'Aprobada', res.tipo)}
-                            title="Aprobar"
-                          >
-                            ✓
-                          </button>
-                          <button
-                            className="btn-deny"
-                            onClick={() => handleStatusUpdate(res.id, 'Denegada', res.tipo)}
-                            title="Denegar"
-                          >
-                            ✕
-                          </button>
-                        </>
-                      ) : (
-                        <span className="action-complete">Procesada</span>
-                      )}
+              reservas.map((res) => {
+                const resStatus = res.status || 'Pendiente';
+                return (
+                  <tr key={`${res.tipo}-${res.id}`}>
+                    <td>
+                      <div className="client-cell">
+                        <strong>{res.userName}</strong>
+                        <span className="user-id">ID: {res.userId}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`badge-tipo ${res.tipo === 'Tour' ? 'tour' : 'room'}`}>
+                        {res.tipo}
+                      </span>
+                    </td>
+                    <td>{res.item}</td>
+                    <td>{res.date}</td>
+                    <td>{res.time || 'N/A'}</td>
+                    <td>
+                      <span className={`status-badge ${resStatus.toLowerCase()}`}>
+                        {resStatus}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        {resStatus === 'Pendiente' ? (
+                          <>
+                            <button
+                              className="btn-approve"
+                              onClick={() => handleStatusUpdate(res.id, 'Aprobada', res.tipo)}
+                              title="Aprobar"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              className="btn-deny"
+                              onClick={() => handleStatusUpdate(res.id, 'Denegada', res.tipo)}
+                              title="Denegar"
+                            >
+                              ✕
+                            </button>
+                          </>
+                        ) : (
+                          <span className="action-complete">Procesada</span>
+                        )}
                       <button
                         className="btn-delete-reserva"
                         onClick={() => handleDelete(res.id, res.tipo, res.item)}
@@ -226,11 +197,18 @@ function ReservasPanel() {
                     </div>
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
+
+      <Pagination 
+        paginaActual={page} 
+        totalPaginas={totalPaginas} 
+        onPageChange={setPage} 
+      />
     </div>
   );
 }

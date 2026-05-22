@@ -1,4 +1,5 @@
 import TourNavbar from '../components/TOURS/NAVBAR/TourNavbar';
+import RecomendadorTours from '../components/RECOMENDACIONES/Tours/RecomendadorTours';
 import ToursPosada from '../components/TOURS/CONTENEDORES/ToursPosada';
 import ToursIsla from '../components/TOURS/CONTENEDORES/ToursIsla';
 import Footer from '../components/INICIO/FOOTER/Footer';
@@ -9,6 +10,7 @@ function Tours() {
   return (
     <div>
       <TourNavbar />
+      <RecomendadorTours />
       <ToursPosada />
       <ToursIsla />
       <Footer />

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { sequelize, Habitacion, Tour, Opinion, Caracteristica } = require('./models/index.js');
+const { sequelize, Habitacion, Tour, Opinion, Caracteristica, Role, Usuario } = require('./models/index.js');
 
 async function migrate() {
     try {
@@ -16,6 +16,46 @@ async function migrate() {
         
         const rawData = fs.readFileSync(dataPath, 'utf8');
         const dbJson = JSON.parse(rawData);
+
+        // Migrate Roles
+        console.log('Migrando roles...');
+        const defaultRoles = [
+            { id_roles: 1, nombre: 'admin', fecha: new Date() },
+            { id_roles: 2, nombre: 'cliente', fecha: new Date() }
+        ];
+        for (const r of defaultRoles) {
+            const existingRole = await Role.findByPk(r.id_roles);
+            if (!existingRole) {
+                await Role.create(r);
+            }
+        }
+        console.log('Roles migrados.');
+
+        // Migrate Users
+        if (dbJson.users && dbJson.users.length > 0) {
+            console.log(`Migrating ${dbJson.users.length} usuarios...`);
+            const bcrypt = require('bcrypt');
+            for (const user of dbJson.users) {
+                const cleanEmail = user.email.trim().toLowerCase();
+                const existingUser = await Usuario.findOne({ where: { email: cleanEmail } });
+                if (!existingUser) {
+                    const passwordHash = await bcrypt.hash(user.password || '123456', 10);
+                    let id_roles = 2; // Default a cliente
+                    if (user.role) {
+                        const cleanRole = user.role.trim().toLowerCase();
+                        if (cleanRole === 'admin') id_roles = 1;
+                    }
+                    await Usuario.create({
+                        email: cleanEmail,
+                        password: passwordHash,
+                        id_roles: id_roles,
+                        nombre: user.name || 'Usuario',
+                        foto: user.photo || ''
+                    });
+                }
+            }
+            console.log('Usuarios migrados.');
+        }
 
         // Ensure at least one Caracteristica exists for Habitaciones
         let caracteristica = await Caracteristica.findOne();

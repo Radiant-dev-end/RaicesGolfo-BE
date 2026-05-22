@@ -1,41 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { getUsers, deleteUser, updateUserRole } from '../../../services/CrudParaUsuarios';
+import usePagination from '../../../hooks/usePagination';
+import Pagination from '../../common/Pagination';
 
 const UsuariosPanel = () => {
-    const [usuarios, setUsuarios] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [searchId, setSearchId] = useState('');
     const [searchRole, setSearchRole] = useState('');
+    const [error, setError] = useState('');
 
-    const cargarUsuarios = async () => {
-        try {
-            setLoading(true);
-            const data = await getUsers();
-            setUsuarios(data);
-        } catch (err) {
-            setError('No se pudieron cargar los usuarios.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { 
+        data: usuarios, 
+        loading, 
+        page, 
+        setPage, 
+        totalPaginas,
+        refresh: cargarUsuarios
+    } = usePagination(() => getUsers(), 3); // LIMIT: 3 users per page
 
-    useEffect(() => {
-        cargarUsuarios();
-    }, []);
-
-    // Filtrar usuarios por correo, ID y Rol
-    const usuariosFiltrados = usuarios.filter(user => {
-        const userId = user.id || user.id_usuarios;
+    // Filtrar usuarios por correo, ID y rol
+    const usuariosFiltrados = (usuarios || []).filter(user => {
+        const matchesEmail = (user.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const userId = String(user.id || user.id_usuarios || '');
+        const matchesId = searchId ? userId.includes(searchId) : true;
         const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
-        
-        const matchEmail = user.email ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : false;
-        const matchId = searchId ? (userId ? userId.toString() === searchId.toString() : false) : true;
-        const matchRole = searchRole ? (userRole && userRole.toLowerCase() === searchRole.toLowerCase()) : true;
-        
-        return matchEmail && matchId && matchRole;
+        const matchesRole = searchRole ? userRole === searchRole : true;
+        return matchesEmail && matchesId && matchesRole;
     });
 
     const handleEliminar = async (id) => {
@@ -53,7 +44,7 @@ const UsuariosPanel = () => {
         if (result.isConfirmed) {
             try {
                 await deleteUser(id);
-                setUsuarios(usuarios.filter(u => u.id !== id));
+                cargarUsuarios(); // Recargar datos del hook
                 Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success');
             } catch (err) {
                 Swal.fire('Error', 'Hubo un error al eliminar el usuario.', 'error');
@@ -75,8 +66,8 @@ const UsuariosPanel = () => {
 
         if (result.isConfirmed) {
             try {
-                const updatedUser = await updateUserRole(id, currentRole);
-                setUsuarios(usuarios.map(u => u.id === id ? updatedUser : u));
+                await updateUserRole(id, currentRole);
+                cargarUsuarios(); // Recargar datos del hook
                 Swal.fire('¡Actualizado!', 'El rol fue modificado exitosamente.', 'success');
             } catch (err) {
                 Swal.fire('Error', 'Hubo un error al actualizar el rol.', 'error');
@@ -183,6 +174,12 @@ const UsuariosPanel = () => {
                     </tbody>
                 </table>
             </div>
+
+            <Pagination 
+                paginaActual={page} 
+                totalPaginas={totalPaginas} 
+                onPageChange={setPage} 
+            />
         </div>
     );
 };
