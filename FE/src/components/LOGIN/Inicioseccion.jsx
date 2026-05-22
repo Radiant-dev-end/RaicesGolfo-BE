@@ -14,7 +14,7 @@ const Inicioseccion = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        
+
         if (!email || !password) {
             setError('Por favor, completa todos los campos.');
             return;
@@ -30,7 +30,7 @@ const Inicioseccion = () => {
         try {
             setLoading(true);
             setError('');
-            
+
             let user = await loginUser(email, password);
 
             if (user) {
@@ -38,13 +38,13 @@ const Inicioseccion = () => {
                 if (user.id_roles) {
                     user.role = user.id_roles === 1 ? 'admin' : 'cliente';
                 }
-                
+
                 // Asegurarse de que el usuario modificado se guarda
                 localStorage.setItem('user', JSON.stringify(user));
-                
+
                 // Normalizar el rol
                 const role = user.role ? user.role.toLowerCase().trim() : '';
-                
+
                 if (role === 'admin') {
                     navigate('/admin');
                 } else if (role === 'cliente' || role === 'user') {
@@ -67,13 +67,13 @@ const Inicioseccion = () => {
         <div className="auth-form-container">
             <h2>Bienvenido</h2>
             <p className="auth-subtitle">Inicia sesión en tu cuenta</p>
-            
+
             {error && (
                 <div className="error-message" role="alert">
                     <span>⚠️</span> {error}
                 </div>
             )}
-            
+
             <form onSubmit={handleLogin} noValidate>
                 <div className="input-group">
                     <label htmlFor="email">Correo electrónico</label>
@@ -89,7 +89,7 @@ const Inicioseccion = () => {
                         aria-label="Correo electrónico"
                     />
                 </div>
-                
+
                 <div className="input-group">
                     <label htmlFor="password">Contraseña</label>
                     <input
@@ -104,18 +104,23 @@ const Inicioseccion = () => {
                         aria-label="Contraseña"
                     />
                 </div>
-                
+
                 <button type="submit" disabled={loading}>
                     {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                 </button>
             </form>
-            
+
             <div className="auth-options">
                 <p>
                     ¿No tienes cuenta?{' '}
                     <Link to="/registro" aria-label="Ir a registro">
                         Regístrate aquí
                     </Link>
+                </p>
+                <Link to="/olvide-contrasena" aria-label="Recuperar contraseña">
+                    Olvidé mi contraseña
+                </Link>
+                <p>
                 </p>
                 <p>
                     <Link to="/" aria-label="Volver al inicio">

@@ -52,13 +52,13 @@ const CaracteristicaController = {
     create: async (req, res) => {
         try {
 
-            const { nombre, icono } = req.body;
+            const { nombre, icono, email, asunto, mensaje, userId, status, respuestaAdmin, respondidoAt } = req.body;
 
             // Validar campos obligatorios
-            if (!nombre || !icono) {
+            if (!nombre) {
 
                 return res.status(400).json({
-                    message: "Todos los campos son obligatorios"
+                    message: "El nombre es obligatorio"
                 });
 
             }
@@ -88,7 +88,14 @@ const CaracteristicaController = {
             // Crear característica
             const nuevaCaracteristica = await Caracteristica.create({
                 nombre,
-                icono
+                icono: icono || '',
+                email,
+                asunto,
+                mensaje,
+                userId,
+                status: status || 'Pendiente',
+                respuestaAdmin,
+                respondidoAt
             });
 
             res.status(201).json({
@@ -122,7 +129,7 @@ const CaracteristicaController = {
 
             }
 
-            const { nombre, icono } = req.body;
+            const { nombre, icono, email, asunto, mensaje, userId, status, respuestaAdmin, respondidoAt } = req.body;
 
             // Validar nombre
             if (nombre && nombre.length < 3) {
@@ -155,8 +162,15 @@ const CaracteristicaController = {
 
             // Actualizar característica
             await caracteristica.update({
-                nombre,
-                icono
+                nombre: nombre !== undefined ? nombre : caracteristica.nombre,
+                icono: icono !== undefined ? icono : caracteristica.icono,
+                email: email !== undefined ? email : caracteristica.email,
+                asunto: asunto !== undefined ? asunto : caracteristica.asunto,
+                mensaje: mensaje !== undefined ? mensaje : caracteristica.mensaje,
+                userId: userId !== undefined ? userId : caracteristica.userId,
+                status: status !== undefined ? status : caracteristica.status,
+                respuestaAdmin: respuestaAdmin !== undefined ? respuestaAdmin : caracteristica.respuestaAdmin,
+                respondidoAt: respondidoAt !== undefined ? respondidoAt : caracteristica.respondidoAt
             });
 
             res.json({

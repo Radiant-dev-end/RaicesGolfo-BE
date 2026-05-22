@@ -9,10 +9,15 @@ const Role = require('./Role');
 const Tour = require('./Tours');
 const Usuario = require('./Usuarios');
 const CompraTour = require('./CompraTours');
+const RecuperacionCodigo = require('./RecuperacionCodigo');
 
 // Role - Usuario
 Role.hasMany(Usuario, { foreignKey: 'id_roles' });
 Usuario.belongsTo(Role, { foreignKey: 'id_roles', as: 'role' });
+
+// Usuario - RecuperacionCodigo
+Usuario.hasMany(RecuperacionCodigo, { foreignKey: 'usuario_id' });
+RecuperacionCodigo.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
 // Usuario - CompraTour
 Usuario.hasMany(CompraTour, { foreignKey: 'id_usuarios' });
@@ -38,8 +43,6 @@ ReservacionHabitaciones.belongsTo(Reservacion, { foreignKey: 'id_reservaciones' 
 Habitacion.hasMany(ReservacionHabitaciones, { foreignKey: 'id_habitaciones' });
 ReservacionHabitaciones.belongsTo(Habitacion, { foreignKey: 'id_habitaciones' });
 
-// Removed invalid associations that reference non-existent columns id_usuarios in Tours and id_tours in Opiniones
-
 module.exports = {
     sequelize,
     Caracteristica,
@@ -49,5 +52,7 @@ module.exports = {
     ReservacionHabitaciones,
     Role,
     Tour,
-    Usuario
+    Usuario,
+    CompraTour,
+    RecuperacionCodigo
 };

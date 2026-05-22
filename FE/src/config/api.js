@@ -1,6 +1,5 @@
 // Configuracion central de endpoints.
-// Tener las rutas del backend en un solo lugar facilita mantenimiento y cambios futuros.
-export const API_BASE_URL = 'http://localhost:3000';
+export const API_BASE_URL = 'http://localhost:3000/api';
 
 export const ENDPOINTS = {
     // Coleccion de usuarios para login, registro y administracion.
@@ -12,12 +11,15 @@ export const ENDPOINTS = {
     RESERVATIONS: `${API_BASE_URL}/reservaciones`,
     // Opiniones publicadas por usuarios.
     OPINIONES: `${API_BASE_URL}/opiniones`,
-    // Mensajes recibidos desde formularios de contacto (Mapeado a caracteristicas por ahora o crear tabla).
+    // Mensajes recibidos desde formularios de contacto
     CONTACTOS: `${API_BASE_URL}/caracteristicas`,
     // Reservas de habitaciones con fechas de entrada y salida.
     RESERVAS_HABITACIONES: `${API_BASE_URL}/habitaciones`,
     // Roles del sistema.
     ROLES: `${API_BASE_URL}/roles`,
+    SETTINGS: `${API_BASE_URL}/settings`,
+    GASTRONOMIA: `${API_BASE_URL}/gastronomia`,
+    TRANSPORTE: `${API_BASE_URL}/transporte`,
 };
 
 export default API_BASE_URL;

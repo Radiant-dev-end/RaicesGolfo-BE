@@ -8,6 +8,7 @@ const UsuariosPanel = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchId, setSearchId] = useState('');
     const [searchRole, setSearchRole] = useState('');
+    const [error, setError] = useState('');
 
     const { 
         data: usuarios, 

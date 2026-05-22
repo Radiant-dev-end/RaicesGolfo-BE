@@ -1,40 +1,43 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-// ProtectedRoute envuelve paginas privadas.
-// Su trabajo es validar la sesion guardada en localStorage
-// y comprobar si el rol del usuario tiene permiso para entrar.
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const userStr = localStorage.getItem('user');
+const ProtectedRoute = ({
+  children,
+  allowedRoles
+}) => {
 
-  // Sin sesion, no hay acceso.
-  if (!userStr) {
-    return <Navigate to="/login" replace />;
-  }
+
+  const token = localStorage.getItem('token');
+
+const userStr = localStorage.getItem('user');
+
+if (!token || !userStr) {
+  return <Navigate to="/login" replace />;
+}
 
   try {
+
     const user = JSON.parse(userStr);
 
-    // Si no se especifican roles, solo se exige que exista un usuario autenticado.
-    if (!allowedRoles) {
-      return children;
+    const role = user.id_roles;
+
+    // validar roles
+    if (
+      allowedRoles &&
+      !allowedRoles.includes(role)
+    ) {
+
+      return <Navigate to="/" replace />;
     }
 
-    // Se normaliza el rol para evitar fallos por formato.
-    const role = user.role ? user.role.toLowerCase().trim() : '';
+    return children;
 
-    // Si el rol es valido para la ruta, se renderiza el contenido protegido.
-    if (allowedRoles.includes(role)) {
-      return children;
-    }
-
-    // Si el usuario existe pero intenta entrar a un panel ajeno,
-    // se redirige a su area correspondiente.
-    if (role === 'admin') return <Navigate to="/admin" replace />;
-    if (role === 'cliente' || role === 'user') return <Navigate to="/cliente" replace />;
-    return <Navigate to="/" replace />;
   } catch (error) {
-    // Si la sesion esta corrupta, el camino seguro es volver al login.
+
+    localStorage.removeItem('token');
+
+    localStorage.removeItem('user');
+
     return <Navigate to="/login" replace />;
   }
 };

@@ -4,6 +4,7 @@ const sequelize = require("../config/db");
 class Usuario extends Model { }
 
 Usuario.init({
+
     id_usuarios: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -32,7 +33,17 @@ Usuario.init({
     },
 
     foto: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT('long'),
+        allowNull: true
+    },
+
+    reset_token: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+    },
+
+    reset_token_expires: {
+        type: DataTypes.DATE,
         allowNull: true
     }
 

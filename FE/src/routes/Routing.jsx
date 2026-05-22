@@ -10,6 +10,8 @@ import Habitaciones from '../pages/Habitaciones';
 import HistoriaIslasPage from '../pages/HistoriaIslasPage';
 import Inicio from '../pages/Inicio';
 import Login from '../pages/Login';
+import OlvideContrasenaPage from '../pages/OlvideContrasenaPage';
+import VerificarCodigoPage from '../pages/VerificarCodigoPage';
 import Registro from '../pages/Registro';
 import Tours from '../pages/Tours';
 import Transporte from '../pages/Transporte';
@@ -33,6 +35,8 @@ function Routing() {
 
         {/* Rutas del flujo de autenticacion. */}
         <Route path="/login" element={<Login />} />
+        <Route path="/olvide-contrasena" element={<OlvideContrasenaPage />} />
+        <Route path="/verificar-codigo" element={<VerificarCodigoPage />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/reservar" element={<Login />} />
 
@@ -40,7 +44,7 @@ function Routing() {
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={[1]}>
               <Admin />
             </ProtectedRoute>
           }
@@ -48,7 +52,7 @@ function Routing() {
         <Route
           path="/cliente"
           element={
-            <ProtectedRoute allowedRoles={['cliente']}>
+            <ProtectedRoute allowedRoles={[2]}>
               <Cliente />
             </ProtectedRoute>
           }

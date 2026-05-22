@@ -13,6 +13,7 @@ const reservacionesRoutes = require('./routes/ReservacionesRoutes');
 const rolRoutes = require('./routes/RoleRoutes');
 const toursRoutes = require('./routes/ToursRoutes');
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
+const recommendationRoutes = require('./routes/RecommendationRoutes');
 
 const app = express();
 
@@ -22,8 +23,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 // Swagger setup (optional for tests, but keeping it)
 const swaggerUi = require("swagger-ui-express");
@@ -61,5 +62,6 @@ app.use('/api/reservaciones', reservacionesRoutes);
 app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 module.exports = app;

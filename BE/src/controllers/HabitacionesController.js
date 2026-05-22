@@ -5,7 +5,14 @@ const HabitacionController = {
     getAll: async (req, res) => {
         try {
             const habitaciones = await Habitacion.findAll();
-            res.json(habitaciones);
+            const mappedHabitaciones = habitaciones.map(h => {
+                const habData = h.toJSON();
+                habData.id = habData.numero || habData.id_habitaciones;
+                habData.precio = habData.precio_noche;
+                habData.status = habData.estado;
+                return habData;
+            });
+            res.json(mappedHabitaciones);
         } catch (error) {
             res.status(500).json({
                 message: "Error al obtener habitaciones",
@@ -23,7 +30,11 @@ const HabitacionController = {
                     message: "Habitación no encontrada"
                 });
             }
-            res.json(habitacion);
+            const habData = habitacion.toJSON();
+            habData.id = habData.numero || habData.id_habitaciones;
+            habData.precio = habData.precio_noche;
+            habData.status = habData.estado;
+            res.json(habData);
         } catch (error) {
             res.status(500).json({
                 message: "Error al buscar habitación",

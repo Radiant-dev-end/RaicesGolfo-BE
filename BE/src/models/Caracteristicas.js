@@ -17,7 +17,35 @@ Caracteristica.init({
 
     icono: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: true
+    },
+    email: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    asunto: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
+    mensaje: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    userId: {
+        type: DataTypes.STRING(50),
+        allowNull: true
+    },
+    status: {
+        type: DataTypes.STRING(30),
+        defaultValue: 'Pendiente'
+    },
+    respuestaAdmin: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    respondidoAt: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
 
 }, {
