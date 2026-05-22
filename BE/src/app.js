@@ -5,6 +5,7 @@ const { sequelize } = require('./models/index');
 const authenticateToken = require('./middlewares/authMiddleware');
 
 const caracteristicasRoutes = require('./routes/CaracteristicasRoutes');
+const gastronomiaRoutes = require('./routes/GastronomiaRoutes');
 const authRoutes = require('./routes/authRoutes');
 const habitacionesRoutes = require('./routes/HabitacionesRoutes');
 const opinionesRoutes = require('./routes/OpinionesRoutes');
@@ -64,7 +65,7 @@ app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 
-module.exports = app;
+app.use('/api/gastronomia', gastronomiaRoutes);
 
 const PORT = process.env.PORT || 3000;
 

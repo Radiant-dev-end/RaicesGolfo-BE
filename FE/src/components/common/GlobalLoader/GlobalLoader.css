@@ -1,0 +1,347 @@
+/* Estilos del Loader Global */
+
+:root {
+  --loader-bg: rgba(6, 18, 23, 0.85); /* Deep sea midnight */
+  --aqua-primary: #2dd4bf;
+  --aqua-glow: rgba(45, 212, 191, 0.4);
+  --teal-dark: #0f766e;
+  --sky-blue: #0ea5e9;
+  --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.global-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--loader-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Fade Classes controlled by React state */
+.global-loader-overlay.fade-in {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.global-loader-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Radial Sea Glow behind visual components */
+.loader-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.12) 0%, rgba(13, 148, 136, 0.04) 50%, rgba(6, 18, 23, 0) 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: glow-pulse 4s infinite ease-in-out;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Spinner & Turtle Wrapper Layout */
+.loader-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 160px;
+}
+
+.spinner-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Spinning outer ring */
+.spinner-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.35));
+}
+
+/* Outer Ring (Clockwise) */
+.spinner-ring-outer {
+  transform-origin: center;
+  animation: rotate-spinner-cw 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+/* Inner Ring (Counter-Clockwise) */
+.spinner-ring-inner {
+  transform-origin: center;
+  animation: rotate-spinner-ccw 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+/* Turtle Centered inside the Ring */
+.turtle-wrapper {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turtle-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 12px rgba(15, 118, 110, 0.4));
+}
+
+.turtle-group {
+  animation: turtle-float 3s infinite ease-in-out;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Flipper Transformations & Swimming Animations */
+.flipper {
+  transform-box: fill-box;
+  will-change: transform;
+}
+
+.front-left {
+  transform-origin: 90% 10%;
+  animation: swim-f-left 2.5s infinite ease-in-out;
+}
+
+.front-right {
+  transform-origin: 10% 10%;
+  animation: swim-f-right 2.5s infinite ease-in-out;
+}
+
+.rear-left {
+  transform-origin: 85% 15%;
+  animation: swim-r-left 2.5s infinite ease-in-out;
+}
+
+.rear-right {
+  transform-origin: 15% 15%;
+  animation: swim-r-right 2.5s infinite ease-in-out;
+}
+
+/* Head swim motion */
+.turtle-head {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: turtle-head-sway 2.5s infinite ease-in-out;
+}
+
+/* Marine Bubbles / Floating Particles */
+.bubbles-container {
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: -20px;
+  right: -20px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bubble {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.45) 0%, rgba(45, 212, 191, 0.08) 70%);
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 4px rgba(45, 212, 191, 0.2), 0 0 6px rgba(45, 212, 191, 0.1);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.bubble.b1 { width: 10px; height: 10px; left: 25%; animation: float-bubble 3.2s infinite ease-in; animation-delay: 0s; }
+.bubble.b2 { width: 7px; height: 7px; left: 45%; animation: float-bubble 4.0s infinite ease-in; animation-delay: 0.7s; }
+.bubble.b3 { width: 13px; height: 13px; left: 65%; animation: float-bubble 3.5s infinite ease-in; animation-delay: 1.4s; }
+.bubble.b4 { width: 9px; height: 9px; left: 35%; animation: float-bubble 4.5s infinite ease-in; animation-delay: 2.1s; }
+.bubble.b5 { width: 6px; height: 6px; left: 75%; animation: float-bubble 3.8s infinite ease-in; animation-delay: 1.0s; }
+
+/* Text & Branding Styling */
+.loader-text-wrapper {
+  margin-top: 1.8rem;
+  text-align: center;
+  font-family: var(--font-outfit);
+}
+
+.loader-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #e0f2fe 0%, var(--aqua-primary) 50%, #0d9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(45, 212, 191, 0.2));
+}
+
+.loader-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.65rem;
+}
+
+.loader-divider-line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(45, 212, 191, 0), rgba(45, 212, 191, 0.4), rgba(45, 212, 191, 0));
+}
+
+.loader-divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--aqua-primary);
+  box-shadow: 0 0 8px var(--aqua-primary);
+}
+
+.loader-status {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+  margin: 0;
+  animation: pulse-text 2s infinite ease-in-out;
+}
+
+.loader-badge {
+  display: inline-block;
+  margin-top: 1.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  color: var(--aqua-primary);
+  border: 1px solid rgba(45, 212, 191, 0.25);
+  padding: 0.35rem 0.9rem;
+  border-radius: 30px;
+  background: rgba(13, 148, 136, 0.08);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Animations Keyframes */
+
+@keyframes rotate-spinner-cw {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rotate-spinner-ccw {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes turtle-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
+}
+
+@keyframes swim-f-left {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-16deg); }
+}
+
+@keyframes swim-f-right {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(16deg); }
+}
+
+@keyframes swim-r-left {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-8deg); }
+}
+
+@keyframes swim-r-right {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
+}
+
+@keyframes turtle-head-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-3deg); }
+}
+
+@keyframes float-bubble {
+  0% {
+    transform: translateY(140px) translateX(0) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(-20px) translateX(15px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .loader-visual {
+    width: 130px;
+    height: 130px;
+  }
+  .spinner-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+  .turtle-wrapper {
+    width: 65px;
+    height: 65px;
+  }
+  .loader-title {
+    font-size: 1.25rem;
+    letter-spacing: 4px;
+  }
+  .loader-status {
+    font-size: 0.8rem;
+  }
+  .loader-badge {
+    margin-top: 1.1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}

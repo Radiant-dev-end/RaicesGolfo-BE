@@ -36,7 +36,7 @@ const Inicioseccion = () => {
             if (user) {
                 // Mapear id_roles de MySQL al formato string que usa el frontend
                 if (user.id_roles) {
-                    user.role = user.id_roles === 1 ? 'admin' : 'cliente';
+                    user.role = parseInt(user.id_roles, 10) === 1 ? 'admin' : 'cliente';
                 }
                 
                 // Asegurarse de que el usuario modificado se guarda

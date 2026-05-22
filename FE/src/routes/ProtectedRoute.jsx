@@ -19,7 +19,15 @@ if (!token || !userStr) {
 
     const user = JSON.parse(userStr);
 
-    const role = user.id_roles;
+    let role = user.id_roles;
+    if (!role && user.role) {
+      if (typeof user.role === 'string') {
+        role = user.role.toLowerCase() === 'admin' ? 1 : 2;
+      } else if (user.role.nombre_rol) {
+        role = user.role.nombre_rol.toLowerCase() === 'admin' ? 1 : 2;
+      }
+    }
+    role = parseInt(role, 10);
 
     // validar roles
     if (
