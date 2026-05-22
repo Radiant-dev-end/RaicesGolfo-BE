@@ -56,7 +56,7 @@ function ReservasPanel() {
           await updateReserva(id, updatedData);
         }
 
-        setReservas(reservas.map(r => r.id === id ? updatedData : r));
+        await fetchReservas();
         Swal.fire({
           icon: 'success',
           title: '¡Actualizado!',
@@ -94,7 +94,7 @@ function ReservasPanel() {
           await deleteReserva(id);
         }
 
-        setReservas(reservas.filter(r => r.id !== id));
+        await fetchReservas();
         Swal.fire({
           icon: 'success',
           title: 'Eliminado',
@@ -142,49 +142,51 @@ function ReservasPanel() {
                 </td>
               </tr>
             ) : (
-              reservas.map((res) => (
-                <tr key={res.id}>
-                  <td>
-                    <div className="client-cell">
-                      <strong>{res.userName}</strong>
-                      <span className="user-id">ID: {res.userId}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`badge-tipo ${res.tipo === 'Tour' ? 'tour' : 'room'}`}>
-                      {res.tipo}
-                    </span>
-                  </td>
-                  <td>{res.item}</td>
-                  <td>{res.date}</td>
-                  <td>{res.time || 'N/A'}</td>
-                  <td>
-                    <span className={`status-badge ${res.status.toLowerCase()}`}>
-                      {res.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      {res.status === 'Pendiente' ? (
-                        <>
-                          <button
-                            className="btn-approve"
-                            onClick={() => handleStatusUpdate(res.id, 'Aprobada', res.tipo)}
-                            title="Aprobar"
-                          >
-                            ✓
-                          </button>
-                          <button
-                            className="btn-deny"
-                            onClick={() => handleStatusUpdate(res.id, 'Denegada', res.tipo)}
-                            title="Denegar"
-                          >
-                            ✕
-                          </button>
-                        </>
-                      ) : (
-                        <span className="action-complete">Procesada</span>
-                      )}
+              reservas.map((res) => {
+                const resStatus = res.status || 'Pendiente';
+                return (
+                  <tr key={`${res.tipo}-${res.id}`}>
+                    <td>
+                      <div className="client-cell">
+                        <strong>{res.userName}</strong>
+                        <span className="user-id">ID: {res.userId}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`badge-tipo ${res.tipo === 'Tour' ? 'tour' : 'room'}`}>
+                        {res.tipo}
+                      </span>
+                    </td>
+                    <td>{res.item}</td>
+                    <td>{res.date}</td>
+                    <td>{res.time || 'N/A'}</td>
+                    <td>
+                      <span className={`status-badge ${resStatus.toLowerCase()}`}>
+                        {resStatus}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        {resStatus === 'Pendiente' ? (
+                          <>
+                            <button
+                              className="btn-approve"
+                              onClick={() => handleStatusUpdate(res.id, 'Aprobada', res.tipo)}
+                              title="Aprobar"
+                            >
+                              ✓
+                            </button>
+                            <button
+                              className="btn-deny"
+                              onClick={() => handleStatusUpdate(res.id, 'Denegada', res.tipo)}
+                              title="Denegar"
+                            >
+                              ✕
+                            </button>
+                          </>
+                        ) : (
+                          <span className="action-complete">Procesada</span>
+                        )}
                       <button
                         className="btn-delete-reserva"
                         onClick={() => handleDelete(res.id, res.tipo, res.item)}
@@ -195,7 +197,8 @@ function ReservasPanel() {
                     </div>
                   </td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
         </table>

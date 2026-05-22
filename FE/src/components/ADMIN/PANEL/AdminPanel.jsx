@@ -25,12 +25,12 @@ function AdminPanel() {
         try {
             setLoadingStats(true);
             const [usersRes, resRes] = await Promise.all([
-                fetch(ENDPOINTS.USERS),
+                fetch(`${ENDPOINTS.USERS}/obtener`),
                 fetch(ENDPOINTS.RESERVATIONS)
             ]);
 
-            const users = await usersRes.json();
-            const reservations = await resRes.json();
+            const users = usersRes.ok ? await usersRes.json() : [];
+            const reservations = resRes.ok ? await resRes.json() : [];
 
             // Cálculos Reales
             const clientesCount = users.filter(u => u.role === 'cliente').length;

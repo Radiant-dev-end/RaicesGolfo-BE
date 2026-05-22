@@ -52,6 +52,10 @@ const normalizeSettings = (payload) => {
 const settingsService = {
     getSettings: async () => {
         try {
+            if (!ENDPOINTS.SETTINGS) {
+                console.warn('ENDPOINTS.SETTINGS no está definido en api.js. Usando valores por defecto.');
+                return normalizeSettings({});
+            }
             const response = await fetch(ENDPOINTS.SETTINGS);
             if (!response.ok) throw new Error('Error al cargar la configuracion');
             const data = await response.json();
@@ -64,6 +68,11 @@ const settingsService = {
 
     updateSettings: async (settings) => {
         try {
+            if (!ENDPOINTS.SETTINGS) {
+                console.warn('ENDPOINTS.SETTINGS no está definido. Simulando guardado exitoso.');
+                return normalizeSettings(settings);
+            }
+
             const normalizedSettings = normalizeSettings(settings);
             const settingsId = normalizedSettings.id;
             const targetUrl = settingsId

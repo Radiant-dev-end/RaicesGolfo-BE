@@ -34,11 +34,16 @@ const ResevaTours = () => {
 
     const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const [form, setForm] = useState(FORM_INICIAL);
+    const [formError, setFormError] = useState('');
+    const [saving, setSaving] = useState(false);
 
     // ── Filtrado ─────────────────────────────────────────────
     const filtrados = tours.filter(t =>
-        t.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.tipo.toLowerCase().includes(searchTerm.toLowerCase())
+        (t.nombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (t.tipo || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // ── Auxiliares del modal ──────────────────────────────────

@@ -6,6 +6,8 @@ import Pagination from '../../common/Pagination';
 
 const UsuariosPanel = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchId, setSearchId] = useState('');
+    const [searchRole, setSearchRole] = useState('');
     const [error, setError] = useState('');
 
     const { 
@@ -17,10 +19,15 @@ const UsuariosPanel = () => {
         refresh: cargarUsuarios
     } = usePagination(() => getUsers(), 3); // LIMIT: 3 users per page
 
-    // Filtrar usuarios por correo
-    const usuariosFiltrados = (usuarios || []).filter(user => 
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filtrar usuarios por correo, ID y rol
+    const usuariosFiltrados = (usuarios || []).filter(user => {
+        const matchesEmail = (user.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const userId = String(user.id || user.id_usuarios || '');
+        const matchesId = searchId ? userId.includes(searchId) : true;
+        const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
+        const matchesRole = searchRole ? userRole === searchRole : true;
+        return matchesEmail && matchesId && matchesRole;
+    });
 
     const handleEliminar = async (id) => {
         const result = await Swal.fire({
