@@ -15,6 +15,7 @@ const rolRoutes = require('./routes/RoleRoutes');
 const toursRoutes = require('./routes/ToursRoutes');
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
 const recommendationRoutes = require('./routes/RecommendationRoutes');
+const claudeRoutes = require('./routes/ClaudeRoutes');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use('/api/roles', rolRoutes);
 app.use('/api/tours', toursRoutes);
 app.use('/api/usuarios', UsuarioRoutes);
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/claude', claudeRoutes);
 
 app.use('/api/gastronomia', gastronomiaRoutes);
 

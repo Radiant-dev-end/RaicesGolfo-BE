@@ -14,7 +14,7 @@ async function test() {
         console.log("Register status:", resReg.status);
         const bodyReg = await resReg.text();
         console.log("Register body:", bodyReg);
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 
@@ -31,7 +31,7 @@ async function test() {
         console.log("Login status:", resLog.status);
         const bodyLog = await resLog.text();
         console.log("Login body:", bodyLog);
-    } catch(e) {
+    } catch (e) {
         console.error(e);
     }
 }
