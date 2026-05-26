@@ -44,7 +44,7 @@ const options = {
             }
         ]
     },
-   apis: ["./src/routes/*.js"]
+    apis: ["./src/routes/*.js"]
 };
 const specs = swaggerJsdoc(options);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
@@ -67,14 +67,4 @@ app.use('/api/recommendations', recommendationRoutes);
 
 app.use('/api/gastronomia', gastronomiaRoutes);
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, async () => {
-    try {
-        await sequelize.authenticate();
-        console.log("Conexión a la base de datos validada exitosamente.");
-        console.log(`Servidor corriendo en puerto ${PORT}`);
-    } catch (error) {
-        console.error("Error conectando a la base de datos:", error);
-    }
-});
+module.exports = app;

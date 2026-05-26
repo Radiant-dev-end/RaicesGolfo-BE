@@ -1,4 +1,5 @@
-const { Reservacion } = require("../models");
+const { Reservacion, Usuario } = require("../models");
+const { sendConfirmationEmail } = require('../services/emailService');
 
 // Helper to format database Reservation into the frontend format
 const formatReservation = (r) => {
@@ -70,6 +71,7 @@ const ReservacionesController = {
                 fecha,
                 date,
                 time,
+                email,
                 status,
                 createdAt,
                 id_usuarios,
@@ -112,7 +114,24 @@ const ReservacionesController = {
                 creado_en: creado_en_val
             });
 
-            res.status(201).json(formatReservation(nuevaReservacion));
+            const formattedRes = formatReservation(nuevaReservacion);
+            let emailSent = false;
+
+            try {
+                let targetEmail = email; // del frontend
+                if (!targetEmail) {
+                    const user = await Usuario.findByPk(id_usuarios_val);
+                    if (user && user.email) targetEmail = user.email;
+                }
+                
+                if (targetEmail) {
+                    emailSent = await sendConfirmationEmail(targetEmail, 'tour', formattedRes);
+                }
+            } catch (err) {
+                console.error("Error silencioso enviando correo de tour:", err);
+            }
+
+            res.status(201).json({ ...formattedRes, emailSent });
 
         } catch (error) {
             res.status(500).json({

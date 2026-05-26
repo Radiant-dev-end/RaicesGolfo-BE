@@ -12,6 +12,9 @@ import { updateUserProfile } from '../../services/CrudParaUsuarios';
 import { getHabitaciones } from '../../services/CrudHabitaciones';
 import { ENDPOINTS } from '../../config/api';
 import './ClientePag.css';
+import { useLoading } from '../../context/LoadingContext';
+
+import emailjs from '@emailjs/browser';
 
 // Importar imágenes de tours para el catálogo
 import posada1 from '../VIDEOS Y IMG/posada1.jpg';
@@ -80,10 +83,31 @@ const getRoomImage = (room, index = 0) => {
   );
 };
 
+const EMAILJS_SERVICE_ID = 'service_n5f77am';
+const EMAILJS_TEMPLATE_ID = 'template_wo1esck';
+const EMAILJS_PUBLIC_KEY = 'wlInvQ-cP4mHu3MzT';
+
+const enviarCorreoReserva = async (templateParams) => {
+  try {
+    const response = await emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      templateParams,
+      EMAILJS_PUBLIC_KEY
+    );
+    console.log('SUCCESS!', response.status, response.text);
+    return true;
+  } catch (error) {
+    console.error('FAILED...', error);
+    return false;
+  }
+};
+
 // Vista principal del cliente autenticado.
 // Coordina catalogos, reservas, perfil y mensajeria dentro de una sola interfaz.
 function ClientePag() {
   const location = useLocation();
+  const { startLoading, stopLoading } = useLoading();
   const [activeTab, setActiveTab] = useState('inicio');
   const [userName, setUserName] = useState('Cliente');
   const [reservas, setReservas] = useState([]);
@@ -96,12 +120,12 @@ function ClientePag() {
   const [allToursReservations, setAllToursReservations] = useState([]);
   const [allRoomsReservations, setAllRoomsReservations] = useState([]);
 
-
   // Estado para el formulario de nueva reserva de tour
   const [newReserva, setNewReserva] = useState({
     tour: '',
     fecha: '',
-    horario: ''
+    horario: '',
+    email: ''
   });
 
   // Estado para el formulario de nueva reserva de habitación
@@ -111,7 +135,8 @@ function ClientePag() {
     checkIn: '',
     checkOut: '',
     time: '12:00 PM',
-    price: 0
+    price: 0,
+    email: ''
   });
 
   // Estados para edición de perfil
@@ -149,7 +174,7 @@ function ClientePag() {
   const handleSendClientMessage = async (e) => {
     e.preventDefault();
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    
+
     if (!clientMessage.mensaje.trim()) {
       Swal.fire({
         title: 'Mensaje vacío',
@@ -250,13 +275,12 @@ function ClientePag() {
     fetchData();
   }, [location.state]);
 
-
   // Funciones de validación de disponibilidad
   const isTourDateAvailable = (tourName, date, time) => {
     if (!tourName || !date || !time) return true;
-    return !allToursReservations.some(res => 
-      res.tourName === tourName && 
-      res.date === date && 
+    return !allToursReservations.some(res =>
+      res.tourName === tourName &&
+      res.date === date &&
       res.time === time &&
       res.status !== 'Denegada'
     );
@@ -275,20 +299,20 @@ function ClientePag() {
       return start < resEnd && end > resStart;
     });
   };
+
   const handleCreateReserva = async (e) => {
     e.preventDefault();
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (!newReserva.tour || !newReserva.fecha || !newReserva.horario) {
+    if (!newReserva.tour || !newReserva.fecha || !newReserva.horario || !newReserva.email) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
-        text: 'Por favor completa todos los campos para tu reserva de tour.',
+        text: 'Por favor completa todos los campos (incluyendo correo) para tu reserva de tour.',
         confirmButtonColor: '#0d9488'
       });
       return;
     }
-
 
     if (!isTourDateAvailable(newReserva.tour, newReserva.fecha, newReserva.horario)) {
       Swal.fire({
@@ -300,34 +324,78 @@ function ClientePag() {
       return;
     }
 
-
     const reservaData = {
       userId: storedUser.id || storedUser.id_usuarios,
       userName: storedUser.name || storedUser.nombre || storedUser.email,
       tourName: newReserva.tour,
       date: newReserva.fecha,
       time: newReserva.horario,
+      email: newReserva.email,
       status: 'Pendiente',
       createdAt: new Date().toISOString()
     };
 
     try {
+      startLoading();
       const added = await createReserva(reservaData);
       setReservas([...reservas, added]);
-      setNewReserva({ tour: '', fecha: '', horario: '' });
-      Swal.fire({
-        icon: 'success',
-        title: '¡Reserva Enviada!',
-        text: 'Tu solicitud de reserva de tour ha sido enviada con éxito.',
-        confirmButtonColor: '#0d9488'
-      });
+      setNewReserva({ tour: '', fecha: '', horario: '', email: '' });
+      
+      const tourSeleccionadoInfo = allTours.find(t => t.nombre === reservaData.tourName);
+
+      const templateParams = {
+        tipo_reserva: 'Tour',
+        detalle_reserva: `Tour reservado: ${reservaData.tourName}`,
+        nombre_cliente: reservaData.userName,
+        id_reserva: added.id || added.id_reserva || 'Generando...',
+        fecha_reserva: new Date().toLocaleDateString(),
+        email_cliente: reservaData.email,
+        telefono_cliente: storedUser.telefono || 'N/A',
+        reservas: reservaData.tourName,
+        lugar: 'Raíces del Golfo',
+        descrpcion: 'Reserva de tour',
+        cantidad: 1,
+        precio: tourSeleccionadoInfo ? tourSeleccionadoInfo.precio : 'N/A',
+        subtotal: tourSeleccionadoInfo ? tourSeleccionadoInfo.precio : 'N/A',
+        iva: 0,
+        total: tourSeleccionadoInfo ? tourSeleccionadoInfo.precio : 'N/A',
+        ubicación: 'Raíces del Golfo',
+        hora: reservaData.time,
+        fecha_checkin: reservaData.date,
+        fecha_checkout: 'N/A',
+        link_reserva: window.location.href,
+        year: new Date().getFullYear(),
+        nombre_empresa: 'Raíces del Golfo',
+        ordenar_id: added.id || added.id_reserva || 'Generando...',
+        email: reservaData.email
+      };
+
+      const emailSent = await enviarCorreoReserva(templateParams);
+
+      if (emailSent) {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Reserva Enviada!',
+          text: 'La reserva fue realizada correctamente y se envió un correo de confirmación.',
+          confirmButtonColor: '#0d9488'
+        });
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Reserva Creada!',
+          text: 'La reserva fue creada, pero hubo un problema al enviar el correo automático.',
+          confirmButtonColor: '#0d9488'
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Hubo un problema al enviar tu reserva. Por favor intenta de nuevo.',
+        text: 'Hubo un problema al crear tu reserva. Por favor intenta de nuevo.',
         confirmButtonColor: '#0d9488'
       });
+    } finally {
+      stopLoading();
     }
   };
 
@@ -335,16 +403,15 @@ function ClientePag() {
     e.preventDefault();
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (!newRoomReserva.roomId || !newRoomReserva.checkIn || !newRoomReserva.checkOut) {
+    if (!newRoomReserva.roomId || !newRoomReserva.checkIn || !newRoomReserva.checkOut || !newRoomReserva.email) {
       Swal.fire({
         icon: 'warning',
         title: 'Campos incompletos',
-        text: 'Por favor completa todos los campos obligatorios para la reserva de habitación.',
+        text: 'Por favor completa todos los campos obligatorios (incluyendo correo) para la reserva de habitación.',
         confirmButtonColor: '#0d9488'
       });
       return;
     }
-
 
     if (new Date(newRoomReserva.checkIn) >= new Date(newRoomReserva.checkOut)) {
       Swal.fire({
@@ -366,7 +433,6 @@ function ClientePag() {
       return;
     }
 
-
     const reservaData = {
       userId: storedUser.id || storedUser.id_usuarios,
       userName: storedUser.name || storedUser.nombre || storedUser.email,
@@ -376,27 +442,70 @@ function ClientePag() {
       checkOut: newRoomReserva.checkOut,
       time: newRoomReserva.time,
       price: newRoomReserva.price,
+      email: newRoomReserva.email,
       status: 'Pendiente',
       createdAt: new Date().toISOString()
     };
 
     try {
+      startLoading();
       const added = await createRoomReserva(reservaData);
       setReservasHab([...reservasHab, added]);
-      setNewRoomReserva({ roomId: '', roomName: '', checkIn: '', checkOut: '', time: '12:00 PM', price: 0 });
-      Swal.fire({
-        icon: 'success',
-        title: '¡Reserva de Habitación Enviada!',
-        text: 'Tu solicitud ha sido enviada con éxito. Revisa el historial para ver el estado.',
-        confirmButtonColor: '#0d9488'
-      });
+      setNewRoomReserva({ roomId: '', roomName: '', checkIn: '', checkOut: '', time: '12:00 PM', price: 0, email: '' });
+      
+      const templateParams = {
+        tipo_reserva: 'Hospedaje',
+        detalle_reserva: `Habitación reservada: ${reservaData.roomName}`,
+        nombre_cliente: reservaData.userName,
+        id_reserva: added.id || added.id_reserva || 'Generando...',
+        fecha_reserva: new Date().toLocaleDateString(),
+        email_cliente: reservaData.email,
+        telefono_cliente: storedUser.telefono || 'N/A',
+        reservas: reservaData.roomName,
+        lugar: 'Raíces del Golfo',
+        descrpcion: 'Reserva de habitación',
+        cantidad: 1,
+        precio: reservaData.price,
+        subtotal: reservaData.price,
+        iva: 0,
+        total: reservaData.price,
+        ubicación: 'Raíces del Golfo',
+        hora: reservaData.time,
+        fecha_checkin: reservaData.checkIn,
+        fecha_checkout: reservaData.checkOut,
+        link_reserva: window.location.href,
+        year: new Date().getFullYear(),
+        nombre_empresa: 'Raíces del Golfo',
+        ordenar_id: added.id || added.id_reserva || 'Generando...',
+        email: reservaData.email
+      };
+
+      const emailSent = await enviarCorreoReserva(templateParams);
+
+      if (emailSent) {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Reserva de Habitación Enviada!',
+          text: 'La reserva fue realizada correctamente y se envió un correo de confirmación.',
+          confirmButtonColor: '#0d9488'
+        });
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Reserva Creada!',
+          text: 'La reserva fue creada, pero hubo un problema al enviar el correo automático.',
+          confirmButtonColor: '#0d9488'
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'No se pudo enviar la reserva de habitación.',
+        text: 'No se pudo crear la reserva de habitación.',
         confirmButtonColor: '#0d9488'
       });
+    } finally {
+      stopLoading();
     }
   };
 
@@ -412,7 +521,6 @@ function ClientePag() {
     }
     return 0;
   };
-
 
   const renderContent = () => {
     switch (activeTab) {
@@ -506,7 +614,19 @@ function ClientePag() {
 
                       <div className="form-row-vertical">
                         <div className="form-group">
-                          <label>2. ¿Cuándo vienes?</label>
+                          <label>2. Correo Electrónico (para confirmación):</label>
+                          <input
+                            type="email"
+                            className="input-custom-style"
+                            placeholder="tu@correo.com"
+                            value={newReserva.email}
+                            onChange={(e) => setNewReserva({ ...newReserva, email: e.target.value })}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>3. ¿Cuándo vienes?</label>
                           <input
                             type="date"
                             className="input-custom-style"
@@ -518,7 +638,7 @@ function ClientePag() {
                         </div>
 
                         <div className="form-group">
-                          <label>3. Elige el horario:</label>
+                          <label>4. Elige el horario:</label>
                           <div className="time-slots-grid">
                             {horariosDisponibles.map(h => (
                               <div
@@ -539,8 +659,8 @@ function ClientePag() {
                         </div>
                       )}
 
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className={`btn-booking-modern ${newReserva.tour && newReserva.fecha && newReserva.horario && isTourDateAvailable(newReserva.tour, newReserva.fecha, newReserva.horario) ? 'ready' : 'disabled'}`}
                         disabled={!isTourDateAvailable(newReserva.tour, newReserva.fecha, newReserva.horario)}
                       >
@@ -662,7 +782,19 @@ function ClientePag() {
 
                       <div className="form-row-vertical">
                         <div className="form-group">
-                          <label>2. Fecha de Entrada (Check-in):</label>
+                          <label>2. Correo Electrónico (para confirmación):</label>
+                          <input
+                            type="email"
+                            className="input-custom-style"
+                            placeholder="tu@correo.com"
+                            value={newRoomReserva.email}
+                            onChange={(e) => setNewRoomReserva({ ...newRoomReserva, email: e.target.value })}
+                            required
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>3. Fecha de Entrada (Check-in):</label>
                           <input
                             type="date"
                             className="input-custom-style"
@@ -677,7 +809,7 @@ function ClientePag() {
                         </div>
 
                         <div className="form-group">
-                          <label>3. Fecha de Salida (Check-out):</label>
+                          <label>4. Fecha de Salida (Check-out):</label>
                           <input
                             type="date"
                             className="input-custom-style"
@@ -692,7 +824,7 @@ function ClientePag() {
                         </div>
 
                         <div className="form-group">
-                          <label>4. Hora de llegada aproximada:</label>
+                          <label>5. Hora de llegada aproximada:</label>
                           <input
                             type="time"
                             className="input-custom-style"
@@ -715,8 +847,8 @@ function ClientePag() {
                         </div>
                       )}
 
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className={`btn-booking-modern ${newRoomReserva.roomId && newRoomReserva.checkIn && newRoomReserva.checkOut && isRoomRangeAvailable(newRoomReserva.roomId, newRoomReserva.checkIn, newRoomReserva.checkOut) ? 'ready' : 'disabled'}`}
                         disabled={!isRoomRangeAvailable(newRoomReserva.roomId, newRoomReserva.checkIn, newRoomReserva.checkOut)}
                       >
@@ -833,23 +965,23 @@ function ClientePag() {
           try {
             // Manejar caso donde el localStorage pueda estar corrupto por una actualización previa
             const userId = currentUser?.id_usuarios || currentUser?.id || currentUser?.usuario?.id_usuarios || currentUser?.usuario?.id;
-            
+
             if (!userId) {
-                throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
+              throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
             }
 
             const response = await updateUserProfile(userId, editedUser);
             const updatedUser = response.usuario || response; // Extraer el usuario de la respuesta
-            
+
             // Actualizar localStorage
             const newUser = { ...currentUser, ...updatedUser };
-            
+
             // Limpiar datos anidados si existían por error previo
             if (newUser.usuario) delete newUser.usuario;
             if (newUser.message) delete newUser.message;
-            
+
             localStorage.setItem('user', JSON.stringify(newUser));
-            
+
             // Actualizar estados locales
             setUserName(updatedUser.nombre || updatedUser.name || userName);
             setIsEditing(false);
@@ -885,14 +1017,14 @@ function ClientePag() {
                     </div>
                     <div className="input-group-modern file-upload-group">
                       <label>Cambiar Foto de Perfil:</label>
-                      
+
                       <div className="custom-file-upload">
                         <label htmlFor="file-upload" className="btn-outline-modern">
                           <span>📷 Seleccionar Archivo</span>
                         </label>
-                        <input 
+                        <input
                           id="file-upload"
-                          type="file" 
+                          type="file"
                           accept="image/*"
                           onChange={handlePhotoUpload}
                           style={{ display: 'none' }}
@@ -902,11 +1034,11 @@ function ClientePag() {
                       <div className="divider-text">
                         <span>O usa un URL:</span>
                       </div>
-                      
-                      <input 
-                        type="text" 
-                        value={editedUser.photo} 
-                        onChange={(e) => setEditedUser({...editedUser, photo: e.target.value})}
+
+                      <input
+                        type="text"
+                        value={editedUser.photo}
+                        onChange={(e) => setEditedUser({ ...editedUser, photo: e.target.value })}
                         placeholder="https://ejemplo.com/foto.jpg"
                         className="input-custom-style"
                       />
@@ -928,15 +1060,15 @@ function ClientePag() {
                   </>
                 )}
               </div>
-              
+
               <div className="details-list">
                 <div className="detail-item">
                   <span className="detail-label">Nombre:</span>
                   {isEditing ? (
-                    <input 
-                      type="text" 
-                      value={editedUser.name} 
-                      onChange={(e) => setEditedUser({...editedUser, name: e.target.value})}
+                    <input
+                      type="text"
+                      value={editedUser.name}
+                      onChange={(e) => setEditedUser({ ...editedUser, name: e.target.value })}
                       className="input-custom-style"
                     />
                   ) : (
@@ -954,7 +1086,7 @@ function ClientePag() {
                   </div>
                 )}
               </div>
-              
+
               <div className="profile-actions-footer">
                 {isEditing ? (
                   <>
@@ -983,20 +1115,20 @@ function ClientePag() {
                   <h3>Nueva Consulta</h3>
                   <div className="form-group" style={{ marginBottom: '1rem' }}>
                     <label>Asunto:</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="Ej: Duda sobre mi reserva"
                       value={clientMessage.asunto}
-                      onChange={(e) => setClientMessage({...clientMessage, asunto: e.target.value})}
+                      onChange={(e) => setClientMessage({ ...clientMessage, asunto: e.target.value })}
                       className="input-custom-style"
                     />
                   </div>
                   <div className="form-group" style={{ marginBottom: '1rem' }}>
                     <label>Mensaje:</label>
-                    <textarea 
+                    <textarea
                       placeholder="Describe tu consulta aquí..."
                       value={clientMessage.mensaje}
-                      onChange={(e) => setClientMessage({...clientMessage, mensaje: e.target.value})}
+                      onChange={(e) => setClientMessage({ ...clientMessage, mensaje: e.target.value })}
                       required
                       className="input-custom-style"
                       style={{ minHeight: '120px', resize: 'vertical' }}
