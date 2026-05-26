@@ -1,0 +1,350 @@
+/* src/components/MODAL/ReservaModal.css */
+/* Estilos para el modal flotante de reservas - RESPONSIVE COMPLETO */
+
+/* Overlay semitransparente detrás del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Modal flotante */
+.modal-floating {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 16px;
+  padding: 40px 30px;
+  max-width: 450px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Botón de cerrar (X) */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 8px;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-close:hover,
+.modal-close:active {
+  background-color: #f0f0f0;
+  color: #333;
+  transform: rotate(90deg);
+}
+
+/* Título del modal */
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 8px 0;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* Subtítulo */
+.modal-subtitle {
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+  margin: 0 0 30px 0;
+  word-wrap: break-word;
+}
+
+/* Contenedor de opciones */
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Botones de opciones */
+.modal-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 60px;
+}
+
+.modal-option:active {
+  border-color: #667eea;
+  background-color: #f8f9ff;
+  transform: translateX(2px);
+}
+
+.modal-option:hover {
+  border-color: #667eea;
+  background-color: #f8f9ff;
+  transform: translateX(4px);
+}
+
+/* Variantes de opciones */
+.modal-option-online:active {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.modal-option-online:hover {
+  border-color: #667eea;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+}
+
+.modal-option-whatsapp:active {
+  border-color: #25d366;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.1);
+}
+
+.modal-option-whatsapp:hover {
+  border-color: #25d366;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.15);
+}
+
+/* Ícono de la opción */
+.modal-option-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Texto de la opción */
+.modal-option-text {
+  flex-grow: 1;
+}
+
+.modal-option h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+  word-wrap: break-word;
+}
+
+.modal-option p {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* Flecha de la opción */
+.modal-option-arrow {
+  font-size: 18px;
+  color: #999;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.modal-option:hover .modal-option-arrow,
+.modal-option:active .modal-option-arrow {
+  color: #667eea;
+  transform: translateX(4px);
+}
+
+.modal-option-whatsapp:hover .modal-option-arrow,
+.modal-option-whatsapp:active .modal-option-arrow {
+  color: #25d366;
+}
+
+/* Pie del modal */
+.modal-footer {
+  font-size: 12px;
+  color: #bbb;
+  text-align: center;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+/* ===== BREAKPOINTS RESPONSIVE ===== */
+
+/* Tablets: 600px - 900px */
+@media (max-width: 900px) {
+  .modal-floating {
+    padding: 35px 25px;
+    width: 92%;
+  }
+
+  .modal-title {
+    font-size: 22px;
+  }
+
+  .modal-subtitle {
+    font-size: 13px;
+  }
+
+  .modal-option {
+    padding: 15px 18px;
+    gap: 14px;
+    min-height: 58px;
+  }
+
+  .modal-option-icon {
+    font-size: 30px;
+  }
+
+  .modal-option h3 {
+    font-size: 15px;
+  }
+
+  .modal-option p {
+    font-size: 12px;
+  }
+}
+
+/* Móvil: menos de 600px */
+@media (max-width: 600px) {
+  .modal-floating {
+    padding: 28px 18px;
+    width: 95%;
+    border-radius: 14px;
+    max-height: 85vh;
+  }
+
+  .modal-close {
+    font-size: 24px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .modal-title {
+    font-size: 19px;
+    margin-bottom: 6px;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+    margin-bottom: 22px;
+  }
+
+  .modal-options {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .modal-option {
+    padding: 13px 14px;
+    gap: 12px;
+    min-height: 56px;
+    border-radius: 10px;
+  }
+
+  .modal-option-icon {
+    font-size: 26px;
+  }
+
+  .modal-option h3 {
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .modal-option p {
+    font-size: 11px;
+  }
+
+  .modal-option-arrow {
+    font-size: 16px;
+  }
+
+  .modal-footer {
+    font-size: 11px;
+  }
+}
+
+/* Móvil pequeño: menos de 400px */
+@media (max-width: 400px) {
+  .modal-floating {
+    padding: 24px 14px;
+    width: 96%;
+  }
+
+  .modal-title {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .modal-subtitle {
+    font-size: 11px;
+    margin-bottom: 18px;
+  }
+
+  .modal-option {
+    padding: 11px 12px;
+    gap: 10px;
+    min-height: 52px;
+  }
+
+  .modal-option-icon {
+    font-size: 24px;
+  }
+
+  .modal-option h3 {
+    font-size: 13px;
+  }
+
+  .modal-option p {
+    font-size: 10px;
+  }
+
+  .modal-footer {
+    font-size: 10px;
+  }
+}
