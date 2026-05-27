@@ -92,7 +92,6 @@ const CaracteristicaController = {
                 email,
                 asunto,
                 mensaje,
-                userId,
                 status: status || 'Pendiente',
                 respuestaAdmin,
                 respondidoAt
@@ -167,7 +166,6 @@ const CaracteristicaController = {
                 email: email !== undefined ? email : caracteristica.email,
                 asunto: asunto !== undefined ? asunto : caracteristica.asunto,
                 mensaje: mensaje !== undefined ? mensaje : caracteristica.mensaje,
-                userId: userId !== undefined ? userId : caracteristica.userId,
                 status: status !== undefined ? status : caracteristica.status,
                 respuestaAdmin: respuestaAdmin !== undefined ? respuestaAdmin : caracteristica.respuestaAdmin,
                 respondidoAt: respondidoAt !== undefined ? respondidoAt : caracteristica.respondidoAt

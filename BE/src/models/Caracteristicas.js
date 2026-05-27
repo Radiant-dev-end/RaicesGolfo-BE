@@ -31,10 +31,6 @@ Caracteristica.init({
         type: DataTypes.TEXT,
         allowNull: true
     },
-    userId: {
-        type: DataTypes.STRING(50),
-        allowNull: true
-    },
     status: {
         type: DataTypes.STRING(30),
         defaultValue: 'Pendiente'

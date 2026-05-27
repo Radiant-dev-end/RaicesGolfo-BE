@@ -10,6 +10,8 @@ import Habitaciones from '../pages/Habitaciones';
 import HistoriaIslasPage from '../pages/HistoriaIslasPage';
 import Inicio from '../pages/Inicio';
 import Login from '../pages/Login';
+import OlvideContrasenaPage from '../pages/OlvideContrasenaPage';
+import VerificarCodigoPage from '../pages/VerificarCodigoPage';
 import Registro from '../pages/Registro';
 import Tours from '../pages/Tours';
 import Transporte from '../pages/Transporte';
@@ -57,6 +59,14 @@ function Routing() {
           <Route path="/registro" element={<Registro />} />
           <Route path="/reservar" element={<Login />} />
 
+          {/* Rutas del flujo de autenticacion. */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/olvide-contrasena" element={<OlvideContrasenaPage />} />
+          <Route path="/verificar-codigo" element={<VerificarCodigoPage />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route path="/reservar" element={<Login />} />
+
+
           {/* Rutas privadas separadas por rol. */}
           <Route
             path="/admin"
@@ -82,7 +92,7 @@ function Routing() {
         {/* Widgets globales siempre montados, sin importar la pagina actual. */}
         <Chatbot />
         <AccessibilityWidget />
-        
+
         {/* Componente visual del loader global */}
         <GlobalLoader />
       </LoadingProvider>

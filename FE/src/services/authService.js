@@ -2,66 +2,174 @@ import { ENDPOINTS, API_BASE_URL } from '../config/api';
 
 const API_URL = ENDPOINTS.USERS;
 
-// Registro contra el backend real.
-export const registerUser = async user => {
-  const userWithRole = { ...user, role: user.role || 'cliente' };
-  const response = await fetch(`${API_URL}/crear`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userWithRole),
-  });
+// ─────────────────────────────────────────────
+// REGISTRO
+// ─────────────────────────────────────────────
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Error en el registro');
-  }
+export const registerUser = async (user) => {
+  try {
 
-  return response.json();
-};
-
-// Login basico por email y password.
-// Primero intenta filtrar por query y, si falla, revisa manualmente toda la coleccion.
-
-export const loginUser = async (email, password) => {
-
-  const response = await fetch(
-    `${API_BASE_URL}/auth/login`,
-    {
+    const response = await fetch(`${API_URL}/crear`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email,
-        password,
+        ...user,
+        role: user.role || 'cliente',
       }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Error al registrar usuario');
     }
-  );
 
-  const data = await response.json();
+    return data;
 
-  if (!response.ok) {
-    throw new Error(data.message);
+  } catch (error) {
+    console.error('REGISTER ERROR:', error);
+    throw error;
   }
+};
 
-  // guardar token
-  localStorage.setItem('token', data.token);
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
 
-  // Estandarizar el objeto usuario para que funcione con el resto del FE
-  const userToStore = {
-    ...data.usuario,
-    id: data.usuario.id_usuarios || data.usuario.id,
-    name: data.usuario.nombre || data.usuario.name,
-    photo: data.usuario.foto || data.usuario.photo
-  };
+export const loginUser = async (email, password) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-  // guardar usuario
-  localStorage.setItem(
-    'user',
-    JSON.stringify(userToStore)
-  );
+    const data = await response.json();
 
-  return userToStore;
+    if (!response.ok) {
+      throw new Error(data.message || 'Credenciales inválidas');
+    }
+
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
+
+    // Estandarizar el objeto usuario para que funcione con el resto del FE
+    const userToStore = data.usuario ? {
+      ...data.usuario,
+      id: data.usuario.id_usuarios || data.usuario.id,
+      name: data.usuario.nombre || data.usuario.name,
+      photo: data.usuario.foto || data.usuario.photo
+    } : null;
+
+    if (userToStore) {
+      localStorage.setItem('user', JSON.stringify(userToStore));
+    }
+
+    return userToStore;
+  } catch (error) {
+    console.error('LOGIN ERROR:', error);
+    throw error; // propagate so callers can react
+  }
+};
+
+// ─────────────────────────────────────────────
+// PASO 1 — ENVIAR CÓDIGO
+// ─────────────────────────────────────────────
+
+export const sendRecoveryCode = async (email) => {
+
+try {
+const response = await fetch(`${API_URL}/send-recovery-code`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email }),
+});
+
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'No se pudo enviar el código');
+}
+
+return data;
+
+} catch (error) {
+console.error('SEND RECOVERY CODE ERROR:', error);
+throw error;
+}
+};
+
+// ─────────────────────────────────────────────
+// PASO 2 — VALIDAR CÓDIGO
+// ─────────────────────────────────────────────
+
+export const verifyRecoveryCode = async (email, code) => {
+
+try {
+const response = await fetch(`${API_URL}/verify-recovery-code`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email, code }),
+});
+
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'Código inválido o expirado');
+}
+
+return data;
+
+} catch (error) {
+console.error('VERIFY CODE ERROR:', error);
+throw error;
+}
+};
+
+// ─────────────────────────────────────────────
+// PASO 3 — CAMBIAR CONTRASEÑA
+// ─────────────────────────────────────────────
+
+export const validateCodeAndResetPassword = async (
+email,
+code,
+password,
+confirmPassword
+) => {
+
+try {
+const response = await fetch(`${API_URL}/validate-code-reset`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email,
+    code,
+    password,
+    confirmPassword,
+  }),
+});
+
+const data = await response.json();
+
+if (!response.ok) {
+  throw new Error(data.message || 'Error al actualizar contraseña');
+}
+
+return data;
+
+} catch (error) {
+console.error('RESET PASSWORD ERROR:', error);
+throw error;
+}
 };

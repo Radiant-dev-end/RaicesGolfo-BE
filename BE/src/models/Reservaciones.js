@@ -20,10 +20,8 @@ Reservation.init({
         allowNull: false
     },
 
-    
-
     nombre_habitacion: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING (100),
         allowNull: false
     },
 

@@ -9,11 +9,19 @@ const Role = require('./Role');
 const Tour = require('./Tours');
 const Usuario = require('./Usuarios');
 const CompraTour = require('./CompraTours');
+
 const Gastronomia = require('./Gastronomia');
+
+const RecuperacionCodigo = require('./RecuperacionCodigo');
+
 
 // Role - Usuario
 Role.hasMany(Usuario, { foreignKey: 'id_roles' });
 Usuario.belongsTo(Role, { foreignKey: 'id_roles', as: 'role' });
+
+// Usuario - RecuperacionCodigo
+Usuario.hasMany(RecuperacionCodigo, { foreignKey: 'usuario_id' });
+RecuperacionCodigo.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
 // Usuario - CompraTour
 Usuario.hasMany(CompraTour, { foreignKey: 'id_usuarios' });
@@ -51,5 +59,7 @@ module.exports = {
     Role,
     Tour,
     Usuario,
-    Gastronomia
+    Gastronomia,
+    CompraTour,
+    RecuperacionCodigo
 };
