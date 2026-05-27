@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../../services/authService';
+import { useLoading } from '../../context/LoadingContext';
 
 const Inicioseccion = () => {
     const [email, setEmail] = useState('');
@@ -11,6 +12,7 @@ const Inicioseccion = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { startLoading, stopLoading } = useLoading();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,6 +31,7 @@ const Inicioseccion = () => {
 
         try {
             setLoading(true);
+            startLoading();
             setError('');
 
             let user = await loginUser(email, password);
@@ -60,6 +63,7 @@ const Inicioseccion = () => {
             console.error(err);
         } finally {
             setLoading(false);
+            stopLoading();
         }
     };
 

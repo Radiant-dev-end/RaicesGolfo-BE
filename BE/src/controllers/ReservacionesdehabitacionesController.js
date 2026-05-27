@@ -1,4 +1,5 @@
-const { ReservacionHabitaciones, Reservacion, Habitacion } = require("../models");
+const { ReservacionHabitaciones, Reservacion, Habitacion, Usuario } = require("../models");
+const { sendConfirmationEmail } = require('../services/emailService');
 
 // Helper to format database Room Reservation into frontend format
 const formatRoomReservation = (rh) => {
@@ -110,6 +111,7 @@ const ReservacionHabitacionesController = {
                 checkOut,
                 time,
                 price,
+                email,
                 createdAt
             } = req.body;
 
@@ -240,7 +242,26 @@ const ReservacionHabitacionesController = {
                 include: [{ model: Reservacion }]
             });
 
-            res.status(201).json(formatRoomReservation(fullyLoaded));
+            const formattedRes = formatRoomReservation(fullyLoaded);
+            let emailSent = false;
+            
+            // Envío de correo de confirmación
+            try {
+                let targetEmail = email; // del frontend
+                if (!targetEmail) {
+                    const userIdToEmail = fullyLoaded.Reservation ? fullyLoaded.Reservation.id_usuarios : 1;
+                    const user = await Usuario.findByPk(userIdToEmail);
+                    if (user && user.email) targetEmail = user.email;
+                }
+                
+                if (targetEmail) {
+                    emailSent = await sendConfirmationEmail(targetEmail, 'room', formattedRes);
+                }
+            } catch (err) {
+                console.error("Error silencioso enviando correo de habitación:", err);
+            }
+
+            res.status(201).json({ ...formattedRes, emailSent });
 
         } catch (error) {
             res.status(500).json({
