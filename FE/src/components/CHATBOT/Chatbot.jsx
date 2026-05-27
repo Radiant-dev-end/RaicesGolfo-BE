@@ -107,11 +107,30 @@ const Chatbot = () => {
           content: m.text
         }));
 
+      // Obtener el usuario logueado desde localStorage
+      const storedUserStr = localStorage.getItem('user');
+      let loggedInUserPrompt = "";
+      if (storedUserStr) {
+        try {
+          const loggedInUser = JSON.parse(storedUserStr);
+          if (loggedInUser && loggedInUser.email) {
+            loggedInUserPrompt = `
+El usuario actual está LOGUEADO en la sesión del sitio web con el nombre de usuario "${loggedInUser.name || loggedInUser.nombre || 'Cliente'}" y el correo electrónico "${loggedInUser.email}".
+Si el usuario desea buscar, ver, consultar o cancelar sus citas/reservaciones, utiliza SIEMPRE este correo electrónico ("${loggedInUser.email}") de manera automática para llamar a las herramientas correspondientes, sin necesidad de solicitárselo ni validarlo de nuevo.
+`;
+          }
+        } catch (e) {
+          console.error("Error parsing loggedInUser in Chatbot:", e);
+        }
+      }
+
       // Consultas Públicas
       // Pasamos el contexto dinámico al prompt del sistema público
       const publicSystemPrompt = `Eres el guía virtual de Raíces del Golfo. 🌴
 Tu objetivo es responder de forma sumamente ordenada, directa y altamente profesional.
 
+${loggedInUserPrompt}
+ 
 Reglas de Formato estrictas que DEBES cumplir bajo cualquier circunstancia:
 1. Responde SIEMPRE estructurando la información en un LISTADO PROFESIONAL Y LIMPIO, evitando párrafos de introducción o textos de relleno largos.
 2. Cada ítem de tu listado debe seguir estrictamente esta plantilla de viñetas con guion:

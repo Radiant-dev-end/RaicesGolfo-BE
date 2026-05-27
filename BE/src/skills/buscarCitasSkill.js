@@ -2,15 +2,45 @@ const { Usuario, Reservacion, ReservacionHabitaciones } = require('../models');
 
 const buscarCitas = async (email) => {
     try {
-        // Buscar el usuario por correo
-        const usuario = await Usuario.findOne({
-            where: { email }
+        if (!email) {
+            return {
+                success: false,
+                message: "No se proporcionó ningún correo electrónico."
+            };
+        }
+
+        const emailTrimmed = email.trim();
+
+        // 1. Buscar el usuario por correo exacto
+        let usuario = await Usuario.findOne({
+            where: { email: emailTrimmed }
         });
+
+        // 2. Si no se encuentra, buscar por similitud en el prefijo del correo para corregir typos
+        if (!usuario) {
+            const emailLower = emailTrimmed.toLowerCase();
+            const todosUsuarios = await Usuario.findAll();
+            for (const u of todosUsuarios) {
+                const uEmail = (u.email || '').toLowerCase();
+                if (uEmail && emailLower) {
+                    const uUsername = uEmail.split('@')[0];
+                    const searchUsername = emailLower.split('@')[0];
+                    if (uUsername.length >= 4 && searchUsername.length >= 4) {
+                        const prefixLength = Math.min(5, Math.floor(searchUsername.length * 0.8));
+                        if (uUsername.startsWith(searchUsername.substring(0, prefixLength)) || 
+                            searchUsername.startsWith(uUsername.substring(0, prefixLength))) {
+                            usuario = u;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         if (!usuario) {
             return {
                 success: false,
-                message: "No encontré ninguna cuenta con ese correo. ¿Podría verificarlo?"
+                message: `No encontré ninguna cuenta con el correo "${emailTrimmed}". ¿Podrías verificarlo?`
             };
         }
 

@@ -224,6 +224,45 @@ function ClientePag() {
     }
   };
 
+  const fetchData = async () => {
+    try {
+      setLoadingTours(true);
+      setLoadingHab(true);
+
+      const [toursRes, habRes, allToursRes, allRoomsRes] = await Promise.all([
+        getTours(),
+        getHabitaciones(),
+        getAllReservas(),
+        getAllRoomReservas()
+      ]);
+
+      setAllTours(toursRes.filter(t => t.disponible));
+      setAllHabitaciones(habRes);
+      setAllToursReservations(allToursRes);
+      setAllRoomsReservations(allRoomsRes);
+
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user.name || user.nombre) setUserName(user.name || user.nombre);
+        const currentUserId = user.id || user.id_usuarios;
+        if (currentUserId) {
+          const [resTours, resHab] = await Promise.all([
+            getReservasByUser(currentUserId),
+            getRoomReservasByUser(currentUserId)
+          ]);
+          setReservas(resTours);
+          setReservasHab(resHab);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoadingTours(false);
+      setLoadingHab(false);
+    }
+  };
+
   useEffect(() => {
     // Verificar si venimos desde un botón de "Reservar" en un Tour
     if (location.state && location.state.tab) {
@@ -233,47 +272,20 @@ function ClientePag() {
       }
     }
 
-    const fetchData = async () => {
-      try {
-        setLoadingTours(true);
-        setLoadingHab(true);
-
-        const [toursRes, habRes, allToursRes, allRoomsRes] = await Promise.all([
-          getTours(),
-          getHabitaciones(),
-          getAllReservas(),
-          getAllRoomReservas()
-        ]);
-
-        setAllTours(toursRes.filter(t => t.disponible));
-        setAllHabitaciones(habRes);
-        setAllToursReservations(allToursRes);
-        setAllRoomsReservations(allRoomsRes);
-
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          if (user.name || user.nombre) setUserName(user.name || user.nombre);
-          const currentUserId = user.id || user.id_usuarios;
-          if (currentUserId) {
-            const [resTours, resHab] = await Promise.all([
-              getReservasByUser(currentUserId),
-              getRoomReservasByUser(currentUserId)
-            ]);
-            setReservas(resTours);
-            setReservasHab(resHab);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoadingTours(false);
-        setLoadingHab(false);
-      }
-    };
-
     fetchData();
   }, [location.state]);
+
+  useEffect(() => {
+    const handleReservationCancelled = () => {
+      console.log("Reservation cancelled event received in ClientePag.jsx. Refetching...");
+      fetchData();
+    };
+
+    window.addEventListener('reservation-cancelled', handleReservationCancelled);
+    return () => {
+      window.removeEventListener('reservation-cancelled', handleReservationCancelled);
+    };
+  }, []);
 
   // Funciones de validación de disponibilidad
   const isTourDateAvailable = (tourName, date, time) => {

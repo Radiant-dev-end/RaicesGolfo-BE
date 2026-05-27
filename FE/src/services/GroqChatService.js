@@ -127,6 +127,22 @@ export const getChatResponse = async (userMessage, chatHistory = [], systemPromp
             });
             const beData = await beResponse.json();
             skillResult = JSON.stringify(beData);
+            
+            // Si la cancelación fue exitosa, disparamos un evento personalizado para recargar la UI reactivamente
+            if (toolName === 'cancelar_cita_raicesgolfo' && beData && beData.success) {
+                try {
+                    window.dispatchEvent(new CustomEvent('reservation-cancelled', { 
+                        detail: { 
+                            tipo: args.tipo, 
+                            id: args.id, 
+                            email: args.email, 
+                            nombre_reserva: args.nombre_reserva 
+                        } 
+                    }));
+                } catch (eventErr) {
+                    console.error("Error dispatching reservation-cancelled event:", eventErr);
+                }
+            }
         } catch (err) {
             console.error("Error calling backend skill", err);
             skillResult = JSON.stringify({ success: false, message: "No se pudo conectar con el servidor." });

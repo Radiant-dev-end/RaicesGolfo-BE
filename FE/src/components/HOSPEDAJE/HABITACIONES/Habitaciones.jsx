@@ -123,14 +123,7 @@ function Habitaciones() {
   const [filtrosActivos, setFiltrosActivos] = useState([]);
   const [searchNombre, setSearchNombre] = useState('');
 
-  // Paginación vinculada a la carga de datos unificada
-  const {
-    data: listaPaginada,
-    loading: cargando,
-    page,
-    setPage,
-    totalPaginas,
-  } = usePagination(async () => {
+  const { data: listaCompleta, loading: cargando, page, setPage, totalPaginas, refresh } = usePagination(async () => {
     try {
       const [habitacionesRes, reservasRes] = await Promise.all([
         fetch(ENDPOINTS.HABITACIONES),
@@ -183,10 +176,22 @@ function Habitaciones() {
     } catch (err) {
       return habitacionesEstaticas;
     }
-  }, 100); // Traemos "todos" para filtrar localmente o ajusta el limite
+  }, 10000); // Traemos "todos" para filtrar localmente o ajusta el limite
+
+  useEffect(() => {
+    const handleReservationCancelled = () => {
+      console.log("Reservation cancelled event received in Habitaciones.jsx. Refreshing...");
+      if (typeof refresh === 'function') refresh();
+    };
+
+    window.addEventListener('reservation-cancelled', handleReservationCancelled);
+    return () => {
+      window.removeEventListener('reservation-cancelled', handleReservationCancelled);
+    };
+  }, [refresh]);
 
   // Lógica de Filtrado con AND (Nombre y Amenidades)
-  const listaFiltrada = (listaPaginada || []).filter(hab => {
+  const listaFiltrada = (listaCompleta || []).filter(hab => {
     // 1. Filtrar por nombre
     const matchNombre = searchNombre === '' || normalizarTexto(hab.nombre).includes(normalizarTexto(searchNombre));
     if (!matchNombre) return false;
@@ -194,9 +199,30 @@ function Habitaciones() {
     if (filtrosActivos.length === 0) return true;
 
     // Unir amenidades y features (de la base de datos)
+    let parsedFeatures = [];
+    if (hab.features) {
+      if (typeof hab.features === 'string') {
+        try {
+          const parsed = JSON.parse(hab.features);
+          parsedFeatures = Array.isArray(parsed) ? parsed : [parsed];
+        } catch (e) {
+          const trimmed = hab.features.trim();
+          if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            parsedFeatures = trimmed.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+          } else {
+            parsedFeatures = trimmed.split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+          }
+        }
+      } else if (Array.isArray(hab.features)) {
+        parsedFeatures = hab.features;
+      } else {
+        parsedFeatures = [hab.features];
+      }
+    }
+
     const todasLasCaracteristicas = [
       ...(hab.amenidades || []),
-      ...(hab.features ? JSON.parse(hab.features) : [])
+      ...parsedFeatures
     ].map(normalizarTexto);
 
     return filtrosActivos.every(filtro => {
@@ -267,7 +293,7 @@ function Habitaciones() {
       </div>
 
       <div className="habitaciones-grid">
-        {listaPaginada.map((hab, index) => (
+        {itemsVisualizados.map((hab, index) => (
           <div key={hab.id} className="habitacion-card">
             {/* ... Contenido de la card (Igual al tuyo) ... */}
             <div className="hab-image-container">

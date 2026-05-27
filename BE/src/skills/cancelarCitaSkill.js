@@ -14,11 +14,33 @@ const cancelarCita = async (tipo, id, email, nombre_reserva) => {
                 reservaToCancel = await ReservacionHabitaciones.findByPk(id);
             }
         } 
-        // Opción 2: Buscar por email + nombre de la reserva
         else if (email) {
-            const usuario = await Usuario.findOne({ where: { email } });
+            const emailTrimmed = email.trim();
+            let usuario = await Usuario.findOne({ where: { email: emailTrimmed } });
+
+            // Buscar por similitud si no se encuentra exactamente
             if (!usuario) {
-                return { success: false, message: "No se encontró un usuario con ese correo electrónico." };
+                const emailLower = emailTrimmed.toLowerCase();
+                const todosUsuarios = await Usuario.findAll();
+                for (const u of todosUsuarios) {
+                    const uEmail = (u.email || '').toLowerCase();
+                    if (uEmail && emailLower) {
+                        const uUsername = uEmail.split('@')[0];
+                        const searchUsername = emailLower.split('@')[0];
+                        if (uUsername.length >= 4 && searchUsername.length >= 4) {
+                            const prefixLength = Math.min(5, Math.floor(searchUsername.length * 0.8));
+                            if (uUsername.startsWith(searchUsername.substring(0, prefixLength)) || 
+                                searchUsername.startsWith(uUsername.substring(0, prefixLength))) {
+                                usuario = u;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!usuario) {
+                return { success: false, message: `No se encontró un usuario con el correo electrónico "${emailTrimmed}".` };
             }
 
             const userId = usuario.id_usuarios;
@@ -68,12 +90,12 @@ const cancelarCita = async (tipo, id, email, nombre_reserva) => {
             return { success: false, message: "No se encontró ninguna reserva activa con esos datos para cancelar." };
         }
 
-        await reservaToCancel.update({ estado: 'Cancelada' });
+        await reservaToCancel.destroy();
 
         const nombreReserva = reservaToCancel.nombre_habitacion || 'Reserva';
-        return { 
-            success: true, 
-            message: `La reserva de '${nombreReserva}' ha sido cancelada exitosamente.`,
+        return {
+            success: true,
+            message: `La reserva de '${nombreReserva}' ha sido eliminada exitosamente.`,
             tipo: cancelType
         };
 
