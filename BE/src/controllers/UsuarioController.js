@@ -136,7 +136,7 @@ const UsuarioController = {
             const { id } = req.params;
             const usuario = await Usuario.findByPk(id);
             if (!usuario) return res.status(404).json({ message: "Usuario no encontrado" });
-            
+
             await usuario.destroy();
             res.json({ message: "Usuario eliminado correctamente" });
         } catch (error) {
@@ -197,15 +197,20 @@ const UsuarioController = {
                     user_email: email,
                     user_name: usuario.nombre,
                     to_name: usuario.nombre,
+                    codigo_verificacion: recoveryCode,
+                    codigo_recuperacion: recoveryCode,
+                    codigo: recoveryCode,
+                    code: recoveryCode,
                     recovery_code: recoveryCode,
+                    recoveryCode: recoveryCode,
                     message: `Tu código de seguridad es: ${recoveryCode}`
                 }
             };
 
             const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json", 
+                headers: {
+                    "Content-Type": "application/json",
                     "Origin": "http://localhost:5173",
                     "Referer": "http://localhost:5173/",
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
