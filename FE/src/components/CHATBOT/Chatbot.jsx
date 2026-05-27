@@ -123,6 +123,7 @@ Reglas de Formato estrictas que DEBES cumplir bajo cualquier circunstancia:
 7. si el usuario pregunta en otro idioma respondele en el mismo idioma, traduce toda la información, utiliza la misma estructura y formato profesional.
 8. Si el usuario pregunta lo mismo que en la petición anterior, no repitas la respuesta, solo di "ya te di esa información", no respondas nada adicional a ese simple texto.
 9. Si el usuario pregunta por información relacionada a tours, habitaciones o gastronomía, utiliza los datos que te proporciona la base de datos.
+10. Tienes acceso a herramientas para buscar y cancelar reservas. Si el usuario te pide cancelar una reserva, no necesitas información adicional de su cuenta si ya tienes el ID. Procede a usar la herramienta de cancelación directamente.
 
 
 ${dynamicContext}`;

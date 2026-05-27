@@ -21,6 +21,7 @@ export const ENDPOINTS = {
     GASTRONOMIA: `${API_BASE_URL}/gastronomia`,
     TRANSPORTE: `${API_BASE_URL}/transporte`,
     RECOMMENDATIONS: `${API_BASE_URL}/recommendations`,
+    CLAUDE_SKILL: `${API_BASE_URL}/claude/skill`,
 };
 
 export default API_BASE_URL;
