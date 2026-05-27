@@ -24,8 +24,8 @@ const UsuariosPanel = () => {
         const matchesEmail = (user.email || '').toLowerCase().includes(searchTerm.toLowerCase());
         const userId = String(user.id || user.id_usuarios || '');
         const matchesId = searchId ? userId.includes(searchId) : true;
-        const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
-        const matchesRole = searchRole ? userRole === searchRole : true;
+        const userRoleStr = typeof user.role === 'object' && user.role !== null ? user.role.nombre : (user.role || (user.id_roles === 1 ? 'admin' : 'cliente'));
+        const matchesRole = searchRole ? userRoleStr.toLowerCase() === searchRole.toLowerCase() : true;
         return matchesEmail && matchesId && matchesRole;
     });
 
@@ -135,20 +135,20 @@ const UsuariosPanel = () => {
                         {usuariosFiltrados.length > 0 ? (
                             usuariosFiltrados.map(user => {
                                 const userId = user.id || user.id_usuarios;
-                                const userRole = user.role || (user.id_roles === 1 ? 'admin' : 'cliente');
+                                const userRoleStr = typeof user.role === 'object' && user.role !== null ? user.role.nombre : (user.role || (user.id_roles === 1 ? 'admin' : 'cliente'));
                                 return (
                                 <tr key={userId}>
                                     <td>{userId}</td>
                                     <td>{user.email}</td>
                                     <td>
-                                        <span className={`badge-role ${userRole}`}>
-                                            {userRole}
+                                        <span className={`badge-role ${userRoleStr.toLowerCase()}`}>
+                                            {userRoleStr}
                                         </span>
                                     </td>
                                     <td>
                                         <button 
                                             className="btn-action edit"
-                                            onClick={() => handleCambiarRol(userId, userRole)}
+                                            onClick={() => handleCambiarRol(userId, userRoleStr)}
                                             title="Cambiar Rol"
                                         >
                                             Cambiar Rol

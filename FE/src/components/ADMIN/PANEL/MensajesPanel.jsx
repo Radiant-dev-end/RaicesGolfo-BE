@@ -35,7 +35,7 @@ function MensajesPanel() {
 
         try {
             await fetch(`${ENDPOINTS.CONTACTOS}/${id}`, { method: 'DELETE' });
-            setMessages(messages.filter(m => m.id !== id));
+            fetchMessages();
             Swal.fire({
                 icon: 'success',
                 title: 'Mensaje eliminado',
@@ -79,8 +79,10 @@ function MensajesPanel() {
                                 </td>
                             </tr>
                         ) : (
-                            messages.map((msg) => (
-                                <tr key={msg.id}>
+                            messages.map((msg, index) => {
+                                const msgId = msg.id_caracteristicas || msg.id || index;
+                                return (
+                                <tr key={msgId}>
                                     <td><strong>{msg.nombre}</strong></td>
                                     <td>{msg.email}</td>
                                     <td>
@@ -92,7 +94,7 @@ function MensajesPanel() {
                                         <div className="action-buttons">
                                             <button
                                                 className="btn-deny"
-                                                onClick={() => handleDelete(msg.id)}
+                                                onClick={() => handleDelete(msg.id_caracteristicas || msg.id)}
                                                 title="Eliminar mensaje"
                                             >
                                                 X
@@ -100,7 +102,8 @@ function MensajesPanel() {
                                         </div>
                                     </td>
                                 </tr>
-                            ))
+                                );
+                            })
                         )}
                     </tbody>
                 </table>

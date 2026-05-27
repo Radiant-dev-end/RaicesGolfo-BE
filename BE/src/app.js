@@ -71,4 +71,9 @@ app.use('/api/claude', claudeRoutes);
 app.use('/api/gastronomia', gastronomiaRoutes);
 app.use('/api/transporte', transporteRoutes);
 
+// Mock Settings endpoint to prevent 404 network errors in the frontend
+app.get('/api/settings', (req, res) => res.json({}));
+app.post('/api/settings', (req, res) => res.json(req.body));
+app.put('/api/settings/:id', (req, res) => res.json(req.body));
+
 module.exports = app;

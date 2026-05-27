@@ -134,7 +134,7 @@ function ClientePag() {
     roomName: '',
     checkIn: '',
     checkOut: '',
-    time: '12:00 PM',
+    time: '12:00',
     price: 0,
     email: ''
   });
@@ -451,7 +451,7 @@ function ClientePag() {
       startLoading();
       const added = await createRoomReserva(reservaData);
       setReservasHab([...reservasHab, added]);
-      setNewRoomReserva({ roomId: '', roomName: '', checkIn: '', checkOut: '', time: '12:00 PM', price: 0, email: '' });
+      setNewRoomReserva({ roomId: '', roomName: '', checkIn: '', checkOut: '', time: '12:00', price: 0, email: '' });
       
       const templateParams = {
         tipo_reserva: 'Hospedaje',
@@ -705,10 +705,10 @@ function ClientePag() {
                   </div>
                 ) : (
                   <div className="reservation-cards-grid">
-                    {reservas.slice().reverse().map((res) => {
+                    {reservas.slice().reverse().map((res, index) => {
                       const tourInfo = allTours.find(t => t.nombre === res.tourName);
                       return (
-                        <div className="reserva-card-item" key={res.id}>
+                        <div className="reserva-card-item" key={res.id || res.id_reservaciones || index}>
                           <div className="reserva-card-img">
                             <img src={tourInfo ? (tourInfo.imagen || IMAGES_MAP[tourInfo.id] || posada1) : posada1} alt={res.tourName} />
                             <span className={`reserva-status-tag ${res.status.toLowerCase()}`}>
@@ -901,10 +901,10 @@ function ClientePag() {
                   </div>
                 ) : (
                   <div className="reservation-cards-grid">
-                    {reservasHab.slice().reverse().map((res) => {
+                    {reservasHab.slice().reverse().map((res, index) => {
                       const roomInfo = allHabitaciones.find(h => h.id === res.roomId || h.nombre === res.roomName);
                       return (
-                        <div className="reserva-card-item" key={res.id}>
+                        <div className="reserva-card-item" key={res.id || res.id_reserva_habitacion || index}>
                           <div className="reserva-card-img">
                             <img
                               src={getRoomImage(roomInfo || { nombre: res.roomName }, allHabitaciones.findIndex(room => room.id === roomInfo?.id))}
@@ -1158,8 +1158,8 @@ function ClientePag() {
                   </div>
                 ) : (
                   <div className="messages-list-scroll" style={{ maxHeight: '500px', overflowY: 'auto', paddingRight: '10px' }}>
-                    {userMessages.map(msg => (
-                      <div key={msg.id} className="message-thread" style={{ marginBottom: '1.5rem', padding: '1rem', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    {userMessages.map((msg, index) => (
+                      <div key={msg.id || msg.id_caracteristica || index} className="message-thread" style={{ marginBottom: '1.5rem', padding: '1rem', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
                         <div className="user-query">
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                             <strong style={{ color: '#0d9488' }}>{msg.asunto}</strong>

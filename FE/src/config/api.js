@@ -14,7 +14,7 @@ export const ENDPOINTS = {
     // Mensajes recibidos desde formularios de contacto
     CONTACTOS: `${API_BASE_URL}/caracteristicas`,
     // Reservas de habitaciones con fechas de entrada y salida.
-    RESERVAS_HABITACIONES: `${API_BASE_URL}/habitaciones`,
+    RESERVAS_HABITACIONES: `${API_BASE_URL}/reservaciondehabitaciones`,
     // Roles del sistema.
     ROLES: `${API_BASE_URL}/roles`,
     SETTINGS: `${API_BASE_URL}/settings`,

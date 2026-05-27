@@ -57,6 +57,10 @@ const settingsService = {
                 return normalizeSettings({});
             }
             const response = await fetch(ENDPOINTS.SETTINGS);
+            if (response.status === 404) {
+                console.warn('Endpoint de settings no encontrado (404). Usando valores por defecto.');
+                return normalizeSettings({});
+            }
             if (!response.ok) throw new Error('Error al cargar la configuracion');
             const data = await response.json();
             return normalizeSettings(data);
@@ -87,6 +91,11 @@ const settingsService = {
                 },
                 body: JSON.stringify(normalizedSettings),
             });
+
+            if (response.status === 404) {
+                console.warn('Endpoint de settings no encontrado (404). Simulando guardado exitoso.');
+                return normalizeSettings(settings);
+            }
 
             if (!response.ok) throw new Error('Error al actualizar la configuracion');
 

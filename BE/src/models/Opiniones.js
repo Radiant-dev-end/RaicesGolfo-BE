@@ -16,7 +16,7 @@ Opiniones.init({
     },
 
     imagen: {
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT('long'),
         allowNull: false
     },
 
