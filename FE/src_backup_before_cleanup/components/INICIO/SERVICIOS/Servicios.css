@@ -1,0 +1,145 @@
+.servicios-section {
+  padding: clamp(60px, 8vw, 120px) 0;
+  background-color: #f9fbfd;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.servicios-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 3rem);
+  display: flex;
+  flex-direction: row;
+  gap: clamp(3rem, 5vw, 6rem);
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Columna Izquierda */
+.servicios-info-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.servicios-main-title {
+  font-size: clamp(2.5rem, 4vw + 1rem, 4rem);
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-bottom: 25px;
+  letter-spacing: -1.5px;
+}
+
+.servicios-main-title .highlight {
+  color: #0d9488;
+}
+
+.servicios-description {
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 30px;
+}
+
+.servicios-action {
+  margin-top: clamp(20px, 4vw, 40px);
+}
+
+.servicios-reserve-btn {
+  background-color: #ea580c; 
+  color: white;
+  border: none;
+  width: 100%;
+  max-width: 320px; /* Limits width on desktop, 100% on mobile */
+  padding: 18px 30px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.servicios-reserve-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(234, 88, 12, 0.4);
+  background-color: #c2410c; 
+}
+
+.btn-icon {
+  font-size: 1.4rem;
+}
+
+/* Columna Derecha: El Grid */
+.servicios-grid-col {
+  flex: 1.2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: 100%; /* Important for grid containment */
+}
+
+.servicio-card {
+  background: white;
+  padding: clamp(30px, 4vw, 40px) clamp(25px, 3vw, 35px);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.servicio-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.1);
+}
+
+.servicio-icon-box {
+  margin-bottom: 20px;
+}
+
+.servicio-icon {
+  font-size: clamp(2.5rem, 4vw, 3rem);
+}
+
+.servicio-card-title {
+  font-size: clamp(1.4rem, 2vw + 0.5rem, 1.7rem);
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.servicio-card-text {
+  font-size: clamp(0.95rem, 1vw + 0.5rem, 1.05rem);
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 1100px) {
+  .servicios-container {
+    flex-direction: column;
+  }
+  
+  .servicios-info-col {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .servicios-reserve-btn {
+    margin: 0 auto;
+    max-width: 100%; /* Make button 100% width on tablet/mobile */
+  }
+}

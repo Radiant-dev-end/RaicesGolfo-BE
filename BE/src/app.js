@@ -16,6 +16,7 @@ const toursRoutes = require('./routes/ToursRoutes');
 const UsuarioRoutes = require('./routes/UsuarioRoutes');
 const recommendationRoutes = require('./routes/RecommendationRoutes');
 const claudeRoutes = require('./routes/ClaudeRoutes');
+const transporteRoutes = require('./routes/TransporteRoutes');
 
 const app = express();
 
@@ -68,5 +69,6 @@ app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/claude', claudeRoutes);
 
 app.use('/api/gastronomia', gastronomiaRoutes);
+app.use('/api/transporte', transporteRoutes);
 
 module.exports = app;

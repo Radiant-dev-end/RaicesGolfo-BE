@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import AccessibilityWidget from '../components/ACCESSIBILITY/AccessibilityWidget';
 import Chatbot from '../components/CHATBOT/Chatbot';
+import ChatbotAdmin from '../components/CHATBOT/ChatbotAdmin';
 import AcercaDe from '../pages/AcercaDe';
 import Admin from '../pages/Admin';
 import Cliente from '../pages/Cliente';
@@ -72,7 +73,7 @@ function Routing() {
         </Routes>
 
         {/* Widgets globales siempre montados, sin importar la pagina actual. */}
-        <Chatbot />
+        <ConditionalChatbot />
         <AccessibilityWidget />
 
         {/* Componente visual del loader global */}
@@ -80,6 +81,17 @@ function Routing() {
       </LoadingProvider>
     </BrowserRouter>
   );
+}
+
+// Renderiza dinámicamente el chatbot correcto según el módulo actual
+function ConditionalChatbot() {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith('/admin');
+
+  if (isAdminPath) {
+    return <ChatbotAdmin />;
+  }
+  return <Chatbot />;
 }
 
 export default Routing;
