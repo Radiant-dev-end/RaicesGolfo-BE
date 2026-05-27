@@ -12,7 +12,8 @@ const startServer = async () => {
         console.log('Conexión a la base de datos validada exitosamente.');
 
         // Sincronizar modelos si es necesario
-        await sequelize.sync({ alter: true });
+        // Use default sync (no alter) to avoid creating duplicate indexes each start
+        await sequelize.sync();
 
         app.listen(PORT, () => {
 
