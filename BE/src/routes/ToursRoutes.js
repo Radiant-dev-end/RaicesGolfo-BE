@@ -61,6 +61,11 @@ router.get("/:id", ToursController.getById);
  *                 type: string
  *               tipo:
  *                 type: string
+<<<<<<< HEAD
+=======
+ *               imagen:
+ *                 type: string
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
  *               estado:
  *                 type: boolean
  *     responses:
@@ -99,6 +104,11 @@ router.post("/", ToursController.create);
  *                 type: string
  *               tipo:
  *                 type: string
+<<<<<<< HEAD
+=======
+ *               imagen:
+ *                 type: string
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
  *               estado:
  *                 type: boolean
  *     responses:

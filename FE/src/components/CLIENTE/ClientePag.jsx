@@ -242,10 +242,34 @@ function ClientePag() {
       setAllRoomsReservations(allRoomsRes);
 
       const storedUser = localStorage.getItem('user');
+<<<<<<< HEAD
       if (storedUser) {
         const user = JSON.parse(storedUser);
         if (user.name || user.nombre) setUserName(user.name || user.nombre);
         const currentUserId = user.id || user.id_usuarios;
+=======
+      const parsedUser = storedUser ? JSON.parse(storedUser) : {};
+      
+      // Pre-seleccionar la habitación si viene desde el estado de la navegación
+      if (location.state && location.state.tab === 'hospedajes' && location.state.selectedTour) {
+        const matchingRoom = habRes.find(
+          h => normalizeText(h.nombre) === normalizeText(location.state.selectedTour)
+        );
+        if (matchingRoom) {
+          setNewRoomReserva(prev => ({
+            ...prev,
+            roomId: matchingRoom.id || matchingRoom.id_habitaciones,
+            roomName: matchingRoom.nombre,
+            price: Number(matchingRoom.precio || matchingRoom.precio_noche || 0),
+            email: parsedUser.email || ''
+          }));
+        }
+      }
+
+      if (storedUser) {
+        if (parsedUser.name || parsedUser.nombre) setUserName(parsedUser.name || parsedUser.nombre);
+        const currentUserId = parsedUser.id || parsedUser.id_usuarios;
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
         if (currentUserId) {
           const [resTours, resHab] = await Promise.all([
             getReservasByUser(currentUserId),
@@ -264,6 +288,7 @@ function ClientePag() {
   };
 
   useEffect(() => {
+<<<<<<< HEAD
     // Verificar si venimos desde un botón de "Reservar" en un Tour
     if (location.state && location.state.tab) {
       setActiveTab(location.state.tab);
@@ -272,6 +297,71 @@ function ClientePag() {
       }
     }
 
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
+========
+    const fetchData = async () => {
+      try {
+        setLoadingTours(true);
+        setLoadingHab(true);
+
+        const [toursRes, habRes, allToursRes, allRoomsRes] = await Promise.all([
+          getTours(),
+          getHabitaciones(),
+          getAllReservas(),
+          getAllRoomReservas()
+        ]);
+
+        setAllTours(toursRes.filter(t => t.disponible));
+        setAllHabitaciones(habRes);
+        setAllToursReservations(allToursRes);
+        setAllRoomsReservations(allRoomsRes);
+
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (user.name || user.nombre) setUserName(user.name || user.nombre);
+          const currentUserId = user.id || user.id_usuarios;
+          if (currentUserId) {
+            const [resTours, resHab] = await Promise.all([
+              getReservasByUser(currentUserId),
+              getRoomReservasByUser(currentUserId)
+            ]);
+            setReservas(resTours);
+            setReservasHab(resHab);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoadingTours(false);
+        setLoadingHab(false);
+      }
+    };
+
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+    // Verificar si venimos desde un botón de "Reservar" en un Tour o Habitación
+    if (location.state && location.state.tab) {
+      setActiveTab(location.state.tab);
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      if (location.state.selectedTour) {
+        if (location.state.tab === 'reservas') {
+          setNewReserva(prev => ({
+            ...prev,
+            tour: location.state.selectedTour,
+            email: storedUser.email || ''
+          }));
+        } else if (location.state.tab === 'hospedajes') {
+          setNewRoomReserva(prev => ({
+            ...prev,
+            email: storedUser.email || ''
+          }));
+        }
+      }
+    }
+
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
     fetchData();
   }, [location.state]);
 
@@ -977,13 +1067,29 @@ function ClientePag() {
           try {
             // Manejar caso donde el localStorage pueda estar corrupto por una actualización previa
             const userId = currentUser?.id_usuarios || currentUser?.id || currentUser?.usuario?.id_usuarios || currentUser?.usuario?.id;
+<<<<<<< HEAD
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
 
             if (!userId) {
               throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
+========
+            
+            if (!userId) {
+                throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+
+            if (!userId) {
+              throw new Error("No se pudo encontrar el ID del usuario en la sesión. Por favor cierra sesión y vuelve a entrar.");
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
             }
 
             const response = await updateUserProfile(userId, editedUser);
             const updatedUser = response.usuario || response; // Extraer el usuario de la respuesta
+<<<<<<< HEAD
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
+=======
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
 
             // Actualizar localStorage
             const newUser = { ...currentUser, ...updatedUser };
@@ -992,6 +1098,19 @@ function ClientePag() {
             if (newUser.usuario) delete newUser.usuario;
             if (newUser.message) delete newUser.message;
 
+<<<<<<< HEAD
+========
+            
+            // Actualizar localStorage
+            const newUser = { ...currentUser, ...updatedUser };
+            
+            // Limpiar datos anidados si existían por error previo
+            if (newUser.usuario) delete newUser.usuario;
+            if (newUser.message) delete newUser.message;
+            
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
             localStorage.setItem('user', JSON.stringify(newUser));
 
             // Actualizar estados locales
@@ -1029,14 +1148,34 @@ function ClientePag() {
                     </div>
                     <div className="input-group-modern file-upload-group">
                       <label>Cambiar Foto de Perfil:</label>
+<<<<<<< HEAD
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
 
+========
+                      
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                       <div className="custom-file-upload">
                         <label htmlFor="file-upload" className="btn-outline-modern">
                           <span>📷 Seleccionar Archivo</span>
                         </label>
+<<<<<<< HEAD
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
                         <input
                           id="file-upload"
                           type="file"
+========
+                        <input 
+                          id="file-upload"
+                          type="file" 
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+                        <input
+                          id="file-upload"
+                          type="file"
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                           accept="image/*"
                           onChange={handlePhotoUpload}
                           style={{ display: 'none' }}
@@ -1046,11 +1185,25 @@ function ClientePag() {
                       <div className="divider-text">
                         <span>O usa un URL:</span>
                       </div>
+<<<<<<< HEAD
+<<<<<<<< HEAD:FE/src/components/CLIENTE/ClientePag.jsx
+=======
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
 
                       <input
                         type="text"
                         value={editedUser.photo}
                         onChange={(e) => setEditedUser({ ...editedUser, photo: e.target.value })}
+<<<<<<< HEAD
+========
+                      
+                      <input 
+                        type="text" 
+                        value={editedUser.photo} 
+                        onChange={(e) => setEditedUser({...editedUser, photo: e.target.value})}
+>>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd:FE/src_backup_before_cleanup/components/CLIENTE/ClientePag.jsx
+=======
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                         placeholder="https://ejemplo.com/foto.jpg"
                         className="input-custom-style"
                       />

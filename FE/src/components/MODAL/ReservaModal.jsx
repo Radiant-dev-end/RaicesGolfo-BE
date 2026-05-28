@@ -5,19 +5,34 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ReservaModal.css';
 
+<<<<<<< HEAD
 function ReservaModal({ isOpen, onClose, tourName, whatsappNumber }) {
+=======
+function ReservaModal({ isOpen, onClose, tourName, whatsappNumber, type = 'tour' }) {
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
   const navigate = useNavigate();
 
   if (!isOpen) return null;
 
   const handleReservarEnLinea = () => {
     const user = localStorage.getItem('user');
+<<<<<<< HEAD
     if (user) {
       // Si está logueado, ir al panel de cliente
       navigate('/cliente', { state: { selectedTour: tourName, tab: 'reservas' } });
     } else {
       // Si no, ir al login
       navigate('/login');
+=======
+    const targetTab = type === 'room' ? 'hospedajes' : 'reservas';
+    
+    if (user) {
+      // Si está logueado, ir al panel de cliente
+      navigate('/cliente', { state: { selectedTour: tourName, tab: targetTab } });
+    } else {
+      // Si no, ir al login, pasando el estado del tour/habitación deseada
+      navigate('/login', { state: { selectedTour: tourName, tab: targetTab } });
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
     }
     onClose();
   };

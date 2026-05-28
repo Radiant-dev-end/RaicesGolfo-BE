@@ -4,7 +4,16 @@ const TourController = {
 
     getAll: async (req, res) => {
         try {
+<<<<<<< HEAD
             const tours = await Tour.findAll();
+=======
+            const { tipo } = req.query;
+            const where = {};
+            if (tipo) {
+                where.tipo = tipo;
+            }
+            const tours = await Tour.findAll({ where });
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
             const mappedTours = tours.map(t => {
                 const tourData = t.toJSON();
                 tourData.id = tourData.id_tours;
@@ -49,10 +58,18 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
+<<<<<<< HEAD
                 disponible
             } = req.body;
 
             if (!nombre || !descripcion || precio === undefined || !duracion || !tipo) {
+=======
+                imagen,
+                disponible
+            } = req.body;
+
+            if (!nombre || !descripcion || precio === undefined || !duracion || !tipo || !imagen) {
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                 return res.status(400).json({
                     message: "Todos los campos obligatorios deben ser completados"
                 });
@@ -76,6 +93,10 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
+<<<<<<< HEAD
+=======
+                imagen,
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                 estado: disponible // Mapped from disponible
             });
 
@@ -108,6 +129,10 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
+<<<<<<< HEAD
+=======
+                imagen, 
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                 disponible
             } = req.body;
 
@@ -129,6 +154,10 @@ const TourController = {
                 precio,
                 duracion,
                 tipo,
+<<<<<<< HEAD
+=======
+                imagen,
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                 estado: disponible
             });
 

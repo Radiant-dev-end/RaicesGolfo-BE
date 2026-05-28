@@ -2,7 +2,11 @@
 // Componente de Login con UX móvil optimizado
 
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { useNavigate, Link } from 'react-router-dom';
+=======
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
 import { loginUser } from '../../services/authService';
 import { useLoading } from '../../context/LoadingContext';
 
@@ -12,6 +16,10 @@ const Inicioseccion = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+<<<<<<< HEAD
+=======
+    const location = useLocation();
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
     const { startLoading, stopLoading } = useLoading();
 
     const handleLogin = async (e) => {
@@ -51,7 +59,11 @@ const Inicioseccion = () => {
                 if (role === 'admin') {
                     navigate('/admin');
                 } else if (role === 'cliente' || role === 'user') {
+<<<<<<< HEAD
                     navigate('/cliente');
+=======
+                    navigate('/cliente', { state: location.state });
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
                 } else {
                     navigate('/');
                 }

@@ -338,6 +338,10 @@ function Habitaciones() {
           onClose={() => setIsModalOpen(false)}
           tourName={habitacionSeleccionada.nombre}
           whatsappNumber={WHATSAPP_HABITACIONES}
+<<<<<<< HEAD
+=======
+          type="room"
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
         />
       )}
     </>

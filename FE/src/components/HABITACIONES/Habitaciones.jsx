@@ -36,6 +36,10 @@ function Habitaciones({ imagen, nombre, descripcion, precio }) {
         onClose={handleCloseModal}
         tourName={nombre}
         whatsappNumber={WHATSAPP_HABITACIONES}
+<<<<<<< HEAD
+=======
+        type="room"
+>>>>>>> 304ceb4bcc6eae6de179494f37c5768d2b51a2dd
       />
     </>
   );
