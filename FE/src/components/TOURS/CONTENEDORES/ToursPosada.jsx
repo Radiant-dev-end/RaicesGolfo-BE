@@ -17,6 +17,18 @@ const IMAGES = {
   't004': posadaImg4,
 };
 
+const getTourImage = (tour) => {
+  // Si la BD tiene una imagen cargada por el admin (que no sea la URL rota por defecto de github)
+  if (tour.imagen && tour.imagen.trim() !== '' && !tour.imagen.includes('github.com/Radiant-dev-end')) {
+    return tour.imagen;
+  }
+  
+  // En caso contrario, usamos el asset local optimizado por Vite
+  const id = tour.id_tours || tour.id;
+  const key = typeof id === 'number' ? `t${String(id).padStart(3, '0')}` : id;
+  return IMAGES[key] || posadaImg1;
+};
+
 function ToursPosada() {
   const { 
     data: tours, 
@@ -46,7 +58,7 @@ function ToursPosada() {
                 key={tour.id_tours || tour.id} 
                 {...tour} 
                 id={tour.id_tours || tour.id}
-                imagen={tour.imagen || IMAGES[tour.id_tours || tour.id] || posadaImg1} 
+                imagen={getTourImage(tour)} 
                 precio={`$${tour.precio} USD`}
               />
             ))
