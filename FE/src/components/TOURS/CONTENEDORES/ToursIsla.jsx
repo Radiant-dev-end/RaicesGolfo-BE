@@ -12,11 +12,23 @@ import islaImg4 from '../../VIDEOS Y IMG/isla4.jpg';
 import islaImg5 from '../../VIDEOS Y IMG/isla5.jpg';
 
 const IMAGES = {
-  't005': islaImg1,
-  't006': islaImg2,
-  't007': islaImg3,
-  't008': islaImg4,
-  't009': islaImg5,
+  't001': islaImg1,
+  't005': islaImg2,
+  't006': islaImg3,
+  't007': islaImg4,
+  't008': islaImg5,
+};
+
+const getTourImage = (tour) => {
+  // Si la BD tiene una imagen cargada por el admin (que no sea la URL rota por defecto de github)
+  if (tour.imagen && tour.imagen.trim() !== '' && !tour.imagen.includes('github.com/Radiant-dev-end')) {
+    return tour.imagen;
+  }
+  
+  // En caso contrario, usamos el asset local optimizado por Vite
+  const id = tour.id_tours || tour.id;
+  const key = typeof id === 'number' ? `t${String(id).padStart(3, '0')}` : id;
+  return IMAGES[key] || islaImg1;
 };
 
 function ToursIsla() {
@@ -48,7 +60,7 @@ function ToursIsla() {
                 key={tour.id_tours || tour.id} 
                 {...tour} 
                 id={tour.id_tours || tour.id}
-                imagen={tour.imagen || IMAGES[tour.id_tours || tour.id] || islaImg1} 
+                imagen={getTourImage(tour)} 
                 precio={`$${tour.precio} USD`}
               />
             ))

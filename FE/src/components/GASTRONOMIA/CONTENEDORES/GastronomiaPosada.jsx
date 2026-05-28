@@ -10,6 +10,22 @@ import comida2 from '../../VIDEOS Y IMG/comida2.jpg';
 import comida3 from '../../VIDEOS Y IMG/comida3.jpg';
 import comida4 from '../../VIDEOS Y IMG/comida4.jpg';
 
+const IMAGES = {
+  'g009': comida1,
+  'g010': comida2,
+  'g011': comida3,
+  'g012': comida4,
+};
+
+const getFoodImage = (dish) => {
+  if (dish.imagen && dish.imagen.trim() !== '' && !dish.imagen.includes('github.com/Radiant-dev-end')) {
+    return dish.imagen;
+  }
+  const id = dish.id_gastronomia || dish.id;
+  const key = typeof id === 'number' ? `g${String(id).padStart(3, '0')}` : id;
+  return IMAGES[key] || comida1;
+};
+
 function GastronomiaPosada() {
   const { 
     data: dishes, 
@@ -35,7 +51,12 @@ function GastronomiaPosada() {
             <p>Cargando platos...</p>
           ) : dishes && dishes.length > 0 ? (
             dishes.map(dish => (
-              <FoodCard key={dish.id_gastronomia || dish.id} {...dish} />
+              <FoodCard 
+                key={dish.id_gastronomia || dish.id} 
+                {...dish} 
+                imagen={getFoodImage(dish)}
+                precio={`₡${parseInt(dish.precio).toLocaleString('es-CR')}`}
+              />
             ))
           ) : (
             <p>No hay platos disponibles en este momento.</p>
