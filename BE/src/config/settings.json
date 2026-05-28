@@ -1,0 +1,27 @@
+{
+  "hotelName": "Raíces del Golfo",
+  "address": "Isla de Chira, Puntarenas, Costa Rica",
+  "contact": {
+    "phone": "+506 8888 8888",
+    "email": "info@raicesdelgolfo.com"
+  },
+  "timezone": "America/Costa_Rica",
+  "currency": "CRC",
+  "languages": [
+    "es",
+    "en"
+  ],
+  "policies": {
+    "checkIn": "14:00",
+    "checkOut": "11:00",
+    "cancellation": "Cancelación gratuita hasta 24 horas antes.",
+    "pets": "Se permiten mascotas con cargo adicional.",
+    "rules": "Prohibido fumar en las habitaciones. Silencio después de las 10 PM. Respetar la flora y fauna local.",
+    "requireAcceptance": true
+  },
+  "appearance": {
+    "primaryColor": "#2c3e50",
+    "logo": "/logo.png"
+  },
+  "id": "5234"
+}

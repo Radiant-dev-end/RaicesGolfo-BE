@@ -1,26 +1,79 @@
-const express = require("express") // Llama al servidor de express para subir el servidor
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const { sequelize } = require('./models/index');
+const authenticateToken = require('./middlewares/authMiddleware');
 
-const app = express() // Lo instancia, para usarlo por medio de app
+const caracteristicasRoutes = require('./routes/CaracteristicasRoutes');
+const gastronomiaRoutes = require('./routes/GastronomiaRoutes');
+const authRoutes = require('./routes/authRoutes');
+const habitacionesRoutes = require('./routes/HabitacionesRoutes');
+const opinionesRoutes = require('./routes/OpinionesRoutes');
+const reservaciondehabitacionesRoutes = require('./routes/ReservaciondehabitacionesRoutes');
+const reservacionesRoutes = require('./routes/ReservacionesRoutes');
+const rolRoutes = require('./routes/RoleRoutes');
+const toursRoutes = require('./routes/ToursRoutes');
+const UsuarioRoutes = require('./routes/UsuarioRoutes');
+const recommendationRoutes = require('./routes/RecommendationRoutes');
+const claudeRoutes = require('./routes/ClaudeRoutes');
+const transporteRoutes = require('./routes/TransporteRoutes');
 
-const sequelize = require("./config/db") // Llama al ORM y a la configuración de la base de datos
+const app = express();
 
-require("./index") // Llama a todos los modelos para que se creen en la base de datos, por medio de sequelize
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-app.use(express.json()) // El servidor va a entender JSON
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-/*
-    Conexión por medio de  sequelize, con la base de datos, y luego levanta el servidor
-*/
+// Swagger setup (optional for tests, but keeping it)
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Raices del Golfo API",
+            version: "1.0.0",
+            description: "Documentacion inicial de la API"
+        },
+        servers: [
+            {
+                url: "http://localhost:3000"
+            }
+        ]
+    },
+    apis: ["./src/routes/*.js"]
+};
+const specs = swaggerJsdoc(options);
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-// Llamamos al archivo de routes dentro de usuario, para obtener
-// las rutas
-// Usamos el archivo de rutas, para que el servidor acceda a ellas
-/*
-    alter true permite modificaciones dentro de las tablas por medio de sequelize
-    Sin tener que eliminar tablas o la base de datos
-*/
+// Public routes
+app.use('/api/auth', authRoutes);
 
+// Protected routes (middleware applied after auth)
+// app.use(authenticateToken); // Uncomment if you want to protect all subsequent routes
 
-app.listen(3000, () => {
-    console.log('servidor corriendo');
-})
+app.use('/api/caracteristicas', caracteristicasRoutes);
+app.use('/api/habitaciones', habitacionesRoutes);
+app.use('/api/opiniones', opinionesRoutes);
+app.use('/api/reservaciondehabitaciones', reservaciondehabitacionesRoutes);
+app.use('/api/reservaciones', reservacionesRoutes);
+app.use('/api/roles', rolRoutes);
+app.use('/api/tours', toursRoutes);
+app.use('/api/usuarios', UsuarioRoutes);
+app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/claude', claudeRoutes);
+
+app.use('/api/gastronomia', gastronomiaRoutes);
+app.use('/api/transporte', transporteRoutes);
+
+// Mock Settings endpoint to prevent 404 network errors in the frontend
+app.get('/api/settings', (req, res) => res.json({}));
+app.post('/api/settings', (req, res) => res.json(req.body));
+app.put('/api/settings/:id', (req, res) => res.json(req.body));
+
+module.exports = app;

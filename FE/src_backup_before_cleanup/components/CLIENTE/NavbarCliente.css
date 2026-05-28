@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+.navbar-cliente {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    font-family: 'Outfit', sans-serif;
+}
+
+.navbar-cliente-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.navbar-cliente-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-cliente-text {
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cliente-badge {
+    background-color: #0d9488;
+    color: #ffffff;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.navbar-cliente-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.cliente-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    background-color: #e2e8f0;
+    color: #0d9488;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cliente-name {
+    color: #0f172a;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.btn-logout {
+    background: linear-gradient(135deg, #0d9488, #0f766e);
+    color: white;
+    text-decoration: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 10px rgba(13, 148, 136, 0.25);
+    border: none;
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 148, 136, 0.35);
+}
+
+@media (max-width: 600px) {
+    .navbar-cliente-container {
+        padding: 0 20px;
+    }
+    
+    .cliente-name {
+        display: none;
+    }
+    
+    .logo-cliente-text {
+        font-size: 1.2rem;
+    }
+}

@@ -1,0 +1,134 @@
+.panel-header {
+  margin-bottom: 30px;
+}
+
+.panel-header h1 {
+  font-size: 2rem;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.admin-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: #f8fafc;
+  padding: 16px 20px;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.admin-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.client-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-id {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-badge.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.aprobada {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.denegada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-approve,
+.btn-deny {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-approve {
+  background: #0d9488;
+  color: white;
+}
+
+.btn-approve:hover {
+  background: #0f766e;
+}
+
+.btn-deny {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-deny:hover {
+  background: #dc2626;
+}
+
+.action-complete {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.badge-tipo {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-tipo.tour {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-tipo.room {
+  background: #fdf2f8;
+  color: #9d174d;
+}
+
+.msg-content {
+  max-width: 400px;
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}

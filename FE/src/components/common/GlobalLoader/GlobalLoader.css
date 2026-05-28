@@ -1,0 +1,258 @@
+/* Estilos del Loader Global */
+
+:root {
+  --loader-bg: rgba(6, 18, 23, 0.85); /* Deep sea midnight */
+  --aqua-primary: #2dd4bf;
+  --aqua-glow: rgba(45, 212, 191, 0.4);
+  --teal-dark: #0f766e;
+  --sky-blue: #0ea5e9;
+  --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.global-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--loader-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Fade Classes controlled by React state */
+.global-loader-overlay.fade-in {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.global-loader-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Radial Sea Glow behind visual components */
+.loader-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.12) 0%, rgba(13, 148, 136, 0.04) 50%, rgba(6, 18, 23, 0) 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: glow-pulse 4s infinite ease-in-out;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Horizontal Bar Visual Layout */
+.loader-visual-horizontal {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 250px;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar-track {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+}
+
+.progress-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--aqua-primary), var(--teal-dark), var(--sky-blue));
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.6);
+  animation: loading-bar-anim 2s infinite ease-in-out;
+  transform-origin: left;
+}
+
+/* Adjust bubbles for horizontal layout */
+.horizontal-bubbles {
+  top: -30px;
+  bottom: -30px;
+  left: -10px;
+  right: -10px;
+}
+
+/* Marine Bubbles / Floating Particles */
+.bubbles-container {
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: -20px;
+  right: -20px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bubble {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.45) 0%, rgba(45, 212, 191, 0.08) 70%);
+  border: 0.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 4px rgba(45, 212, 191, 0.2), 0 0 6px rgba(45, 212, 191, 0.1);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.bubble.b1 { width: 10px; height: 10px; left: 25%; animation: float-bubble 3.2s infinite ease-in; animation-delay: 0s; }
+.bubble.b2 { width: 7px; height: 7px; left: 45%; animation: float-bubble 4.0s infinite ease-in; animation-delay: 0.7s; }
+.bubble.b3 { width: 13px; height: 13px; left: 65%; animation: float-bubble 3.5s infinite ease-in; animation-delay: 1.4s; }
+.bubble.b4 { width: 9px; height: 9px; left: 35%; animation: float-bubble 4.5s infinite ease-in; animation-delay: 2.1s; }
+.bubble.b5 { width: 6px; height: 6px; left: 75%; animation: float-bubble 3.8s infinite ease-in; animation-delay: 1.0s; }
+
+/* Text & Branding Styling */
+.loader-text-wrapper {
+  margin-top: 1.8rem;
+  text-align: center;
+  font-family: var(--font-outfit);
+}
+
+.loader-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 5px;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #e0f2fe 0%, var(--aqua-primary) 50%, #0d9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(45, 212, 191, 0.2));
+}
+
+.loader-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.65rem;
+}
+
+.loader-divider-line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(45, 212, 191, 0), rgba(45, 212, 191, 0.4), rgba(45, 212, 191, 0));
+}
+
+.loader-divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--aqua-primary);
+  box-shadow: 0 0 8px var(--aqua-primary);
+}
+
+.loader-status {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+  margin: 0;
+  animation: pulse-text 2s infinite ease-in-out;
+}
+
+.loader-badge {
+  display: inline-block;
+  margin-top: 1.4rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  color: var(--aqua-primary);
+  border: 1px solid rgba(45, 212, 191, 0.25);
+  padding: 0.35rem 0.9rem;
+  border-radius: 30px;
+  background: rgba(13, 148, 136, 0.08);
+  box-shadow: 0 0 12px rgba(45, 212, 191, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Animations Keyframes */
+
+@keyframes loading-bar-anim {
+  0% { transform: translateX(-100%); width: 50%; }
+  50% { transform: translateX(50%); width: 100%; }
+  100% { transform: translateX(200%); width: 50%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* Animation frames kept clean */
+
+@keyframes float-bubble {
+  0% {
+    transform: translateY(140px) translateX(0) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.75;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(-20px) translateX(15px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .loader-visual-horizontal {
+    width: 200px;
+    height: 50px;
+  }
+  .loader-title {
+    font-size: 1.25rem;
+    letter-spacing: 4px;
+  }
+  .loader-status {
+    font-size: 0.8rem;
+  }
+  .loader-badge {
+    margin-top: 1.1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}

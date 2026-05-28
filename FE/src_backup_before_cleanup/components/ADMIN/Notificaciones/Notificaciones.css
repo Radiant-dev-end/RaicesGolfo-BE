@@ -1,0 +1,172 @@
+.notifications-wrapper {
+    position: relative;
+}
+
+.notifications-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: -10px;
+    width: 320px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    animation: slideInNotifications 0.3s ease;
+    transform-origin: top right;
+    z-index: 1000;
+}
+
+@keyframes slideInNotifications {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8fafc;
+}
+
+.dropdown-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.count-label {
+    background-color: #0d9488;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.dropdown-body {
+    max-height: 380px;
+    overflow-y: auto;
+}
+
+.empty-notifications {
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.empty-notifications span {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 20px;
+    gap: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.notification-item:hover {
+    background-color: #f1f5f9;
+}
+
+.notification-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.notification-icon.tour { background-color: #ecfdf5; color: #10b981; }
+.notification-icon.room { background-color: #eff6ff; color: #3b82f6; }
+.notification-icon.contact { background-color: #fff7ed; color: #f59e0b; }
+
+.notification-info {
+    flex-grow: 1;
+}
+
+.notif-label {
+    margin: 0 0 4px 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+.notif-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.notif-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.btn-reply-small {
+  padding: 0.2rem 0.6rem;
+  background: #0d9488;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-reply-small:hover {
+  background: #0f766e;
+}
+
+.notification-item:hover {
+  background: #f8fafc;
+}
+
+/* Reusable icon-btn styles from NavbarAdmin if needed, but scoped here */
+.icon-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.icon-btn:hover, .icon-btn.active {
+    color: #0d9488;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+}

@@ -1,0 +1,28 @@
+.footer-only-img {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+.footer-full-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover; /* Changed from contain to cover for better fill */
+}
+
+@media screen and (max-width: 768px) {
+  .footer-full-image {
+    min-height: 200px;
+    object-position: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .footer-full-image {
+    min-height: 150px;
+  }
+}
